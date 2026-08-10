@@ -1,0 +1,2106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#DDE2D6">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Cut 16">
+<title>Cut 16 — fasting &amp; fat tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,600;12..96,75..100,800&family=Archivo:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sage:#DDE2D6;
+  --masa:#F7F4EC;
+  --ink:#1C2118;
+  --soft:#5F6656;
+  --guajillo:#A83A26;
+  --tomatillo:#4F7031;
+  --char:#2B3025;
+  --line:rgba(28,33,24,.14);
+  --line2:rgba(28,33,24,.28);
+  --amber:#B67A18;
+  --r:3px;
+  --tab-h:64px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--sage);
+  color:var(--ink);
+  font-family:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;
+  font-size:15px;line-height:1.5;
+  padding-bottom:calc(var(--tab-h) + env(safe-area-inset-bottom));
+  -webkit-text-size-adjust:100%;
+}
+h1,h2,h3,h4{font-family:'Bricolage Grotesque','Archivo',sans-serif;font-weight:800;margin:0;letter-spacing:-.02em;line-height:1.05}
+h2{font-size:23px}
+h3{font-size:17px;letter-spacing:-.01em}
+.mono{font-family:'DM Mono',ui-monospace,Menlo,monospace}
+.eyebrow{font-family:'DM Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft)}
+a{color:var(--guajillo)}
+button{font-family:inherit;font-size:inherit;cursor:pointer}
+
+/* ---------- shell ---------- */
+.wrap{max-width:860px;margin:0 auto;padding:0 16px}
+header.top{
+  position:sticky;top:0;z-index:40;background:var(--sage);
+  border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top);
+}
+.top-in{max-width:860px;margin:0 auto;padding:11px 16px;display:flex;align-items:baseline;gap:10px}
+.brand{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:19px;letter-spacing:-.03em}
+.brand em{font-style:normal;color:var(--guajillo)}
+.vtag{font-size:10px;color:var(--soft);border:1px solid var(--line2);border-radius:99px;padding:1px 6px;letter-spacing:.02em}
+.top-right{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;color:var(--soft);text-align:right}
+
+nav.tabs{
+  position:fixed;left:0;right:0;bottom:0;z-index:50;
+  background:var(--char);display:flex;
+  padding-bottom:env(safe-area-inset-bottom);
+  box-shadow:0 -1px 0 rgba(0,0,0,.2);
+}
+nav.tabs button{
+  flex:1;background:none;border:0;color:rgba(247,244,236,.5);
+  height:var(--tab-h);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;padding:0 2px;
+}
+nav.tabs button svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+nav.tabs button[aria-selected="true"]{color:var(--masa)}
+nav.tabs button[aria-selected="true"] svg{stroke:#C8DDA8}
+.view{display:none;padding:18px 0 34px}
+.view.on{display:block}
+
+/* ---------- cards ---------- */
+.card{background:var(--masa);border:1px solid var(--line);border-radius:var(--r);padding:15px;margin-bottom:12px}
+.card.tight{padding:12px}
+.card-h{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+.card-h h3{flex:1}
+.rule{height:1px;background:var(--line);margin:13px 0}
+.verdict{margin-bottom:12px}
+.v-state{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:26px;letter-spacing:-.03em;line-height:1.05}
+.v-state.good{color:var(--tomatillo)}
+.v-state.warn{color:var(--amber)}
+.v-state.bad{color:var(--guajillo)}
+.v-state.idle{color:var(--soft)}
+.v-sub{font-size:14px;line-height:1.55;margin-top:7px}
+.lrow{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:7px 0;font-size:13.5px;line-height:1.35}
+.lrow span{color:var(--soft)}
+.lrow b{font-family:'DM Mono',monospace;font-weight:500;font-size:15px;white-space:nowrap}
+.lrow.tot{border-top:1px solid var(--line2);padding-top:9px}
+.lrow.tot span,.lrow.tot b{color:var(--ink)}
+.lrow.big{border-top:2px solid var(--ink);padding-top:10px;margin-top:3px}
+.lrow.big span{color:var(--ink);font-weight:600;font-size:14.5px}
+.lrow.big b{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:25px;letter-spacing:-.03em}
+.lmeter{height:5px;background:rgba(28,33,24,.11);border-radius:99px;margin-top:10px;overflow:hidden}
+.lmeter i{display:block;height:100%;border-radius:99px;background:var(--tomatillo);transition:width .45s cubic-bezier(.4,0,.2,1)}
+.lmeter i.warn{background:var(--amber)}
+.lmeter i.bad{background:var(--guajillo)}
+.lnote{font-size:10.5px;color:var(--soft);margin-top:6px;letter-spacing:.02em}
+.chip.stat{cursor:default;font-family:'DM Mono',monospace;font-size:11.5px;padding:5px 10px}
+.chip.stat.ok{border-color:var(--tomatillo);color:var(--tomatillo)}
+.chip.stat.no{border-color:var(--guajillo);color:var(--guajillo)}
+
+/* ---------- signature: the day band ---------- */
+.band-wrap{background:var(--masa);border:1px solid var(--line);border-radius:var(--r);padding:15px 15px 12px;margin-bottom:12px}
+.band-top{display:flex;align-items:flex-end;gap:12px;margin-bottom:14px}
+.band-state{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:30px;letter-spacing:-.03em;line-height:.95}
+.band-state.fasting,.band-state.behind{color:var(--char)}
+.band-state.eating,.band-state.ontrack{color:var(--tomatillo)}
+.band-sub{font-family:'DM Mono',monospace;font-size:11.5px;color:var(--soft);margin-top:5px}
+.band-cta{margin-left:auto;text-align:right}
+.band{position:relative;height:46px;margin-bottom:6px}
+.band svg{display:block;width:100%;height:46px;overflow:visible}
+.exband svg{display:block;width:100%;height:auto;overflow:visible}
+.band-scale{display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:9.5px;color:var(--soft);letter-spacing:.04em}
+
+/* ---------- budget bars ---------- */
+.budgets{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:12px}
+.bud{background:var(--masa);padding:12px 12px 13px}
+.bud .lab{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--soft)}
+.bud .num{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:27px;letter-spacing:-.03em;line-height:1.05;margin:3px 0 1px}
+.bud .of{font-family:'DM Mono',monospace;font-size:10.5px;color:var(--soft)}
+.meter{height:5px;background:rgba(28,33,24,.11);border-radius:99px;margin-top:9px;overflow:hidden}
+.meter i{display:block;height:100%;border-radius:99px;background:var(--tomatillo);transition:width .45s cubic-bezier(.4,0,.2,1)}
+.meter i.warn{background:var(--amber)}
+.meter i.over{background:var(--guajillo)}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  background:var(--char);color:var(--masa);border:1px solid var(--char);
+  padding:9px 14px;border-radius:var(--r);font-weight:600;font-size:14px;
+  transition:opacity .15s;
+}
+.btn:active{opacity:.72}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line2)}
+.btn.red{background:var(--guajillo);border-color:var(--guajillo)}
+.btn.sm{padding:6px 10px;font-size:12.5px}
+.btn.full{width:100%}
+.btn:disabled{opacity:.4}
+.chip{
+  background:transparent;border:1px solid var(--line2);color:var(--ink);
+  padding:6px 11px;border-radius:99px;font-size:12.5px;font-weight:500;
+}
+.chip[aria-pressed="true"]{background:var(--char);color:var(--masa);border-color:var(--char)}
+.chiprow{display:flex;flex-wrap:wrap;gap:7px}
+
+/* ---------- forms ---------- */
+label.f{display:block;margin-bottom:10px}
+label.f>span{display:block;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--soft);margin-bottom:4px}
+input,select,textarea{
+  width:100%;font-family:'Archivo',sans-serif;font-size:16px;color:var(--ink);
+  background:#fff;border:1px solid var(--line2);border-radius:var(--r);padding:9px 10px;
+}
+input[type=number]{font-family:'DM Mono',monospace}
+textarea{min-height:88px;resize:vertical;line-height:1.5}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--guajillo);outline-offset:1px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+
+/* ---------- lists ---------- */
+.row{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row .nm{flex:1;min-width:0}
+.row .nm b{display:block;font-weight:600;font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .nm small{font-family:'DM Mono',monospace;font-size:11px;color:var(--soft)}
+.row .kc{font-family:'DM Mono',monospace;font-size:13px;text-align:right;white-space:nowrap}
+.row .kc em{display:block;font-style:normal;font-size:10.5px;color:var(--soft)}
+.x{background:none;border:0;color:var(--soft);font-size:19px;line-height:1;padding:2px 4px}
+.mealhead{display:flex;align-items:baseline;gap:8px;margin:16px 0 2px}
+.mealhead .eyebrow{flex:1}
+.mealhead .tot{font-family:'DM Mono',monospace;font-size:11px;color:var(--soft)}
+.empty{font-size:13.5px;color:var(--soft);padding:12px 0;font-style:italic}
+
+/* ---------- suggestion / recipe cards ---------- */
+.sug{border:1px solid var(--line);border-radius:var(--r);padding:12px;margin-bottom:9px;background:#fff}
+.sug-h{display:flex;gap:10px;align-items:flex-start}
+.sug-h b{flex:1;font-weight:600;font-size:15px;line-height:1.25}
+.macros{font-family:'DM Mono',monospace;font-size:11px;color:var(--soft);margin-top:5px;letter-spacing:.01em}
+.macros b{color:var(--ink);font-weight:500}
+.ing{font-size:13px;color:var(--soft);margin-top:7px;line-height:1.45}
+.flag{display:inline-block;font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;border-radius:2px;background:rgba(182,122,24,.16);color:#7A5210;margin-top:7px}
+.flag.good{background:rgba(79,112,49,.15);color:var(--tomatillo)}
+details.rec{border:1px solid var(--line);border-radius:var(--r);background:#fff;margin-bottom:9px;overflow:hidden}
+details.rec>summary{padding:12px;cursor:pointer;list-style:none;display:flex;gap:10px;align-items:flex-start}
+details.rec>summary::-webkit-details-marker{display:none}
+details.rec>summary b{flex:1;font-weight:600;font-size:15px}
+details.rec>summary .arw{color:var(--soft);font-family:'DM Mono',monospace;font-size:12px}
+details.rec[open]>summary .arw{transform:rotate(90deg)}
+.rec-body{padding:0 12px 13px;border-top:1px solid var(--line);margin-top:2px;padding-top:11px}
+ol.steps{margin:0;padding-left:0;list-style:none;counter-reset:s}
+ol.steps li{counter-increment:s;position:relative;padding-left:26px;margin-bottom:8px;font-size:14px;line-height:1.5}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:1px;font-family:'DM Mono',monospace;font-size:10.5px;color:var(--guajillo);border:1px solid var(--line2);border-radius:99px;width:18px;height:18px;display:flex;align-items:center;justify-content:center}
+ul.ingl{margin:0 0 12px;padding-left:0;list-style:none}
+ul.ingl li{font-size:13.5px;padding:3px 0;border-bottom:1px dotted var(--line);display:flex;gap:8px}
+ul.ingl li span{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;color:var(--soft);white-space:nowrap}
+
+/* ---------- prose (plan tab) ---------- */
+.prose p{margin:0 0 11px;font-size:14.5px;line-height:1.62}
+.prose ul{margin:0 0 12px;padding-left:19px}
+.prose li{font-size:14.5px;line-height:1.55;margin-bottom:6px}
+.prose strong{font-weight:600}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
+.kv:last-child{border-bottom:0}
+.kv b{font-family:'DM Mono',monospace;font-weight:500;white-space:nowrap}
+.callout{border-left:3px solid var(--guajillo);padding:2px 0 2px 13px;margin:14px 0;font-size:14px;line-height:1.6}
+.callout .eyebrow{margin-bottom:4px;color:var(--guajillo)}
+
+/* ---------- weight chart ---------- */
+.chartbox{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:12px 10px 6px}
+.chartbox svg{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-family:'DM Mono',monospace;font-size:10px;color:var(--soft);padding:8px 4px 2px}
+.legend i{display:inline-block;width:14px;height:2px;vertical-align:middle;margin-right:5px}
+
+/* ---------- toast ---------- */
+#toast{
+  position:fixed;left:50%;transform:translateX(-50%) translateY(20px);
+  bottom:calc(var(--tab-h) + env(safe-area-inset-bottom) + 14px);z-index:99;
+  background:var(--char);color:var(--masa);padding:10px 16px;border-radius:99px;
+  font-size:13.5px;font-weight:500;opacity:0;pointer-events:none;transition:.25s;
+  max-width:88vw;text-align:center;
+}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (max-width:560px){
+  .budgets{grid-template-columns:1fr 1fr}
+}
+@media (max-width:430px){
+  .bud{padding:10px 8px 11px}
+  .bud .num{font-size:22px}
+  .band-state{font-size:25px}
+  h2{font-size:20px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <span class="brand">CUT<em>16</em></span><span class="vtag mono" id="vTag"></span>
+    <span class="eyebrow" id="todayLabel"></span>
+    <span class="top-right" id="dayCounter"></span>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ============ TODAY ============ -->
+<section class="view on" id="v-today">
+  <div class="band-wrap">
+    <div class="band-top">
+      <div>
+        <div class="band-state" id="fastState">—</div>
+        <div class="band-sub" id="fastSub"></div>
+      </div>
+      <div class="band-cta">
+        <div class="eyebrow">Window</div>
+        <div class="mono" style="font-size:13px" id="windowLabel"></div>
+      </div>
+    </div>
+    <div class="band"><svg id="bandSvg" viewBox="0 0 1000 46" preserveAspectRatio="none" aria-label="24 hour fasting band"></svg></div>
+    <div class="band-scale">
+      <span>12a</span><span>4a</span><span>8a</span><span>12p</span><span>4p</span><span>8p</span><span>12a</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="verdict">
+      <div class="v-state" id="vState">—</div>
+      <div class="v-sub" id="vSub"></div>
+    </div>
+    <div class="chiprow" id="vChips" style="margin-bottom:14px"></div>
+    <div class="lrow"><span>Burn just being you — age, height, weight, normal daily moving about</span><b id="lBase">—</b></div>
+    <div class="lrow"><span>Plus exercise you logged today</span><b id="lEx">—</b></div>
+    <div class="lrow tot"><span>Total burned today</span><b id="lBurn">—</b></div>
+    <div class="lrow"><span>Minus everything you ate</span><b id="lEat">—</b></div>
+    <div class="lrow big"><span id="lDefLab">Deficit so far</span><b id="lDef">—</b></div>
+    <div class="lmeter"><i id="lDefBar" style="width:0"></i></div>
+    <div class="lnote mono" id="lDefNote"></div>
+    <div class="rule"></div>
+    <div class="kv"><span>Eat this much today and your weight holds steady</span><b id="lHold">—</b></div>
+    <div class="kv"><span>Eat this much and you lose about 2 lb a week</span><b id="lLose">—</b></div>
+    <p style="font-size:13px;line-height:1.6;color:var(--soft);margin:12px 0 0">These are one goal, not two. The eating target was worked out from the deficit target, so hitting the first delivers the second. Eating is the part you control and can measure; the deficit is the scoreboard, and every burn figure in it is an estimate.</p>
+  </div>
+
+  <div class="budgets">
+    <div class="bud">
+      <div class="lab">Calories left</div>
+      <div class="num" id="calLeft">—</div>
+      <div class="of" id="calOf"></div>
+      <div class="meter"><i id="calBar" style="width:0"></i></div>
+    </div>
+    <div class="bud">
+      <div class="lab">Fat left</div>
+      <div class="num" id="fatLeft">—</div>
+      <div class="of" id="fatOf"></div>
+      <div class="meter"><i id="fatBar" style="width:0"></i></div>
+    </div>
+    <div class="bud">
+      <div class="lab">Protein</div>
+      <div class="num" id="proNum">—</div>
+      <div class="of" id="proOf"></div>
+      <div class="meter"><i id="proBar" style="width:0"></i></div>
+    </div>
+    <div class="bud">
+      <div class="lab">Carbs left</div>
+      <div class="num" id="carbLeft">—</div>
+      <div class="of" id="carbOf"></div>
+      <div class="meter"><i id="carbBar" style="width:0"></i></div>
+    </div>
+  </div>
+
+  <div class="band-wrap">
+    <div class="band-top">
+      <div>
+        <div class="band-state" id="exWeekTotal">0</div>
+        <div class="band-sub" id="exWeekSub"></div>
+      </div>
+      <div class="band-cta">
+        <div class="eyebrow">Resistance</div>
+        <div class="mono" style="font-size:13px" id="exResistTag"></div>
+      </div>
+    </div>
+    <div class="exband"><svg id="exBandSvg" viewBox="0 0 700 124" aria-label="Exercise this week"></svg></div>
+    <div class="band-scale" style="margin-top:6px">
+      <span id="exWeekOf"></span>
+      <span style="display:flex;gap:12px">
+        <span><i style="display:inline-block;width:10px;height:5px;background:#C8DDA8;vertical-align:middle;margin-right:4px"></i>burn</span>
+        <span><i style="display:inline-block;width:10px;height:5px;background:#A83A26;vertical-align:middle;margin-right:4px"></i>resistance</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h">
+      <h3>Today's log</h3>
+      <button class="btn sm ghost" id="jumpAdd">Add food</button>
+    </div>
+    <div id="logList"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>Log today's weight</h3></div>
+    <div style="display:flex;gap:9px">
+      <input type="number" step="0.1" id="wQuick" placeholder="206.3" inputmode="decimal">
+      <button class="btn" id="wQuickBtn">Save</button>
+    </div>
+    <div class="mono" style="font-size:11px;color:var(--soft);margin-top:8px" id="wQuickNote"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>Day type</h3></div>
+    <div class="chiprow" id="dayTypeRow"></div>
+    <div class="mono" style="font-size:11.5px;color:var(--soft);margin-top:10px;line-height:1.5" id="dayTypeNote"></div>
+  </div>
+</section>
+
+<!-- ============ EAT ============ -->
+<section class="view" id="v-eat">
+  <h2 style="margin-bottom:4px">Eat</h2>
+  <p class="eyebrow" style="margin-bottom:14px">Search your pantry, or tap a suggested meal</p>
+
+  <div class="card">
+    <div class="card-h"><h3>Quick add</h3></div>
+    <label class="f"><span>Meal</span>
+      <select id="qMeal"><option>Breakfast</option><option selected>Lunch</option><option>Snack</option><option>Dinner</option></select>
+    </label>
+    <label class="f"><span>Search foods &amp; your saved items</span>
+      <input id="qSearch" placeholder="chicken, pinto, oat milk…" autocomplete="off">
+    </label>
+    <div id="searchResults"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>Suggested meals</h3></div>
+    <div class="chiprow" id="sugFilter" style="margin-bottom:12px"></div>
+    <div id="sugList"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>Build a full day</h3></div>
+    <p style="font-size:13.5px;color:var(--soft);margin:0 0 12px">One tap logs every item in the template. Edit or delete anything afterward from Today.</p>
+    <div id="dayTemplates"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>Save a new food</h3></div>
+    <label class="f"><span>Name</span><input id="nfName" placeholder="e.g. Kirkland ciabatta roll"></label>
+    <label class="f"><span>Serving description</span><input id="nfServ" placeholder="1 roll / 100 g / 1 cup"></label>
+    <div class="grid2">
+      <label class="f"><span>Kcal</span><input type="number" id="nfCal" inputmode="numeric"></label>
+      <label class="f"><span>Fat g</span><input type="number" step="0.1" id="nfFat" inputmode="decimal"></label>
+      <label class="f"><span>Protein g</span><input type="number" step="0.1" id="nfPro" inputmode="decimal"></label>
+      <label class="f"><span>Carbs g</span><input type="number" step="0.1" id="nfCarb" inputmode="decimal"></label>
+    </div>
+    <p class="mono" style="font-size:11px;color:var(--soft);margin:-4px 0 12px;line-height:1.5">Use total carbohydrate from the label, not net. Leave blank if you don't know it and the item will count as zero.</p>
+    <button class="btn full" id="nfSave">Save food</button>
+  </div>
+</section>
+
+<!-- ============ RECIPES ============ -->
+<section class="view" id="v-recipes">
+  <h2 style="margin-bottom:4px">Recipes</h2>
+  <p class="eyebrow" style="margin-bottom:14px">Built from what's already in your kitchen</p>
+  <div class="chiprow" id="recFilter" style="margin-bottom:14px"></div>
+  <div id="recList"></div>
+
+  <div class="card" style="margin-top:18px">
+    <div class="card-h"><h3>Write your own recipe</h3></div>
+    <label class="f"><span>Name</span><input id="nrName" placeholder="Guajillo pork, cabbage slaw"></label>
+    <div class="grid2">
+      <label class="f"><span>Meal</span><select id="nrMeal"><option>Breakfast</option><option>Lunch</option><option>Snack</option><option>Dinner</option></select></label>
+      <label class="f"><span>Servings</span><input type="number" id="nrServ" value="1" inputmode="numeric"></label>
+    </div>
+    <div class="grid2">
+      <label class="f"><span>Kcal / serving</span><input type="number" id="nrCal" inputmode="numeric"></label>
+      <label class="f"><span>Fat g</span><input type="number" step="0.1" id="nrFat" inputmode="decimal"></label>
+      <label class="f"><span>Protein g</span><input type="number" step="0.1" id="nrPro" inputmode="decimal"></label>
+      <label class="f"><span>Carbs g</span><input type="number" step="0.1" id="nrCarb" inputmode="decimal"></label>
+    </div>
+    <label class="f"><span>Ingredients — one per line</span><textarea id="nrIng" placeholder="6 oz tilapia&#10;1 poblano, charred&#10;1 tsp EVOO"></textarea></label>
+    <label class="f"><span>Steps — one per line</span><textarea id="nrSteps" placeholder="Pat the fish dry and salt it.&#10;Sear 3 min a side in a hot dry pan."></textarea></label>
+    <button class="btn full" id="nrSave">Save recipe</button>
+  </div>
+</section>
+
+<!-- ============ MOVE ============ -->
+<section class="view" id="v-move">
+  <h2 style="margin-bottom:4px">Move</h2>
+  <p class="eyebrow" style="margin-bottom:14px">Burn estimates scaled to your current weight</p>
+
+  <div class="card">
+    <div class="card-h"><h3>Log activity</h3></div>
+    <div class="chiprow" id="exPresets" style="margin-bottom:12px"></div>
+    <div class="grid2">
+      <label class="f"><span>Activity</span><input id="exName" placeholder="Brisk walk"></label>
+      <label class="f"><span>Minutes</span><input type="number" id="exMin" inputmode="numeric" placeholder="45"></label>
+    </div>
+    <label class="f"><span>Calories burned (auto-estimates, editable)</span><input type="number" id="exCal" inputmode="numeric"></label>
+    <p class="mono" style="font-size:11px;line-height:1.55;color:var(--soft);margin:-4px 0 12px" id="exNote"></p>
+    <button class="btn full" id="exSave">Add to today</button>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>Today's activity</h3><span class="mono" style="font-size:12px;color:var(--soft)" id="exTotal"></span></div>
+    <div id="exList"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>The weekly minimum</h3></div>
+    <div class="prose">
+      <p>To hit 10&nbsp;lb in four weeks you need roughly <strong>300–400&nbsp;kcal of deliberate movement most days</strong>. That's a 45–60 minute brisk walk. Nothing exotic required.</p>
+      <ul>
+        <li><strong>5–6 days:</strong> 45–60 min walking, incline if you have it</li>
+        <li><strong>3 days:</strong> 25–30 min of resistance work — push-ups, squats, rows, carries. This is what keeps the lost weight from being muscle.</li>
+        <li><strong>Daily:</strong> a 10-minute walk after your two meals. Small, but it blunts the post-meal glucose spike and adds up to ~700 kcal a week.</li>
+      </ul>
+      <p style="color:var(--soft);font-size:13px">Wearables and machines overestimate burn by 15–30%. The numbers here are deliberately conservative — don't eat back more than half of them.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WEIGHT ============ -->
+<section class="view" id="v-weight">
+  <h2 style="margin-bottom:4px">Weight</h2>
+  <p class="eyebrow" style="margin-bottom:14px">Weigh in first thing, after the bathroom, before anything else</p>
+
+  <div class="budgets" style="grid-template-columns:1fr 1fr">
+    <div class="bud">
+      <div class="lab">Latest</div>
+      <div class="num" id="wLatest">—</div>
+      <div class="of" id="wLatestDate"></div>
+    </div>
+    <div class="bud">
+      <div class="lab">Change</div>
+      <div class="num" id="wDelta">—</div>
+      <div class="of" id="wToGo"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>Add a weigh-in</h3></div>
+    <div class="grid2">
+      <label class="f"><span>Date</span><input type="date" id="wDate"></label>
+      <label class="f"><span>Pounds</span><input type="number" step="0.1" id="wLbs" inputmode="decimal"></label>
+    </div>
+    <button class="btn full" id="wSave">Save weigh-in</button>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>28-day track</h3></div>
+    <div class="chartbox"><svg id="wChart" viewBox="0 0 640 300" preserveAspectRatio="xMidYMid meet"></svg></div>
+    <div class="legend">
+      <span><i style="background:var(--char)"></i>You</span>
+      <span><i style="background:var(--tomatillo)"></i>Path to 196.3 (−10)</span>
+      <span><i style="background:var(--guajillo)"></i>Path to 190.3 (−16)</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>History</h3></div>
+    <div id="wList"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>What you're actually burning</h3></div>
+    <div id="calibBox"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>Reading the scale</h3></div>
+    <div class="prose">
+      <p>The first week will look spectacular and part of it is a lie. Dropping carbs and calories flushes glycogen, and each gram of stored glycogen holds ~3&nbsp;g of water. Expect <strong>3–5 lb of that in week one</strong>. It's real weight but it isn't fat, and it doesn't repeat.</p>
+      <p>After that, the honest rate is <strong>1.5–2.5 lb a week</strong>. A flat or up day means nothing. Judge only the 7-day average, and only against last week's 7-day average.</p>
+      <p>Salt, a late dinner, a hard workout, and poor sleep can each swing you 2–3 lb overnight. None of it is fat.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PLAN ============ -->
+<section class="view" id="v-plan">
+  <h2 style="margin-bottom:4px">The plan</h2>
+  <p class="eyebrow" style="margin-bottom:14px">Your numbers, your coffee, your fasting schedule</p>
+
+  <div class="card">
+    <div class="card-h"><h3>Can you do 16 lb in 4 weeks?</h3></div>
+    <div class="prose">
+      <p><strong>10 lb: yes, very likely. 16 lb in 28 days: no — not as real weight you keep.</strong> Here's the arithmetic, so you can see it rather than take my word.</p>
+      <p>16 lb of fat is about 56,000 calories. Spread over 28 days that's a <strong>2,000 kcal deficit every single day</strong> — roughly your entire daily burn. You'd have to eat nothing. What actually happens at that intensity is muscle loss, a stalled metabolism, and a rebound.</p>
+      <p>What is achievable: about <strong>2–2.5 lb/week of fat</strong> plus a <strong>3–5 lb water drop in week one</strong>. That lands you around <strong>195–199 lb on day 28</strong> — your 10 lb goal, comfortably beaten.</p>
+      <div class="callout">
+        <div class="eyebrow">The honest timeline to 190</div>
+        190.3 lb is a genuinely good target — it puts your BMI at 24.7, inside the healthy range for 6'1.5". At a sustainable rate you get there in <strong>6–7 weeks</strong>, not 4. Same destination. Keep the app running past day 28.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>Your numbers</h3></div>
+    <div id="numbersBlock"></div>
+    <div class="rule"></div>
+    <label class="f" style="margin-bottom:0"><span>Age (adjust — this changes every number above)</span>
+      <div style="display:flex;gap:9px"><input type="number" id="ageIn" inputmode="numeric"><button class="btn" id="ageSave">Update</button></div>
+    </label>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>The coffee question</h3></div>
+    <div class="prose">
+      <p>You drink 1.5 cups of decaf with about <strong>0.5 cup (120 ml) of oat milk</strong>. At 110 kcal and 6 g fat per 240 ml, your actual pour costs:</p>
+      <div class="kv"><span>Your coffee, as you make it</span><b>55 kcal · 3 g fat</b></div>
+      <div class="kv"><span>Two of them in a day</span><b>110 kcal · 6 g fat</b></div>
+      <div class="kv"><span>Three</span><b>165 kcal · 9 g fat</b></div>
+      <p style="margin-top:12px"><strong>The verdict: two a day, capped.</strong> 110 kcal is 7% of your daily allowance and 6 g is 12% of your fat budget — affordable, and it's the one ritual you shouldn't have to negotiate. A third is fine on a training day. Four starts eating a meal.</p>
+      <div class="callout">
+        <div class="eyebrow">Timing is the real rule</div>
+        <strong>Oat milk breaks your fast.</strong> 55 kcal with carbohydrate in it is enough to blunt the fasted state. So: <strong>black decaf only before noon</strong> — unlimited, it costs ~3 kcal and genuinely helps with hunger. Save the oat milk coffee for <strong>12:00, alongside your first meal</strong>, and the second one at <strong>3–4 pm</strong> where it doubles as a snack and gets you to dinner.
+      </div>
+      <p>If you want a third pour, swap the oat milk for a splash of water and drink it black, or halve the oat milk to 60 ml (28 kcal, 1.5 g fat).</p>
+      <p style="color:var(--soft);font-size:13px">One caution: decaf still has 2–15 mg caffeine per cup, so three cups late is not a sleep problem — but oat milk after 6 pm is 55 calories you'll wish you'd spent on dinner.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>Fasting: pick one, run it four weeks</h3></div>
+    <div class="prose">
+      <p>Fasting doesn't burn fat by magic. It works because it <strong>shrinks the hours in which you can eat</strong>, which for most people cuts 300–500 calories a day without any counting. That's the whole mechanism. Since you already skip breakfast, you're most of the way into protocol A already.</p>
+    </div>
+    <div class="rule"></div>
+    <div class="sug">
+      <div class="sug-h"><b>A · Daily 16:8 — eat 12:00 to 20:00</b></div>
+      <div class="macros">8-hour window · every day · <b>recommended for you</b></div>
+      <div class="ing">Black decaf, water, and plain tea until noon. First meal at 12. Kitchen closes at 8 pm — that's the hard edge, and it's the one that matters most, because evening grazing is where the calories hide. You're already doing 80% of this; you're just formalizing the back end.</div>
+      <span class="flag good">Best fit — you don't eat breakfast anyway</span>
+    </div>
+    <div class="sug">
+      <div class="sug-h"><b>B · 16:8 plus two low days</b></div>
+      <div class="macros">Tue &amp; Thu at ~1,200 kcal · <b>adds ~0.25 lb/week</b></div>
+      <div class="ing">Same daily window, but twice a week you eat around 1,200 instead of 1,650 — protein-forward and low fat, so you stay full. Not the traditional 500-calorie 5:2 fast; combining a true 500 kcal day with an already-aggressive deficit is more than your training will tolerate. Put the low days on your two lightest activity days and never back to back.</div>
+      <span class="flag">Use this only if week 2 stalls</span>
+    </div>
+    <div class="sug">
+      <div class="sug-h"><b>C · Two 24-hour fasts a week</b></div>
+      <div class="macros">Dinner to dinner · <b>not recommended here</b></div>
+      <div class="ing">Effective for some people, but at 150 g protein a day you cannot fit your protein target into five days, and protein is what protects your muscle while you cut. You'd lose more scale weight and a worse share of it would be lean tissue.</div>
+      <span class="flag">Skip</span>
+    </div>
+    <div class="rule"></div>
+    <div class="grid2">
+      <label class="f"><span>Window opens</span><input type="time" id="eatStart"></label>
+      <label class="f"><span>Window closes</span><input type="time" id="eatEnd"></label>
+    </div>
+    <button class="btn full" id="winSave">Save window</button>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>Two meals or three?</h3></div>
+    <div class="prose">
+      <p><strong>Two whole meals plus one deliberate protein snack. That's the answer.</strong></p>
+      <p>There is nothing metabolically special about three meals — meal frequency has been tested repeatedly and, with calories held equal, it doesn't change fat loss. So don't force breakfast in just because it's called breakfast. Forcing a meal you don't want is how people quit in week two.</p>
+      <p>But there is one real problem with eating only twice, and it isn't calories — <strong>it's protein</strong>. Your target is about 150 g a day. Split across two meals that's 75 g each, which is 9 oz of chicken at both sittings. Most people can't sustain that, so they quietly undershoot, and undershooting protein while in a steep deficit is exactly how you lose muscle instead of fat.</p>
+      <div class="callout">
+        <div class="eyebrow">So the structure is</div>
+        <strong>12:00</strong> — real meal, 45–50 g protein &nbsp;·&nbsp; <strong>15:30</strong> — protein snack, 20–25 g (ham roll-ups, tuna on romaine, two eggs) &nbsp;·&nbsp; <strong>19:00</strong> — real meal, 45–55 g protein. Three eating occasions, but only two of them are cooking.
+      </div>
+      <p>The other advantage of the mid-afternoon snack is practical: it's the difference between arriving at dinner hungry and arriving at dinner ravenous, and the second one is what wrecks the day.</p>
+      <p><strong>If you truly want only two:</strong> make the 3:30 slot a shake or 6 oz of canned tuna — 30 seconds, not a meal — and push both real meals to 55 g protein each. Also drop your fat target to 45 g, because with two meals you'll want the calories in food volume rather than oil.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>Working with your groceries</h3></div>
+    <div class="prose">
+      <p>Your pantry is already close to ideal for this — lean protein, chiles, beans, a lot of vegetables, and two sauces (salsa verde and guajillo) that add enormous flavour for almost no calories. Very little needs to change. What does:</p>
+      <ul>
+        <li><strong>EVOO is the biggest lever in your kitchen.</strong> 120 kcal and 13.5 g fat per tablespoon — a generous free pour can be 300 kcal you never notice. Measure it with a teaspoon, every time. One teaspoon per person per dish.</li>
+        <li><strong>Cheddar and avocado are your other two fat sources.</strong> One ounce of cheddar is 9 g fat; half an avocado is 11 g. Pick <em>one</em> of those on any given day, not both, or your 50 g fat target is gone before dinner.</li>
+        <li><strong>The ciabatta rolls are 240–270 kcal each.</strong> Not banned — but treat one roll as half a meal, or use half a roll. They're the single densest item on your list.</li>
+        <li><strong>Your pinto beans are a genuine asset.</strong> Cooked in water with no fat, they're ~245 kcal and 15 g fiber per cup. Fiber plus protein is the most filling combination there is. Use them where you'd otherwise use rice.</li>
+        <li><strong>Dashi is nearly free.</strong> 25 kcal, zero fat, and it turns any pile of vegetables and chicken into a real meal. Lean on it hard.</li>
+        <li><strong>White rice → brown, or halve the portion.</strong> A cup of white rice is 205 kcal. Half a cup with double the vegetables looks like the same bowl.</li>
+      </ul>
+      <p><strong>Worth adding to the cart:</strong> plain Greek yogurt (protein per calorie is unbeatable), frozen vegetables (volume with no prep), cucumber, and cooking spray to replace half your EVOO pours.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>Non-negotiables</h3></div>
+    <div class="prose">
+      <ul>
+        <li><strong>Protein at every eating occasion.</strong> Under-eating protein in a deficit costs you muscle, and muscle is what keeps this off.</li>
+        <li><strong>Don't go under 1,500 kcal.</strong> The plan is 1,650. Cutting further doesn't speed it up meaningfully and it does make you quit.</li>
+        <li><strong>3–4 litres of water a day.</strong> Fasting plus a deficit dehydrates you, and thirst reliably masquerades as hunger around 4 pm.</li>
+        <li><strong>Sleep 7+ hours.</strong> Short sleep raises ghrelin and measurably increases how much people eat the next day. It's the cheapest intervention on this list.</li>
+        <li><strong>Salt your food.</strong> Cutting carbs flushes sodium with the water. Under-salting during a fast is what causes the headaches and the flat feeling people blame on fasting itself.</li>
+        <li><strong>Weigh daily, judge weekly.</strong></li>
+      </ul>
+      <p style="color:var(--soft);font-size:13px;margin-top:14px">This is a general plan built from your numbers, not medical advice. If you take medication — particularly for blood pressure or diabetes — or have any heart, kidney, or blood sugar condition, run the fasting schedule past your doctor first, because meal timing can interact with dosing.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DATA ============ -->
+<section class="view" id="v-data">
+  <h2 style="margin-bottom:4px">Data</h2>
+  <p class="eyebrow" style="margin-bottom:14px">Move your log between iPhone and laptop</p>
+
+  <div class="card">
+    <div class="card-h"><h3>Report</h3></div>
+    <p style="font-size:14px;line-height:1.6;margin:0 0 12px">A readable summary of what you've actually eaten, moved and weighed. Plain text, so you can read it yourself, send it to someone, or paste the whole thing into an AI and ask it what the numbers say.</p>
+    <div class="chiprow" id="repScope" style="margin-bottom:12px"></div>
+    <div class="grid2" style="margin-bottom:9px">
+      <button class="btn" id="repDl">Download report</button>
+      <button class="btn ghost" id="repCopy">Copy report</button>
+    </div>
+    <label class="f" style="margin-bottom:0"><span>Preview</span><textarea id="repPrev" readonly style="min-height:190px;font-family:'DM Mono',monospace;font-size:11.5px;line-height:1.5"></textarea></label>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>Version</h3><span class="mono" style="font-size:12px;color:var(--soft)" id="vNum"></span></div>
+    <div class="kv"><span>Build</span><b id="vName"></b></div>
+    <div class="kv"><span>Dated</span><b id="vDate"></b></div>
+    <div class="kv"><span>Filename</span><b id="vFile"></b></div>
+    <p style="font-size:14px;line-height:1.6;margin:12px 0 0" id="vNote"></p>
+    <div class="rule"></div>
+    <div class="eyebrow" style="margin-bottom:8px">History</div>
+    <div id="vLog"></div>
+    <div class="rule"></div>
+    <p style="font-size:13px;color:var(--soft);margin:0">To release a new version: open the file, edit the <b class="mono">VERSION</b> block at the top of the script, add a line to <b class="mono">CHANGELOG</b> below it, and save it under the new filename before uploading as <b class="mono">index.html</b>.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>How syncing works here</h3></div>
+    <div class="prose">
+      <p>Your data lives in the browser on the device you're using — GitHub Pages can host the app but can't store anything for you. So phone and laptop each keep their own copy, and you move between them with a file.</p>
+      <p><strong>Export on the device you just used, import on the one you're switching to.</strong> Do it once a day and you'll never lose more than a day.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>Export</h3></div>
+    <button class="btn full" id="expBtn" style="margin-bottom:9px">Download backup file</button>
+    <button class="btn full ghost" id="copyBtn">Copy backup to clipboard</button>
+    <p style="font-size:13px;color:var(--soft);margin:11px 0 0">On iPhone the file saves to Files → Downloads. AirDrop or email it to yourself, or paste the clipboard version into a note.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>Import</h3></div>
+    <label class="f"><span>From a backup file</span><input type="file" id="impFile" accept=".json,application/json"></label>
+    <label class="f"><span>Or paste a backup</span><textarea id="impText" placeholder="Paste the JSON here"></textarea></label>
+    <button class="btn full" id="impBtn">Import and replace everything</button>
+    <p style="font-size:13px;color:var(--soft);margin:11px 0 0">Importing replaces the data on this device. Export first if this device has anything newer.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>Profile</h3></div>
+    <div class="grid2">
+      <label class="f"><span>Height (inches)</span><input type="number" step="0.5" id="pHeight" inputmode="decimal"></label>
+      <label class="f"><span>Start weight (lb)</span><input type="number" step="0.1" id="pStart" inputmode="decimal"></label>
+    </div>
+    <div class="grid2">
+      <label class="f"><span>Goal weight (lb)</span><input type="number" step="0.1" id="pGoal" inputmode="decimal"></label>
+      <label class="f"><span>Start date</span><input type="date" id="pDate"></label>
+    </div>
+    <div class="grid3">
+      <label class="f"><span>Kcal target</span><input type="number" id="pCal" inputmode="numeric"></label>
+      <label class="f"><span>Fat g target</span><input type="number" id="pFat" inputmode="numeric"></label>
+      <label class="f"><span>Protein g target</span><input type="number" id="pPro" inputmode="numeric"></label>
+    </div>
+    <div class="grid2">
+      <label class="f"><span>Exercise kcal / day</span><input type="number" id="pExD" inputmode="numeric"></label>
+      <label class="f"><span>Resistance sessions / week</span><input type="number" id="pExR" inputmode="numeric"></label>
+    </div>
+    <button class="btn full" id="pSave">Save profile</button>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>Put this on GitHub</h3></div>
+    <div class="prose">
+      <ol class="steps">
+        <li>Create a new repository on GitHub. Public is fine — there's nothing sensitive in the file itself.</li>
+        <li>Upload this file and make sure it's named <b class="mono">index.html</b> at the top level.</li>
+        <li>Repository → <b>Settings</b> → <b>Pages</b> → set Source to <b>Deploy from a branch</b>, branch <b class="mono">main</b>, folder <b class="mono">/ (root)</b>. Save.</li>
+        <li>Wait about a minute. Your app is at <b class="mono">https://YOURNAME.github.io/REPONAME/</b></li>
+        <li>Open that on your iPhone in Chrome. Tap the share icon → <b>Add to Home Screen</b> so it opens like an app.</li>
+      </ol>
+      <p style="color:var(--soft);font-size:13px">Re-uploading the file to update it won't erase your logged data — that's stored separately by the browser.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h3>Danger zone</h3></div>
+    <button class="btn full red" id="wipeBtn">Erase all data on this device</button>
+  </div>
+</section>
+
+</main>
+
+<nav class="tabs" role="tablist">
+  <button role="tab" aria-selected="true" data-v="today"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Today</button>
+  <button role="tab" aria-selected="false" data-v="eat"><svg viewBox="0 0 24 24"><path d="M5 3v8a3 3 0 0 0 6 0V3M8 11v10M17 3c-1.5 2-2 4-2 6.5V13h3V3z"/><path d="M18 13v8"/></svg>Eat</button>
+  <button role="tab" aria-selected="false" data-v="recipes"><svg viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H7a2 2 0 0 1-2-2z"/><path d="M9 8h6M9 12h6"/></svg>Recipes</button>
+  <button role="tab" aria-selected="false" data-v="move"><svg viewBox="0 0 24 24"><path d="M4 12h2M18 12h2M7 8v8M17 8v8M10 12h4"/></svg>Move</button>
+  <button role="tab" aria-selected="false" data-v="weight"><svg viewBox="0 0 24 24"><path d="M4 20V6l6 6 4-5 6 8v5z"/></svg>Weight</button>
+  <button role="tab" aria-selected="false" data-v="plan"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h5M9 8h3"/></svg>Plan</button>
+  <button role="tab" aria-selected="false" data-v="data"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/></svg>Data</button>
+</nav>
+
+<div id="toast"></div>
+
+<script>
+/* ============================================================
+   VERSION — edit these four lines when you update the app,
+   then re-save the file as weightloss_app_ver_N_short_name.html
+   ============================================================ */
+const VERSION={
+  num:'6',
+  name:'day ledger',
+  date:'2026-08-09',
+  note:'Rebuilt the Today page around an explicit day ledger: baseline burn, plus exercise, minus food, equals deficit, shown as running arithmetic with a plain-English verdict that names whether you missed the eating target, the deficit, or neither. Two status chips answer that at a glance, and the page states what to eat to hold weight versus to lose. Earlier: carbohydrate is now tracked everywhere: a Carbs field on the save-food and save-recipe forms, carb values on all 51 pantry items, 21 suggested meals and 10 recipes, a fourth budget tile on Today, and carb lines in the report. The carb allowance is derived from your calorie target minus protein and fat, so it moves automatically on low and training days. Earlier: rebuilt calorie-burn estimates on MET values scaled to your current weight, net of resting metabolism, and fixed a bug where typing an activity name by hand produced no estimate at all. Added a calibration card on the Weight tab that reverse-engineers your true daily burn from intake and weight trend. Earlier: added the exercise week band on the Today page: seven columns, one per day, showing burn against target with resistance sessions marked in red and today ringed. Exercise targets are now editable in the profile. Earlier: added downloadable reports. Pick today, the last 7 days, or everything, then download or copy a plain-text summary with adherence stats, weight trend, eating-window drift and a full daily breakdown. Includes a Flags section that calls out under-eating, protein shortfalls and window drift. Written to be pasted straight into an AI for analysis.'
+};
+/* Older versions, newest first. Add a line each time you update. */
+const CHANGELOG=[
+  ['6','day ledger','2026-08-09','Today page rebuilt as a running ledger with a verdict that distinguishes missing the food target from missing the deficit. Fixed the eating window not refreshing the page when changed.'],
+  ['5','carbs','2026-08-09','Carbohydrate tracked end to end - new Carbs field on both save forms, carb data added to the whole pantry, meals and recipes, a fourth budget tile, and carb figures in the report.'],
+  ['4','burn calibration','2026-08-09','MET-based burn estimates that work with any typed activity name; fixed the estimator failing on hand-typed names. New calibration card derives your actual TDEE from logged intake and the weight trend.'],
+  ['3','exercise band','2026-08-09','Exercise week band on the Today page, mirroring the fasting band but at week scale. Editable daily burn and resistance targets.'],
+  ['2','reports','2026-08-09','Report generator in the Data tab: download or copy a readable summary for any period, with an automatic Flags section. Built for sharing or AI analysis.'],
+  ['1','first build','2026-08-09','Initial release.']
+];
+
+/* ============================================================
+   CUT 16 — state
+   ============================================================ */
+const KEY='cut16.v1';
+const clone=o=>JSON.parse(JSON.stringify(o));
+let mem=null; // fallback if storage blocked
+
+const DEFAULTS={
+  profile:{heightIn:73.5,startLbs:206.3,goalLbs:190.3,age:40,startDate:todayISO(),
+           calTarget:1650,fatTarget:50,proTarget:150,exDaily:350,exResist:3},
+  window:{start:'12:00',end:'20:00'},
+  foods:[],      // user-created
+  recipes:[],    // user-created
+  log:{},        // date -> {entries:[],ex:[],dayType:'standard'}
+  weights:[]     // {date,lbs}
+};
+
+function todayISO(d){const t=d||new Date();return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0')}
+function storeOK(){try{localStorage.setItem('__t','1');localStorage.removeItem('__t');return true}catch(e){return false}}
+const HAS_LS=storeOK();
+function load(){
+  try{
+    const raw=HAS_LS?localStorage.getItem(KEY):mem;
+    if(!raw) return clone(DEFAULTS);
+    const p=JSON.parse(raw);
+    return Object.assign(clone(DEFAULTS),p,{profile:Object.assign({},DEFAULTS.profile,p.profile||{})});
+  }catch(e){return clone(DEFAULTS)}
+}
+let S=load();
+function save(){
+  const raw=JSON.stringify(S);
+  if(HAS_LS){try{localStorage.setItem(KEY,raw)}catch(e){mem=raw}}else{mem=raw}
+}
+function day(d){
+  const k=d||todayISO();
+  if(!S.log[k])S.log[k]={entries:[],ex:[],dayType:'standard'};
+  return S.log[k];
+}
+const uid=()=>Math.random().toString(36).slice(2,9);
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('on'),1900)}
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const r1=n=>Math.round(n*10)/10;
+
+/* ============================================================
+   Pantry — every item is something in your kitchen
+   name | serving | kcal | fat g | protein g
+   ============================================================ */
+const PANTRY=[
+ ['Chicken breast, raw','4 oz / 113 g',136,3,25,0],
+ ['Chicken breast, raw','6 oz / 170 g',204,4.4,38,0],
+ ['Pork loin, thin sliced','4 oz / 113 g',160,5.6,25,0],
+ ['Pork loin, thin sliced','6 oz / 170 g',240,8.4,37,0],
+ ['Tilapia fillet','6 oz / 170 g',163,2.9,34,0],
+ ['Swai fillet','6 oz / 170 g',153,5.1,26,0],
+ ['Salmon fillet','5 oz / 142 g',260,16,29,0],
+ ['Egg, large','1 egg',72,5,6,0.4],
+ ['Egg white','1 white',17,0,3.6,0.2],
+ ['Canned tuna in water','1 can drained',110,1,26,0],
+ ['Kirkland extra lean ham','1 slice / 28 g',30,0.5,5,1],
+ ['Cheddar cheese','1 oz / 28 g',114,9.4,7,0.9],
+ ['Pinto beans, home cooked','1 cup',245,1,15,45],
+ ['Pinto beans, home cooked','1/2 cup',123,0.5,7.5,22.5],
+ ['White rice, cooked','1 cup',205,0.4,4.3,45],
+ ['White rice, cooked','1/2 cup',103,0.2,2.2,22.5],
+ ['Brown rice, cooked','1 cup',218,1.6,5,46],
+ ['Brown rice, cooked','1/2 cup',109,0.8,2.5,23],
+ ['Pasta, dry','2 oz / 56 g',200,1,7,42],
+ ['Pasta, dry','1 oz / 28 g',100,0.5,3.5,21],
+ ['Rolled oats, dry','1/2 cup / 40 g',150,3,5,27],
+ ['Ciabatta roll, Kirkland','1 roll',255,3,8,48],
+ ['Ciabatta roll, Kirkland','1/2 roll',128,1.5,4,24],
+ ['Sweet potato','1 medium',112,0.1,2,26],
+ ['Zucchini','1 cup sliced',21,0.4,1.5,3.9],
+ ['Poblano pepper','1 medium',25,0.2,1,5],
+ ['Jalapeno','1 pepper',4,0,0.1,0.9],
+ ['Tomato','1 medium',22,0.2,1.1,4.8],
+ ['Canned tomatoes','1/2 cup',20,0.1,1,4.5],
+ ['Onion','1/2 cup chopped',32,0.1,0.9,7.5],
+ ['Romaine lettuce','2 cups',16,0.3,1.2,3.1],
+ ['Spinach, raw','2 cups',14,0.2,1.7,2.2],
+ ['Cabbage, shredded','1 cup',22,0.1,1.1,5.2],
+ ['Broccoli, raw','1 cup',31,0.3,2.6,6],
+ ['Avocado','1/2 medium',120,11,1.5,6.4],
+ ['Avocado','1/4 medium',60,5.5,0.8,3.2],
+ ['Garlic','2 cloves',8,0,0.4,2],
+ ['Cilantro','1/4 cup',1,0,0.1,0.2],
+ ['Nori sheet','1 sheet',5,0.1,0.6,0.7],
+ ['Dashi packet (Gremlin)','1 packet / 8 g',25,0,4,2],
+ ['Chicken stock powder','1 tsp',10,0.2,0.5,1.5],
+ ['Chicken broth, homemade','1 cup',15,0.5,2,1],
+ ['Salsa verde, homemade','1/4 cup',20,0.2,0.7,4],
+ ['Guajillo sauce, homemade','1/4 cup',25,0.3,1,5],
+ ['Extra virgin olive oil','1 tbsp',119,13.5,0,0],
+ ['Extra virgin olive oil','1 tsp',40,4.5,0,0],
+ ['Oat milk','1/2 cup / 120 ml',55,3,1,8.5],
+ ['Oat milk','1 cup / 240 ml',110,6,2,17],
+ ['Decaf coffee, black','1.5 cups',3,0,0.3,0],
+ ['YOUR COFFEE - 1.5c decaf + 0.5c oat milk','1 mug',58,3,1.3,8.5],
+ ['Lime juice','1 tbsp',4,0,0,1.3],
+];
+
+/* ============================================================
+   Suggested meals — assembled from the pantry above
+   ============================================================ */
+const MEALS=[
+ // ---- BREAKFAST ----
+ {meal:'Breakfast',name:'Black decaf, nothing else',cal:3,fat:0,pro:0.3,carb:0,
+  ing:'1.5 cups decaf coffee, black',
+  note:'The default on 16:8. Unlimited before noon — it genuinely blunts morning hunger.',flag:'good',flagT:'Free · does not break the fast'},
+ {meal:'Breakfast',name:'Ham & egg-white scramble',cal:200,fat:1.5,pro:30,carb:13,
+  ing:'3 slices lean ham · 4 egg whites · 1 tomato · salsa verde',
+  note:'If you ever do want breakfast, this is the version that costs you almost nothing.'},
+ {meal:'Breakfast',name:'Oats with your coffee',cal:205,fat:6,pro:6,carb:36,
+  ing:'40 g rolled oats · 1/2 cup oat milk · water · cinnamon',
+  note:'Low protein for the calories — pair with two eggs if this is a real meal.'},
+ {meal:'Breakfast',name:'Two eggs, spinach, salsa verde',cal:218,fat:14.5,pro:14,carb:7,
+  ing:'2 eggs · 2 cups spinach · 1 tsp EVOO · salsa verde',
+  note:'Tasty, but 14.5 g is nearly a third of your daily fat before noon.',flag:'warn',flagT:'Fat-heavy for the calories'},
+
+ // ---- LUNCH ----
+ {meal:'Lunch',name:'Tuna & pinto power bowl',cal:388,fat:6.3,pro:40,carb:47,
+  ing:'1 can tuna · 3/4 cup pinto beans · 2 cups romaine · tomato · onion · cilantro · lime · 1 tsp EVOO',
+  note:'Fiber plus protein — the most filling 388 calories on this list. No cooking.',flag:'good',flagT:'Highest satiety per calorie'},
+ {meal:'Lunch',name:'Salsa verde chicken rice bowl',cal:366,fat:4,pro:35,carb:43,
+  ing:'5 oz chicken breast · 3/4 cup white rice · 1 cup cabbage · 1/4 cup salsa verde · cilantro',
+  note:'Uses leftover chicken. Swap in brown rice and cut to 1/2 cup for the same volume with more fiber.'},
+ {meal:'Lunch',name:'Dashi chicken & nori soup',cal:256,fat:4.2,pro:34,carb:15,
+  ing:'1 dashi packet · 5 oz chicken · 1 cup zucchini · 1 cup cabbage · 2 nori sheets · garlic',
+  note:'Enormous bowl, tiny number. The one to make on a low day.',flag:'good',flagT:'Low-day staple'},
+ {meal:'Lunch',name:'Ham, cheddar & tomato half-ciabatta',cal:327,fat:8.2,pro:28,carb:35,
+  ing:'1/2 ciabatta roll · 4 slices ham · 1/2 oz cheddar · romaine · tomato · mustard',
+  note:'Half a roll, not a whole one. A whole roll adds 128 calories for no extra fullness.'},
+ {meal:'Lunch',name:'Tilapia cabbage tacos, guajillo',cal:272,fat:7.4,pro:35,carb:21,
+  ing:'6 oz tilapia · 2 cups cabbage · 1/4 cup guajillo sauce · onion · cilantro · lime · 1 tsp EVOO',
+  note:'Cabbage leaves instead of tortillas saves ~200 calories and you barely notice.'},
+
+ // ---- SNACK ----
+ {meal:'Snack',name:'Your coffee — decaf + oat milk',cal:58,fat:3,pro:1.3,carb:9,
+  ing:'1.5 cups decaf · 1/2 cup oat milk',
+  note:'The 3–4 pm one. Doubles as a bridge to dinner.'},
+ {meal:'Snack',name:'Ham & cheddar roll-ups',cal:177,fat:6.7,pro:24,carb:5,
+  ing:'4 slices lean ham · 1/2 oz cheddar · jalapeño',
+  note:'24 g protein in 30 seconds. This is the snack that makes the two-meal day work.',flag:'good',flagT:'Best protein-to-effort ratio'},
+ {meal:'Snack',name:'Two boiled eggs + salsa verde',cal:164,fat:10,pro:12,carb:5,
+  ing:'2 hard-boiled eggs · salsa verde · salt',
+  note:'Boil six on Sunday. Fat is on the high side — skip the avocado at dinner.'},
+ {meal:'Snack',name:'Raw broccoli with guajillo dip',cal:87,fat:1,pro:5,carb:17,
+  ing:'2 cups raw broccoli · 1/4 cup guajillo sauce',
+  note:'For the day you\'ve already spent your calories and still want to chew something.'},
+ {meal:'Snack',name:'Tuna scoop on romaine',cal:126,fat:1,pro:26,carb:4,
+  ing:'1 can tuna · romaine leaves · lime · black pepper',
+  note:'26 g protein for 126 calories — nothing else on your list beats this ratio.',flag:'good',flagT:'Leanest protein available'},
+ {meal:'Snack',name:'Half an avocado, lime, salt',cal:120,fat:11,pro:1.5,carb:6,
+  ing:'1/2 avocado · lime · flaky salt',
+  note:'Delicious and 22% of your daily fat. Have it instead of cheese today, not as well as.',flag:'warn',flagT:'11 g fat — pick one fat today'},
+
+ // ---- DINNER ----
+ {meal:'Dinner',name:'Seared tilapia, charred poblano, brown rice',cal:378,fat:8.3,pro:38,carb:36,
+  ing:'6 oz tilapia · 1 poblano · 1 cup zucchini · 1/2 cup brown rice · 1 tsp EVOO · salsa verde',
+  note:'20 minutes start to finish. The poblano char is doing all the work.'},
+ {meal:'Dinner',name:'Guajillo pork with cabbage slaw & sweet potato',cal:437,fat:11.7,pro:34,carb:49,
+  ing:'5 oz thin pork · 1/4 cup guajillo · 2 cups cabbage · onion · 1 medium sweet potato · 1 tsp EVOO',
+  note:'Thin-sliced pork cooks in 90 seconds a side. Don\'t crowd the pan.'},
+ {meal:'Dinner',name:'Sheet-pan chicken, sweet potato, broccoli',cal:418,fat:9.6,pro:45,carb:40,
+  ing:'6 oz chicken · 1 sweet potato · 2 cups broccoli · garlic · 1 tsp EVOO',
+  note:'45 g protein and one pan. Make two portions and lunch is handled.',flag:'good',flagT:'Highest protein dinner'},
+ {meal:'Dinner',name:'Pinto & poblano stew with a soft egg',cal:427,fat:6.4,pro:22,carb:66,
+  ing:'1 cup pinto beans · 1 poblano · 1/2 cup canned tomato · onion · garlic · 1 dashi packet · 1 egg',
+  note:'No meat, still 22 g protein and 15 g fiber. The cheapest meal on the list.'},
+ {meal:'Dinner',name:'Salmon over garlic spinach & rice',cal:438,fat:21.5,pro:33,carb:28,
+  ing:'5 oz salmon · 3 cups spinach · 1/2 cup brown rice · garlic · 1 tsp EVOO',
+  note:'Worth it for the omega-3s, but it uses 43% of your fat budget. Salmon night = no cheese, no avocado.',flag:'warn',flagT:'21.5 g fat — plan the day around it'},
+ {meal:'Dinner',name:'Zucchini-noodle tuna "pasta"',cal:320,fat:6.5,pro:31,carb:35,
+  ing:'2 cups zucchini ribbons · 1 oz dry pasta · 1 can tuna · 1/2 cup canned tomato · garlic · 1 tsp EVOO',
+  note:'Half noodles, half zucchini — you get a full bowl of pasta for a third of the calories.'},
+];
+
+/* Day templates: references into MEALS by name, plus loose extras */
+const DAYS=[
+ {name:'Standard day — ~1,650',desc:'Your default. Two real meals, two protein snacks, coffee twice. Lands around 1,640 kcal, 39 g fat, 170 g protein.',
+  items:[['Snack','Your coffee \u2014 decaf + oat milk'],
+         ['Lunch','Tuna & pinto power bowl'],
+         ['Lunch','Ham, cheddar & tomato half-ciabatta'],
+         ['Snack','Ham & cheddar roll-ups'],
+         ['Snack','Your coffee \u2014 decaf + oat milk'],
+         ['Snack','Raw broccoli with guajillo dip'],
+         ['Dinner','Sheet-pan chicken, sweet potato, broccoli'],
+         ['Snack','Tuna scoop on romaine']]},
+ {name:'Low day — ~1,150',desc:'Tuesday and Thursday, only if week 2 stalls. Fat drops hard, protein barely moves.',
+  items:[['Snack','Your coffee \u2014 decaf + oat milk'],
+         ['Lunch','Dashi chicken & nori soup'],
+         ['Snack','Tuna scoop on romaine'],
+         ['Snack','Ham & cheddar roll-ups'],
+         ['Snack','Raw broccoli with guajillo dip'],
+         ['Snack','Your coffee \u2014 decaf + oat milk'],
+         ['Dinner','Seared tilapia, charred poblano, brown rice']]},
+ {name:'Training day — ~1,800',desc:'For days with a hard resistance session. The extra carbs sit around the work.',
+  items:[['Snack','Your coffee \u2014 decaf + oat milk'],
+         ['Lunch','Salsa verde chicken rice bowl'],
+         ['Lunch','Ham, cheddar & tomato half-ciabatta'],
+         ['Snack','Ham & cheddar roll-ups'],
+         ['Snack','Your coffee \u2014 decaf + oat milk'],
+         ['Dinner','Guajillo pork with cabbage slaw & sweet potato'],
+         ['Snack','Two boiled eggs + salsa verde'],
+         ['Snack','Raw broccoli with guajillo dip'],
+         ['Snack','Tuna scoop on romaine']]},
+ {name:'No-cook day — ~1,700',desc:'Nothing touches a stove. For the day you get home at nine and the answer would otherwise be takeout.',
+  items:[['Snack','Your coffee \u2014 decaf + oat milk'],
+         ['Lunch','Tuna & pinto power bowl'],
+         ['Lunch','Ham, cheddar & tomato half-ciabatta'],
+         ['Snack','Ham & cheddar roll-ups'],
+         ['Snack','Tuna scoop on romaine'],
+         ['Snack','Raw broccoli with guajillo dip'],
+         ['Snack','Two boiled eggs + salsa verde'],
+         ['Dinner','Ham, cheddar & tomato half-ciabatta'],
+         ['Snack','Your coffee \u2014 decaf + oat milk']]},
+];
+
+/* ============================================================
+   Recipes with instructions
+   ============================================================ */
+const RECIPES=[
+ {meal:'Dinner',name:'Charred poblano tilapia',cal:378,fat:8.3,pro:38,carb:36,mins:20,
+  ing:[['Tilapia fillet','6 oz'],['Poblano pepper','1 large'],['Zucchini','1 cup, half-moons'],
+       ['Brown rice, cooked','1/2 cup'],['EVOO','1 tsp — measured'],['Salsa verde','1/4 cup'],['Salt, lime','to taste']],
+  steps:['Put the poblano directly on a gas burner or under the broiler. Turn it every couple of minutes until it is blistered black on all sides, about 8 minutes.',
+         'Drop it in a bowl, cover with a plate, and leave it 5 minutes. The steam loosens the skin. Rub the skin off with your fingers, pull the stem and seeds, slice into strips.',
+         'Pat the tilapia completely dry — this is the difference between a sear and a steam. Salt both sides.',
+         'Heat a heavy pan hot and dry, then add the measured teaspoon of oil. Lay the fish down and do not touch it for 3 minutes. Flip, 2 more minutes.',
+         'Lift the fish out. Throw the zucchini into the same pan with the poblano strips and a pinch of salt, 3 minutes on high so it browns rather than sweats.',
+         'Rice down, vegetables over, fish on top, salsa verde spooned across, hard squeeze of lime.']},
+
+ {meal:'Dinner',name:'Guajillo pork with cabbage slaw',cal:437,fat:11.7,pro:34,carb:49,mins:25,
+  ing:[['Pork loin, thin sliced','5 oz'],['Guajillo sauce','1/4 cup'],['Cabbage','2 cups, shredded thin'],
+       ['Onion','1/2, sliced'],['Sweet potato','1 medium'],['EVOO','1 tsp'],['Lime, cilantro, salt','to taste']],
+  steps:['Prick the sweet potato, microwave 6–8 minutes until it gives when squeezed. Do this first; everything else takes ten minutes.',
+         'Toss the pork with 2 tbsp of the guajillo sauce and a good pinch of salt. Leave it while you cut the cabbage.',
+         'Dress the cabbage with lime juice, salt, and cilantro. Squeeze it with your hands for 30 seconds — it collapses and stops tasting raw.',
+         'Get a pan properly hot with the teaspoon of oil. Cook the onion 2 minutes, push it aside.',
+         'Lay the pork in a single layer. 90 seconds a side, no more — thin pork goes from done to leather fast. Work in two batches rather than crowding the pan.',
+         'Add the rest of the guajillo, let it bubble 30 seconds and coat the meat. Plate with the slaw and the split sweet potato.']},
+
+ {meal:'Dinner',name:'Sheet-pan chicken, sweet potato & broccoli',cal:418,fat:9.6,pro:45,carb:40,mins:35,
+  ing:[['Chicken breast','6 oz'],['Sweet potato','1 medium, 1-inch cubes'],['Broccoli','2 cups florets'],
+       ['Garlic','4 cloves, smashed'],['EVOO','1 tsp total'],['Salt, pepper, chile powder','to taste']],
+  steps:['Oven to 425°F. Toss the sweet potato cubes with half the oil, salt and chile powder. Spread them on the pan with room between them — crowded vegetables steam.',
+         'Roast 15 minutes alone. They need the head start.',
+         'Meanwhile butterfly the chicken breast so it is an even thickness throughout. Season it hard on both sides.',
+         'Pull the pan, push the potatoes to one side, add the chicken and the broccoli and garlic tossed in the remaining oil.',
+         'Back in for 14–16 minutes, until the chicken hits 165°F at the thickest point.',
+         'Rest the chicken 5 minutes before slicing or the juice ends up on the board. Double everything and tomorrow\'s lunch is done.']},
+
+ {meal:'Dinner',name:'Pinto & poblano stew with a soft egg',cal:427,fat:6.4,pro:22,carb:66,mins:25,
+  ing:[['Pinto beans, home cooked','1 cup with their liquid'],['Poblano pepper','1, diced'],['Canned tomatoes','1/2 cup'],
+       ['Onion','1/2, diced'],['Garlic','3 cloves'],['Dashi packet','1'],['Egg','1'],['Cilantro, lime, salt','to taste']],
+  steps:['Sweat the onion and poblano in a dry non-stick pan with a splash of water for 5 minutes. No oil needed — the water does the same job for zero calories.',
+         'Garlic in for 30 seconds, then the canned tomatoes. Cook them down 3 minutes until they darken.',
+         'Add the pinto beans with a cup of their cooking liquid and the dashi packet. Simmer 10 minutes.',
+         'Mash about a quarter of the beans against the side of the pot. That is what turns broth into stew.',
+         'Crack the egg straight into the simmering stew, cover, 3 minutes for a set white and a running yolk.',
+         'Cilantro, lime, salt. Salt it more than feels right — beans cooked without salt need it at the end.']},
+
+ {meal:'Lunch',name:'Tuna & pinto power bowl',cal:388,fat:6.3,pro:40,carb:47,mins:5,
+  ing:[['Canned tuna','1 can, drained'],['Pinto beans, home cooked','3/4 cup'],['Romaine','2 cups, chopped'],
+       ['Tomato','1, diced'],['Onion','1/4, minced'],['EVOO','1 tsp'],['Lime, cilantro, salt, pepper','to taste']],
+  steps:['Drain the tuna properly — press it against the lid. Wet tuna makes a sad bowl.',
+         'Soak the minced onion in the lime juice for 2 minutes. It takes the raw bite off completely.',
+         'Combine everything, dress with the teaspoon of oil and the lime-onion mixture, season aggressively.',
+         'Eat it immediately or the romaine wilts. If packing it for later, keep the lettuce separate.']},
+
+ {meal:'Lunch',name:'Dashi chicken & nori soup',cal:256,fat:4.2,pro:34,carb:15,mins:15,
+  ing:[['Chicken breast','5 oz, sliced thin'],['Dashi packet','1'],['Zucchini','1 cup'],['Cabbage','1 cup'],
+       ['Nori sheet','2, torn'],['Garlic','2 cloves'],['Water','3 cups'],['Salt, chile flake','to taste']],
+  steps:['Bring the water to a simmer with the dashi packet and the garlic. Give it 5 minutes — the packet needs time to give up its flavour.',
+         'Fish the packet out. Add the cabbage, simmer 3 minutes.',
+         'Slide in the thinly sliced chicken. Keep the heat at a bare simmer, not a boil — boiling makes chicken breast stringy. 4 minutes.',
+         'Zucchini in for the last 90 seconds so it keeps some bite.',
+         'Off the heat, tear the nori in and let it soften for a minute. Salt to taste, chile flake on top.']},
+
+ {meal:'Dinner',name:'Zucchini-noodle tuna pasta',cal:320,fat:6.5,pro:31,carb:35,mins:15,
+  ing:[['Zucchini','2 cups, ribboned or spiralized'],['Pasta, dry','1 oz'],['Canned tuna','1 can'],
+       ['Canned tomatoes','1/2 cup'],['Garlic','3 cloves, sliced'],['EVOO','1 tsp'],['Chile flake, salt','to taste']],
+  steps:['Boil the ounce of pasta in well-salted water. Keep half a cup of the water when you drain it.',
+         'While it cooks, gently warm the garlic in the teaspoon of oil over low heat until it is pale gold. Rushing this and burning the garlic ruins the dish.',
+         'Chile flake, then the canned tomatoes. Simmer 5 minutes.',
+         'Tuna in, broken up, 1 minute — just to warm it.',
+         'Zucchini ribbons and the drained pasta into the pan with a splash of the pasta water. Toss over high heat for 60 seconds. Any longer and the zucchini turns to water.',
+         'Off the heat immediately and serve. The zucchini keeps cooking in the pan.']},
+
+ {meal:'Snack',name:'Ham & cheddar roll-ups',cal:177,fat:6.7,pro:24,carb:5,mins:2,
+  ing:[['Kirkland extra lean ham','4 slices'],['Cheddar cheese','1/2 oz, in batons'],['Jalapeño','sliced thin']],
+  steps:['Lay out the ham, a baton of cheddar and a couple of jalapeño slices on each, roll tight.',
+         'That is it. Make eight on Sunday, keep them in a container, and the 3:30 protein problem is solved for the week.']},
+
+ {meal:'Lunch',name:'Tilapia cabbage tacos, guajillo',cal:272,fat:7.4,pro:35,carb:21,mins:15,
+  ing:[['Tilapia fillet','6 oz'],['Cabbage','2 cups — leaves kept whole for wrapping, rest shredded'],
+       ['Guajillo sauce','1/4 cup'],['Onion','1/4, thin sliced'],['EVOO','1 tsp'],['Lime, cilantro','to taste']],
+  steps:['Peel four big outer cabbage leaves off whole and blanch them 60 seconds in boiling water so they fold without cracking. Shred the rest.',
+         'Cut the tilapia into strips, toss with 1 tbsp of the guajillo and salt.',
+         'Sear the strips in the teaspoon of oil, 2 minutes a side. Do not stir them around — let them sit and colour.',
+         'Fill the leaves with fish, shredded cabbage, onion, the rest of the guajillo, cilantro and lime.']},
+
+ {meal:'Breakfast',name:'Ham & egg-white scramble',cal:200,fat:1.5,pro:30,carb:13,mins:8,
+  ing:[['Kirkland extra lean ham','3 slices, diced'],['Egg white','4'],['Tomato','1, diced'],['Salsa verde','1/4 cup']],
+  steps:['Crisp the diced ham in a dry non-stick pan for 2 minutes. It has enough fat of its own.',
+         'Tomato in, 1 minute, to drive off some water.',
+         'Whites in, heat low, and stir slowly and constantly. Egg whites go rubbery over high heat faster than whole eggs do.',
+         'Pull them while still slightly glossy — they finish on the plate. Salsa verde over the top.']},
+];
+
+/* Exercise presets: kcal per 30 min at ~200 lb */
+const EX_PRESETS=[
+ ['Brisk walk'],['Incline walk / hills'],['Walk-jog intervals'],['Jog'],['Hiking'],
+ ['Cycling'],['Elliptical'],['Stair climber'],['Weights, full body'],
+ ['Bodyweight circuit'],['Swimming'],['Rowing'],['Yard work'],['Basketball'],
+];
+
+/* ============================================================
+   Derived numbers
+   ============================================================ */
+function latestWeight(){
+  if(!S.weights.length) return S.profile.startLbs;
+  const s=[...S.weights].sort((a,b)=>a.date<b.date?1:-1);
+  return s[0].lbs;
+}
+function calcNumbers(){
+  const p=S.profile, lbs=latestWeight();
+  const kg=lbs*0.453592, cm=p.heightIn*2.54;
+  const bmr=Math.round(10*kg+6.25*cm-5*p.age+5);
+  const sed=Math.round(bmr*1.2), light=Math.round(bmr*1.375), mod=Math.round(bmr*1.55);
+  const bmi=r1(703*lbs/(p.heightIn*p.heightIn));
+  return {lbs,kg:r1(kg),bmr,sed,light,mod,bmi};
+}
+
+/* ============================================================
+   Render — Today
+   ============================================================ */
+function totals(k){
+  const d=day(k);
+  const t={cal:0,fat:0,pro:0,carb:0};
+  d.entries.forEach(e=>{t.cal+=e.cal;t.fat+=e.fat;t.pro+=e.pro;t.carb+=(e.carb||0)});
+  t.ex=d.ex.reduce((a,b)=>a+b.cal,0);
+  return t;
+}
+function hm2min(s){const[a,b]=s.split(':').map(Number);return a*60+b}
+
+function renderBand(){
+  const now=new Date(), nowMin=now.getHours()*60+now.getMinutes();
+  const s=hm2min(S.window.start), e=hm2min(S.window.end);
+  const svg=$('#bandSvg'), W=1000, H=46;
+  const x=m=>m/1440*W;
+  let h='';
+  // closed (fasting) ground
+  h+=`<rect x="0" y="8" width="${W}" height="26" fill="#2B3025" rx="2"/>`;
+  // open window
+  h+=`<rect x="${x(s)}" y="8" width="${x(e)-x(s)}" height="26" fill="#C8DDA8" rx="2"/>`;
+  // hour ticks
+  for(let i=0;i<=24;i+=2){
+    h+=`<line x1="${x(i*60)}" y1="8" x2="${x(i*60)}" y2="${i%6===0?38:14}" stroke="rgba(28,33,24,.35)" stroke-width="3"/>`;
+  }
+  // meal marks
+  const d=day();
+  d.entries.forEach(en=>{
+    if(en.min==null) return;
+    h+=`<line x1="${x(en.min)}" y1="4" x2="${x(en.min)}" y2="38" stroke="#A83A26" stroke-width="6"/>`;
+  });
+  // now marker
+  h+=`<line x1="${x(nowMin)}" y1="0" x2="${x(nowMin)}" y2="46" stroke="#1C2118" stroke-width="7"/>`;
+  h+=`<rect x="${x(nowMin)-13}" y="0" width="26" height="5" fill="#1C2118"/>`;
+  svg.innerHTML=h;
+  svg.setAttribute('preserveAspectRatio','none');
+
+  // state text
+  const eating = s<e ? (nowMin>=s&&nowMin<e) : (nowMin>=s||nowMin<e);
+  const st=$('#fastState'), sub=$('#fastSub');
+  function fmt(mins){const h=Math.floor(mins/60),m=Math.round(mins%60);return h+'h '+String(m).padStart(2,'0')+'m'}
+  if(eating){
+    st.textContent='Window open';st.className='band-state eating';
+    let left=e-nowMin; if(left<0)left+=1440;
+    sub.textContent='Kitchen closes in '+fmt(left);
+  }else{
+    st.textContent='Fasting';st.className='band-state fasting';
+    let until=s-nowMin; if(until<0)until+=1440;
+    // how long fasted so far
+    let since=nowMin-e; if(since<0)since+=1440;
+    sub.textContent=fmt(since)+' fasted · opens in '+fmt(until);
+  }
+  $('#windowLabel').textContent=to12(S.window.start)+'–'+to12(S.window.end);
+}
+function to12(hm){let[h,m]=hm.split(':').map(Number);const ap=h>=12?'pm':'am';h=h%12||12;return h+(m?':'+String(m).padStart(2,'0'):'')+ap}
+
+function carbAllowance(){
+  const p=S.profile;
+  return Math.max(20,Math.round((p.calTarget-p.proTarget*4-p.fatTarget*9)/4));
+}
+function renderToday(){
+  const p=S.profile, t=totals(), d=day();
+  const carbAllow=carbAllowance();
+  const calLeft=Math.round(p.calTarget-t.cal), fatLeft=r1(p.fatTarget-t.fat);
+  $('#calLeft').textContent=calLeft;
+  $('#calOf').textContent=Math.round(t.cal)+' of '+p.calTarget;
+  $('#fatLeft').textContent=fatLeft+'g';
+  $('#fatOf').textContent=r1(t.fat)+' of '+p.fatTarget+'g';
+  $('#proNum').textContent=Math.round(t.pro)+'g';
+  $('#proOf').textContent='of '+p.proTarget+'g target';
+  $('#carbLeft').textContent=Math.round(carbAllow-t.carb)+'g';
+  $('#carbOf').textContent=Math.round(t.carb)+' of '+carbAllow+'g';
+  setBar('#carbBar',t.carb/carbAllow);
+  setBar('#calBar',t.cal/p.calTarget);
+  setBar('#fatBar',t.fat/p.fatTarget);
+  const pb=$('#proBar');pb.style.width=Math.min(100,t.pro/p.proTarget*100)+'%';
+  pb.className=t.pro>=p.proTarget*0.85?'':'warn';
+
+  // log list grouped
+  const order=['Breakfast','Lunch','Snack','Dinner'];
+  let h='';
+  order.forEach(m=>{
+    const items=d.entries.filter(e=>e.meal===m);
+    if(!items.length) return;
+    const sub=items.reduce((a,b)=>a+b.cal,0);
+    h+=`<div class="mealhead"><span class="eyebrow">${m}</span><span class="tot">${Math.round(sub)} kcal</span></div>`;
+    items.forEach(e=>{
+      h+=`<div class="row"><div class="nm"><b>${esc(e.name)}</b><small>${e.serv?esc(e.serv)+' · ':''}${r1(e.fat)}f · ${r1(e.pro)}p · ${r1(e.carb||0)}c</small></div>
+      <div class="kc">${Math.round(e.cal)}<em>kcal</em></div>
+      <button class="x" data-del="${e.id}" aria-label="Remove">×</button></div>`;
+    });
+  });
+  $('#logList').innerHTML=h||'<div class="empty">Nothing logged yet. Go to Eat and tap a suggested meal.</div>';
+  $$('#logList [data-del]').forEach(b=>b.onclick=()=>{
+    d.entries=d.entries.filter(e=>e.id!==b.dataset.del);save();renderToday();renderBand();
+  });
+
+  renderLedger();
+
+  // weight quick
+  const w=S.weights.find(x=>x.date===todayISO());
+  $('#wQuick').value=w?w.lbs:'';
+  $('#wQuickNote').textContent=w?('Logged today: '+w.lbs+' lb'):('Last: '+latestWeight()+' lb');
+
+  // day counter
+  const dd=daysSinceStart();
+  $('#dayCounter').innerHTML='Day '+dd+' / 28';
+  $('#todayLabel').textContent=new Date().toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
+
+  // day type chips
+  const types=[['standard','Standard 16:8'],['low','Low day ~1,200'],['training','Training ~1,800']];
+  $('#dayTypeRow').innerHTML=types.map(([k,l])=>`<button class="chip" aria-pressed="${d.dayType===k}" data-dt="${k}">${l}</button>`).join('');
+  $$('#dayTypeRow [data-dt]').forEach(b=>b.onclick=()=>{
+    d.dayType=b.dataset.dt;
+    S.profile.calTarget = d.dayType==='low'?1200:d.dayType==='training'?1800:1650;
+    S.profile.fatTarget = d.dayType==='low'?35:d.dayType==='training'?58:50;
+    save();renderToday();
+  });
+  $('#dayTypeNote').textContent = d.dayType==='low'
+    ? 'Target drops to 1,200 kcal / 35 g fat. Keep protein at 150 g — the cut comes out of fat and carbs, never protein.'
+    : d.dayType==='training'
+    ? 'Target rises to 1,800 kcal / 58 g fat. Put the extra carbs in the meal after your session.'
+    : 'Target 1,650 kcal / 50 g fat / 150 g protein. This is your default.';
+}
+function renderLedger(){
+  const p=S.profile, t=totals(), n=calcNumbers();
+  const base=n.sed, ex=Math.round(t.ex), burn=base+ex, eaten=Math.round(t.cal);
+  const deficit=burn-eaten;
+  const targetDef=Math.round(base+(p.exDaily||350)-p.calTarget);
+  const nowMin=(function(){const d=new Date();return d.getHours()*60+d.getMinutes()})();
+  const ws=hm2min(S.window.start), we=hm2min(S.window.end);
+  const windowOpen = ws<we ? (nowMin>=ws&&nowMin<we) : (nowMin>=ws||nowMin<we);
+  const beforeWindow = nowMin<ws;
+  const foodLeft=p.calTarget-eaten;
+
+  $('#lBase').textContent=base.toLocaleString();
+  $('#lEx').textContent=(ex?'+ ':'')+ex.toLocaleString();
+  $('#lBurn').textContent=burn.toLocaleString();
+  $('#lEat').textContent=(eaten?'\u2212 ':'')+eaten.toLocaleString();
+  $('#lDef').textContent=(deficit<0?'+':'')+Math.abs(deficit).toLocaleString();
+  $('#lDefLab').textContent=deficit<0?'Surplus so far':'Deficit so far';
+  $('#lHold').textContent=burn.toLocaleString()+' kcal';
+  $('#lLose').textContent=p.calTarget.toLocaleString()+' kcal';
+
+  const hasFood=eaten>0;
+  var phase = windowOpen ? 'open' : (ws>we ? 'post' : (nowMin>=we ? 'post' : 'pre'));
+
+  const dbar=$('#lDefBar');
+  if(hasFood){
+    dbar.style.width=Math.max(0,Math.min(100,deficit/targetDef*100))+'%';
+    dbar.className = deficit>targetDef*1.35?'bad':deficit>=targetDef*0.9?'':'warn';
+    $('#lDefNote').textContent=Math.round(deficit).toLocaleString()+' of about '+targetDef.toLocaleString()
+      +' \u2014 roughly '+r1(deficit*7/3500)+' lb a week at this rate';
+  }else{
+    $('#lDef').textContent='\u2014';
+    $('#lDefLab').textContent='Deficit';
+    dbar.style.width='0'; dbar.className='';
+    $('#lDefNote').textContent='Log some food and the deficit works itself out here.';
+  }
+
+  const foodOK = eaten<=p.calTarget;
+  const defOK  = hasFood && deficit>=targetDef*0.9;
+  $('#vChips').innerHTML=
+     '<span class="chip stat '+(hasFood?(foodOK?'ok':'no'):'')+'">Food '+eaten.toLocaleString()+' / '+p.calTarget.toLocaleString()+(hasFood?(foodOK?' \u2713':' \u2717'):'')+'</span>'
+    +'<span class="chip stat '+(hasFood?(defOK?'ok':'no'):'')+'">Deficit '+(hasFood?Math.max(0,deficit).toLocaleString()+' / '+targetDef.toLocaleString()+(defOK?' \u2713':' \u2717'):'\u2014')+'</span>';
+
+  const st=$('#vState'), sub=$('#vSub');
+  var cls='good', head, msg;
+
+  if(!hasFood){
+    cls='idle';
+    if(phase==='pre'){
+      head='Fasting';
+      msg='Nothing logged yet, which is the plan. The window opens at '+to12(S.window.start)+' with '+p.calTarget.toLocaleString()+' kcal to spend.'
+        +(ex?' Your '+ex.toLocaleString()+' kcal of exercise is already banked.':' A walk before then costs you nothing and widens the day\u2019s deficit.');
+    } else if(phase==='open'){
+      head='Window open';
+      msg='Nothing logged yet. You have '+p.calTarget.toLocaleString()+' kcal and until '+to12(S.window.end)+' to eat it. Front-load the protein.';
+    } else {
+      cls='warn'; head='Nothing logged';
+      msg='The window closed at '+to12(S.window.end)+' with no food recorded. If you ate and skipped logging, add it now \u2014 blank days quietly corrupt your weekly averages and the burn calibration.';
+    }
+  }
+  else if(phase==='open'){
+    if(!foodOK){
+      cls='bad'; head='Over budget';
+      msg='You\u2019re '+Math.abs(foodLeft).toLocaleString()+' kcal past the eating target with the window still open. '
+        +(defOK?'Movement has covered it so far \u2014 the deficit still stands at '+deficit.toLocaleString()+'.'
+               :'The deficit is down to '+Math.max(0,deficit).toLocaleString()+' against about '+targetDef.toLocaleString()+'. A 45-minute walk claws back roughly 250.');
+    } else {
+      cls='good'; head=foodLeft>0?foodLeft.toLocaleString()+' kcal left today':'Right on target';
+      msg='Eaten '+eaten.toLocaleString()+' of '+p.calTarget.toLocaleString()+'. '
+        +(defOK?'The deficit is where it should be at '+deficit.toLocaleString()+'.'
+               :'The deficit sits at '+Math.max(0,deficit).toLocaleString()+' against about '+targetDef.toLocaleString()+', so '+(ex?'more movement':'a walk')+' would close the gap.')
+        +' Kitchen closes at '+to12(S.window.end)+'.';
+    }
+  }
+  else {
+    if(eaten<p.calTarget*0.75){
+      cls='warn'; head='Under-ate';
+      msg='Only '+eaten.toLocaleString()+' logged against a '+p.calTarget.toLocaleString()+' target. Either food went unlogged, or you genuinely under-ate \u2014 and the second doesn\u2019t speed anything up while it does cost muscle.';
+    } else if(!foodOK && !defOK){
+      cls='bad'; head='Missed both';
+      msg='Over on food by '+Math.abs(foodLeft).toLocaleString()+', and the deficit finished at '+Math.max(0,deficit).toLocaleString()+' against about '+targetDef.toLocaleString()+'. One day like this costs roughly '+r1((targetDef-deficit)/3500*7)+' lb of weekly progress. Not a catastrophe \u2014 just don\u2019t let it become the pattern.';
+    } else if(!foodOK && defOK){
+      cls='warn'; head='Over on food, covered by movement';
+      msg='You ate '+Math.abs(foodLeft).toLocaleString()+' over target, but '+ex.toLocaleString()+' kcal of exercise carried the deficit to '+deficit.toLocaleString()+'. The result is fine. Be aware you can\u2019t outrun this every day \u2014 the food target is the reliable lever.';
+    } else if(foodOK && !defOK){
+      cls='warn'; head='Short on movement';
+      msg='Food was fine at '+eaten.toLocaleString()+' against '+p.calTarget.toLocaleString()+'. But with '+(ex?'only '+ex.toLocaleString():'no')+' kcal of exercise the deficit came to '+Math.max(0,deficit).toLocaleString()+' instead of about '+targetDef.toLocaleString()+'. This is the day that quietly costs you half a pound a week \u2014 it looks like success on the food tile and isn\u2019t.';
+    } else {
+      cls='good'; head='Day landed';
+      msg='Ate '+eaten.toLocaleString()+', burned '+burn.toLocaleString()+', deficit '+deficit.toLocaleString()+'. Both targets met. Repeat this and the scale follows.';
+    }
+  }
+  st.textContent=head; st.className='v-state '+cls; sub.textContent=msg;
+}
+function setBar(sel,frac){
+  const el=$(sel);el.style.width=Math.min(100,frac*100)+'%';
+  el.className = frac>1?'over':frac>0.85?'warn':'';
+}
+function daysSinceStart(){
+  const a=new Date(S.profile.startDate+'T00:00:00'), b=new Date(todayISO()+'T00:00:00');
+  return Math.max(1,Math.round((b-a)/86400000)+1);
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+/* ============================================================
+   Adding entries
+   ============================================================ */
+function addEntry(meal,name,serv,cal,fat,pro,carb){
+  const now=new Date();
+  day().entries.push({id:uid(),meal,name,serv:serv||'',cal:+cal,fat:+fat,pro:+pro,carb:+(carb||0),min:now.getHours()*60+now.getMinutes()});
+  save();
+}
+
+/* ---- search ---- */
+function allFoods(){
+  const base=PANTRY.map(([n,s,c,f,p,cb])=>({name:n,serv:s,cal:c,fat:f,pro:p,carb:cb||0}));
+  const mine=S.foods.map(f=>({name:f.name,serv:f.serv,cal:f.cal,fat:f.fat,pro:f.pro,carb:f.carb||0,mine:true}));
+  const recs=[...RECIPES,...S.recipes].map(r=>({name:r.name+' (recipe)',serv:'1 serving',cal:r.cal,fat:r.fat,pro:r.pro,carb:r.carb||0}));
+  const meals=MEALS.map(m=>({name:m.name,serv:m.meal+' suggestion',cal:m.cal,fat:m.fat,pro:m.pro,carb:m.carb||0}));
+  return [...mine,...base,...meals,...recs];
+}
+function renderSearch(){
+  const q=$('#qSearch').value.trim().toLowerCase();
+  const box=$('#searchResults');
+  if(!q){box.innerHTML='<div class="empty">Type to search 50+ pantry items, your saved foods, recipes and suggested meals.</div>';return}
+  const hits=allFoods().filter(f=>f.name.toLowerCase().includes(q)).slice(0,14);
+  if(!hits.length){box.innerHTML='<div class="empty">No match. Save it as a new food below and it\'ll be here next time.</div>';return}
+  box.innerHTML=hits.map((f,i)=>`<div class="row"><div class="nm"><b>${esc(f.name)}</b><small>${esc(f.serv)} · ${f.fat}f · ${f.pro}p · ${f.carb||0}c</small></div>
+    <div class="kc">${f.cal}<em>kcal</em></div>
+    <button class="btn sm" data-add="${i}">Add</button></div>`).join('');
+  $$('#searchResults [data-add]').forEach(b=>b.onclick=()=>{
+    const f=hits[+b.dataset.add];
+    addEntry($('#qMeal').value,f.name,f.serv,f.cal,f.fat,f.pro,f.carb);
+    toast(f.name+' added');renderToday();renderBand();
+  });
+}
+
+/* ---- suggestions ---- */
+let sugMeal='All';
+function renderSug(){
+  const cats=['All','Breakfast','Lunch','Snack','Dinner'];
+  $('#sugFilter').innerHTML=cats.map(c=>`<button class="chip" aria-pressed="${sugMeal===c}" data-sf="${c}">${c}</button>`).join('');
+  $$('#sugFilter [data-sf]').forEach(b=>b.onclick=()=>{sugMeal=b.dataset.sf;renderSug()});
+  const list=MEALS.filter(m=>sugMeal==='All'||m.meal===sugMeal);
+  $('#sugList').innerHTML=list.map((m,i)=>`
+    <div class="sug">
+      <div class="sug-h"><b>${esc(m.name)}</b><button class="btn sm" data-sug="${MEALS.indexOf(m)}">Log</button></div>
+      <div class="macros"><b>${m.cal}</b> kcal · <b>${m.fat}</b>g fat · <b>${m.pro}</b>g protein · <b>${m.carb||0}</b>g carb${sugMeal==='All'?' · '+m.meal:''}</div>
+      <div class="ing">${esc(m.ing)}</div>
+      <div class="ing" style="color:var(--ink)">${esc(m.note)}</div>
+      ${m.flag?`<span class="flag ${m.flag==='good'?'good':''}">${esc(m.flagT)}</span>`:''}
+    </div>`).join('');
+  $$('#sugList [data-sug]').forEach(b=>b.onclick=()=>{
+    const m=MEALS[+b.dataset.sug];
+    addEntry(m.meal,m.name,'',m.cal,m.fat,m.pro,m.carb);
+    toast(m.name+' → '+m.meal);renderToday();renderBand();
+  });
+}
+
+/* ---- day templates ---- */
+function findMeal(slot,name){return MEALS.find(m=>m.name===name)}
+function renderDayTemplates(){
+  $('#dayTemplates').innerHTML=DAYS.map((d,i)=>{
+    let c=0,f=0,p=0,cb=0;
+    d.items.forEach(([m,n])=>{const x=findMeal(m,n);if(x){c+=x.cal;f+=x.fat;p+=x.pro;cb+=(x.carb||0)}else{console.warn('missing meal:',n)}});
+    const names=d.items.map(([m,n])=>n).join(' · ');
+    return `<div class="sug">
+      <div class="sug-h"><b>${esc(d.name)}</b><button class="btn sm" data-day="${i}">Log day</button></div>
+      <div class="macros"><b>${Math.round(c)}</b> kcal · <b>${r1(f)}</b>g fat · <b>${Math.round(p)}</b>g protein · <b>${Math.round(cb)}</b>g carb</div>
+      <div class="ing" style="color:var(--ink)">${esc(d.desc)}</div>
+      <div class="ing">${esc(names)}</div>
+    </div>`;
+  }).join('');
+  $$('#dayTemplates [data-day]').forEach(b=>b.onclick=()=>{
+    const d=DAYS[+b.dataset.day];
+    d.items.forEach(([m,n])=>{const x=findMeal(m,n);if(x)addEntry(m,x.name,'',x.cal,x.fat,x.pro,x.carb)});
+    toast(d.name+' logged');renderToday();renderBand();
+  });
+}
+
+/* ---- recipes ---- */
+let recMeal='All';
+function renderRecipes(){
+  const cats=['All','Breakfast','Lunch','Snack','Dinner','Mine'];
+  $('#recFilter').innerHTML=cats.map(c=>`<button class="chip" aria-pressed="${recMeal===c}" data-rf="${c}">${c}</button>`).join('');
+  $$('#recFilter [data-rf]').forEach(b=>b.onclick=()=>{recMeal=b.dataset.rf;renderRecipes()});
+  const mine=S.recipes.map(r=>Object.assign({},r,{mine:true}));
+  let all=[...RECIPES,...mine];
+  if(recMeal==='Mine')all=mine; else if(recMeal!=='All')all=all.filter(r=>r.meal===recMeal);
+  if(!all.length){$('#recList').innerHTML='<div class="empty">Nothing here yet. Write one below.</div>';return}
+  $('#recList').innerHTML=all.map((r,i)=>`
+    <details class="rec">
+      <summary><b>${esc(r.name)}</b><span class="arw">›</span></summary>
+      <div class="rec-body">
+        <div class="macros" style="margin-bottom:10px"><b>${r.cal}</b> kcal · <b>${r.fat}</b>g fat · <b>${r.pro}</b>g protein · <b>${r.carb||0}</b>g carb${r.mins?' · '+r.mins+' min':''}</div>
+        <div class="eyebrow" style="margin-bottom:6px">Ingredients</div>
+        <ul class="ingl">${(r.ing||[]).map(x=>Array.isArray(x)?`<li>${esc(x[0])}<span>${esc(x[1])}</span></li>`:`<li>${esc(x)}</li>`).join('')}</ul>
+        <div class="eyebrow" style="margin-bottom:6px">Method</div>
+        <ol class="steps">${(r.steps||[]).map(s=>`<li>${esc(s)}</li>`).join('')}</ol>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn sm" data-rlog="${i}">Log this</button>
+          ${r.mine?`<button class="btn sm ghost" data-rdel="${esc(r.id||'')}">Delete</button>`:''}
+        </div>
+      </div>
+    </details>`).join('');
+  $$('#recList [data-rlog]').forEach(b=>b.onclick=()=>{
+    const r=all[+b.dataset.rlog];
+    addEntry(r.meal,r.name,'1 serving',r.cal,r.fat,r.pro,r.carb);
+    toast(r.name+' logged');renderToday();renderBand();
+  });
+  $$('#recList [data-rdel]').forEach(b=>b.onclick=()=>{
+    S.recipes=S.recipes.filter(x=>x.id!==b.dataset.rdel);save();renderRecipes();toast('Recipe deleted');
+  });
+}
+
+/* ---- exercise ---- */
+function renderEx(){
+  $('#exPresets').innerHTML=EX_PRESETS.map((e,i)=>`<button class="chip" data-ep="${i}">${esc(e[0])}</button>`).join('');
+  $$('#exPresets [data-ep]').forEach(b=>b.onclick=()=>{
+    $('#exName').value=EX_PRESETS[+b.dataset.ep][0];
+    if(!+$('#exMin').value)$('#exMin').value=45;
+    updateBurnEstimate();
+  });
+  $('#exName').oninput=updateBurnEstimate;
+  $('#exMin').oninput=updateBurnEstimate;
+  updateBurnEstimate();
+  const d=day();
+  $('#exTotal').textContent=d.ex.reduce((a,b)=>a+b.cal,0)+' kcal';
+  $('#exList').innerHTML=d.ex.length?d.ex.map(e=>`<div class="row"><div class="nm"><b>${esc(e.name)}</b><small>${e.mins} min</small></div>
+    <div class="kc">${e.cal}<em>kcal</em></div><button class="x" data-exdel="${e.id}">×</button></div>`).join('')
+    :'<div class="empty">No activity logged today.</div>';
+  $$('#exList [data-exdel]').forEach(b=>b.onclick=()=>{
+    d.ex=d.ex.filter(x=>x.id!==b.dataset.exdel);save();renderEx();renderToday();renderExBand();
+  });
+}
+
+/* ---- weight ---- */
+function renderWeight(){
+  const sorted=[...S.weights].sort((a,b)=>a.date<b.date?-1:1);
+  const latest=sorted.length?sorted[sorted.length-1]:null;
+  $('#wLatest').textContent=latest?latest.lbs:S.profile.startLbs;
+  $('#wLatestDate').textContent=latest?new Date(latest.date+'T00:00:00').toLocaleDateString(undefined,{month:'short',day:'numeric'}):'start weight';
+  const cur=latest?latest.lbs:S.profile.startLbs;
+  const dlt=r1(cur-S.profile.startLbs);
+  $('#wDelta').textContent=(dlt>0?'+':'')+dlt;
+  $('#wToGo').textContent=r1(cur-S.profile.goalLbs)+' lb to '+S.profile.goalLbs;
+
+  const rows=[...sorted].reverse().map(w=>{
+    const idx=sorted.indexOf(w);
+    const prev=idx>0?sorted[idx-1].lbs:null;
+    const ch=prev!==null?r1(w.lbs-prev):null;
+    return `<div class="row"><div class="nm"><b>${w.lbs} lb</b><small>${new Date(w.date+'T00:00:00').toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'})}</small></div>
+    <div class="kc">${ch===null?'—':(ch>0?'+':'')+ch}<em>vs prev</em></div>
+    <button class="x" data-wdel="${w.date}">×</button></div>`;
+  }).join('');
+  $('#wList').innerHTML=rows||'<div class="empty">No weigh-ins yet. The first one is today.</div>';
+  $$('#wList [data-wdel]').forEach(b=>b.onclick=()=>{
+    S.weights=S.weights.filter(x=>x.date!==b.dataset.wdel);save();renderWeight();renderToday();
+  });
+  drawChart(sorted);
+  renderCalibration();
+}
+function drawChart(pts){
+  const W=640,H=300,L=44,R=14,T=14,B=30;
+  const start=new Date(S.profile.startDate+'T00:00:00');
+  const s0=S.profile.startLbs;
+  const yMax=Math.ceil(s0+2), yMin=Math.floor(Math.min(S.profile.goalLbs-2, s0-18));
+  const x=d=>L+(d/28)*(W-L-R);
+  const y=v=>T+(yMax-v)/(yMax-yMin)*(H-T-B);
+  let h='';
+  // grid
+  for(let v=yMin;v<=yMax;v+=4){
+    h+=`<line x1="${L}" y1="${y(v)}" x2="${W-R}" y2="${y(v)}" stroke="rgba(28,33,24,.1)" stroke-width="1"/>`;
+    h+=`<text x="${L-7}" y="${y(v)+4}" text-anchor="end" font-family="DM Mono,monospace" font-size="10" fill="#5F6656">${v}</text>`;
+  }
+  for(let d=0;d<=28;d+=7){
+    h+=`<line x1="${x(d)}" y1="${T}" x2="${x(d)}" y2="${H-B}" stroke="rgba(28,33,24,.1)"/>`;
+    h+=`<text x="${x(d)}" y="${H-B+16}" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#5F6656">${d===0?'start':'d'+d}</text>`;
+  }
+  // guide lines
+  h+=`<line x1="${x(0)}" y1="${y(s0)}" x2="${x(28)}" y2="${y(s0-10)}" stroke="#4F7031" stroke-width="1.6" stroke-dasharray="5 4"/>`;
+  h+=`<line x1="${x(0)}" y1="${y(s0)}" x2="${x(28)}" y2="${y(s0-16)}" stroke="#A83A26" stroke-width="1.6" stroke-dasharray="2 4"/>`;
+  // data
+  if(pts.length){
+    const P=pts.map(p=>{
+      const dd=Math.round((new Date(p.date+'T00:00:00')-start)/86400000);
+      return [x(Math.max(0,Math.min(28,dd))),y(p.lbs)];
+    });
+    h+=`<polyline points="${P.map(p=>p[0]+','+p[1]).join(' ')}" fill="none" stroke="#2B3025" stroke-width="2.4" stroke-linejoin="round"/>`;
+    P.forEach(p=>{h+=`<circle cx="${p[0]}" cy="${p[1]}" r="3.4" fill="#F7F4EC" stroke="#2B3025" stroke-width="2"/>`});
+  }else{
+    h+=`<text x="${W/2}" y="${H/2}" text-anchor="middle" font-family="DM Mono,monospace" font-size="12" fill="#5F6656">Log a weigh-in to start the line</text>`;
+  }
+  $('#wChart').innerHTML=h;
+}
+
+/* ---- plan numbers ---- */
+function renderNumbers(){
+  const n=calcNumbers(), p=S.profile;
+  $('#numbersBlock').innerHTML=`
+    <div class="kv"><span>Height</span><b>6'1.5" · ${p.heightIn} in</b></div>
+    <div class="kv"><span>Current weight</span><b>${n.lbs} lb · ${n.kg} kg</b></div>
+    <div class="kv"><span>BMI</span><b>${n.bmi} — ${n.bmi<25?'healthy':'overweight'}</b></div>
+    <div class="kv"><span>BMR — burn at total rest</span><b>${n.bmr} kcal</b></div>
+    <div class="kv"><span>Burn, sedentary day</span><b>${n.sed} kcal</b></div>
+    <div class="kv"><span>Burn, with a 45-min walk</span><b>${n.light} kcal</b></div>
+    <div class="kv"><span>Burn, hard training day</span><b>${n.mod} kcal</b></div>
+    <div class="rule"></div>
+    <div class="kv"><span><b style="font-family:Archivo">Eat</b></span><b>${p.calTarget} kcal</b></div>
+    <div class="kv"><span>Fat ceiling</span><b>${p.fatTarget} g (${Math.round(p.fatTarget*9/p.calTarget*100)}% of calories)</b></div>
+    <div class="kv"><span>Protein floor</span><b>${p.proTarget} g</b></div>
+    <div class="kv"><span>Carbs, whatever's left</span><b>≈${Math.round((p.calTarget-p.proTarget*4-p.fatTarget*9)/4)} g</b></div>
+    <div class="rule"></div>
+    <div class="kv"><span>Daily deficit on a normal day</span><b>≈${n.light-p.calTarget} kcal</b></div>
+    <div class="kv"><span>Predicted loss per week</span><b>≈${r1((n.light-p.calTarget)*7/3500)} lb</b></div>
+    <div class="kv"><span>Predicted day-28 weight</span><b>≈${r1(p.startLbs-((n.light-p.calTarget)*28/3500)-4)} lb <span style="color:var(--soft)">(incl. week-1 water)</span></b></div>`;
+}
+
+
+
+
+/* ============================================================
+   Calorie burn — MET based, net of resting metabolism.
+
+   kcal/min = (MET - 1) x 3.5 x bodyweight_kg / 200
+
+   The "-1" matters. A MET of 1 is what you burn sitting still,
+   and the app's deficit maths already assumes you were alive
+   during that hour (baseline BMR x 1.2). Crediting gross METs
+   would double count roughly 90 kcal an hour.
+   MET values follow the Compendium of Physical Activities.
+   ============================================================ */
+const METS=[
+  [/stair|step.?mill|stepper/i,9.0,'stair climbing'],
+  [/incline|hill|uphill|ruck/i,6.3,'incline walking'],
+  [/walk.*jog|jog.*walk|interval/i,6.0,'walk-jog intervals'],
+  [/sprint|hiit/i,10.0,'high intensity intervals'],
+  [/run(?!g)|running/i,9.8,'running'],
+  [/jog/i,7.0,'jogging'],
+  [/brisk|power.?walk|fast walk/i,4.3,'brisk walking'],
+  [/hike|hiking|trail/i,6.0,'hiking'],
+  [/walk|treadmill/i,3.8,'walking'],
+  [/bodyweight|circuit|calisthenic|crossfit/i,8.0,'circuit training'],
+  [/weight|lift|strength|resist|dumbbell|barbell|kettle/i,4.5,'resistance training'],
+  [/swim/i,7.0,'swimming'],
+  [/row/i,7.0,'rowing'],
+  [/cycl|bike|spin|peloton/i,7.5,'cycling'],
+  [/elliptical/i,5.0,'elliptical'],
+  [/basketball|soccer|tennis|racquet|pickle/i,7.0,'court sport'],
+  [/yard|garden|mow|rake|shovel/i,4.0,'yard work'],
+  [/yoga|stretch|pilates|mobility/i,3.0,'yoga or mobility'],
+  [/clean|chore|housework/i,3.3,'housework'],
+  [/dance|zumba/i,6.5,'dancing'],
+  [/golf/i,4.8,'golf'],
+];
+function metFor(name){
+  const s=String(name||'').trim();
+  if(!s) return null;
+  for(var i=0;i<METS.length;i++) if(METS[i][0].test(s)) return {met:METS[i][1],label:METS[i][2]};
+  return {met:4.0,label:'general activity (no match — rough default)',guess:true};
+}
+function burnEstimate(name,mins){
+  const m=metFor(name); if(!m||!mins) return null;
+  const kg=latestWeight()*0.453592;
+  const perMin=(m.met-1)*3.5*kg/200;
+  return {cal:Math.round(perMin*mins), perMin:perMin, met:m.met, label:m.label, guess:!!m.guess};
+}
+function updateBurnEstimate(){
+  const name=$('#exName').value, mins=+$('#exMin').value||0;
+  const note=$('#exNote');
+  if(!name||!mins){ note.textContent='Type an activity and minutes and the estimate fills in below.'; return; }
+  const e=burnEstimate(name,mins);
+  if(!e){note.textContent='';return}
+  $('#exCal').value=e.cal;
+  note.innerHTML='Estimated as <b>'+esc(e.label)+'</b> at MET '+e.met+', '+e.perMin.toFixed(1)
+    +' kcal/min at '+latestWeight()+' lb. This is <b>net</b> of what you\u2019d have burned resting, which is what the deficit maths needs.'
+    +(e.guess?' <span style="color:var(--guajillo)">No keyword matched, so this is a rough default \u2014 edit the number if you know better.</span>':'')
+    +' Override it freely; the estimate only refreshes when you change the activity or minutes.';
+}
+
+/* ============================================================
+   Calibration — what your body is ACTUALLY burning.
+   Reverse-engineered from intake and the weight trend, which
+   beats any device estimate because it is measured on you.
+   ============================================================ */
+function calibration(){
+  const W=[...S.weights].sort(function(a,b){return a.date<b.date?-1:1});
+  if(W.length<4) return {ok:false,why:'Need at least 4 weigh-ins. You have '+W.length+'.'};
+  const t0=new Date(W[0].date+'T00:00:00'), t1=new Date(W[W.length-1].date+'T00:00:00');
+  const span=Math.round((t1-t0)/86400000);
+  if(span<14) return {ok:false,why:'Need at least 14 days between your first and latest weigh-in. You have '+span+'.'};
+
+  // least-squares slope in lb/day
+  var n=0,sx=0,sy=0,sxy=0,sxx=0;
+  W.forEach(function(w){
+    const x=Math.round((new Date(w.date+'T00:00:00')-t0)/86400000), y=w.lbs;
+    n++;sx+=x;sy+=y;sxy+=x*y;sxx+=x*x;
+  });
+  const slope=(n*sxy-sx*sy)/(n*sxx-sx*sx);          // lb per day, negative when losing
+
+  // average intake over logged days inside the window
+  var days=0,cal=0;
+  Object.keys(S.log).forEach(function(k){
+    if(k<W[0].date||k>W[W.length-1].date) return;
+    const e=S.log[k].entries||[];
+    if(!e.length) return;
+    days++; e.forEach(function(x){cal+=x.cal});
+  });
+  if(days<10) return {ok:false,why:'Need food logged on at least 10 days in that window. You have '+days+'.'};
+  const coverage=days/(span+1);
+  const avgIntake=cal/days;
+  const measured=Math.round(avgIntake-slope*3500);   // slope negative -> TDEE above intake
+  const est=calcNumbers().light;
+  return {ok:true,span:span,days:days,coverage:coverage,avgIntake:Math.round(avgIntake),
+          slope:slope,rate:r1(slope*7),measured:measured,est:est,
+          ratio:Math.round((measured/est)*100),
+          for15:Math.round(measured-750),for20:Math.round(measured-1000)};
+}
+function renderCalibration(){
+  const c=calibration(), box=$('#calibBox');
+  if(!c.ok){
+    box.innerHTML='<p style="font-size:14px;line-height:1.6;margin:0 0 10px">Once there\u2019s enough data, this works out what you\u2019re actually burning by running the arithmetic backwards from your intake and your weight trend. That number is measured on you, so it beats any watch, machine or formula.</p>'
+      +'<div class="kv"><span>Not ready yet</span><b>'+esc(c.why)+'</b></div>';
+    return;
+  }
+  const off=c.measured-c.est;
+  box.innerHTML=
+   '<div class="kv"><span>Window analysed</span><b>'+(c.span+1)+' days, '+c.days+' with food logged</b></div>'
+  +'<div class="kv"><span>Average intake</span><b>'+c.avgIntake.toLocaleString()+' kcal/day</b></div>'
+  +'<div class="kv"><span>Measured weight trend</span><b>'+c.rate+' lb/week</b></div>'
+  +'<div class="rule"></div>'
+  +'<div class="kv"><span><b style="font-family:Archivo">Your actual burn</b></span><b>'+c.measured.toLocaleString()+' kcal/day</b></div>'
+  +'<div class="kv"><span>The formula\u2019s guess</span><b>'+c.est.toLocaleString()+' kcal/day</b></div>'
+  +'<div class="kv"><span>Formula error</span><b>'+(off>=0?'+':'')+off+' kcal ('+c.ratio+'% of estimate)</b></div>'
+  +'<div class="rule"></div>'
+  +'<div class="kv"><span>Eat this for 1.5 lb/week</span><b>'+c.for15.toLocaleString()+' kcal/day</b></div>'
+  +'<div class="kv"><span>Eat this for 2.0 lb/week</span><b>'+c.for20.toLocaleString()+' kcal/day</b></div>'
+  +'<p style="font-size:13.5px;line-height:1.6;color:var(--soft);margin:12px 0 0">'
+  +(c.coverage<0.8?'<b style="color:var(--guajillo)">Food was logged on only '+Math.round(c.coverage*100)+'% of days in this window.</b> Unlogged days almost always contained food, so your real intake is higher than the average above and this burn figure is correspondingly overstated. Treat it as a ceiling until logging is more complete. ':'')
+  +'Precision is roughly \u00b110% at three weeks of data and tightens as weigh-ins accumulate \u2014 scale noise is what limits it, not the arithmetic. Still comfortably better than any wrist wearable. Never set intake below 1,500 kcal regardless of what this says.</p>';
+}
+
+/* ============================================================
+   Exercise week band — the output companion to the fasting band.
+   Food is judged by the day, movement by the week, so this is a
+   7-day strip rather than another 24-hour one.
+   ============================================================ */
+const RESIST_RE=/weight|resist|bodyweight|strength|lift|circuit|push|squat|kettle/i;
+function weekDays(){
+  const t=new Date(todayISO()+'T00:00:00');
+  const off=(t.getDay()+6)%7;              // week starts Monday
+  const ws=new Date(t); ws.setDate(t.getDate()-off);
+  const out=[];
+  for(var i=0;i<7;i++){
+    const dt=new Date(ws); dt.setDate(ws.getDate()+i);
+    const k=todayISO(dt);
+    const l=S.log[k];
+    const ex=(l&&l.ex)?l.ex:[];
+    out.push({k:k,i:i,
+      cal:ex.reduce(function(a,b){return a+b.cal},0),
+      resist:ex.some(function(e){return RESIST_RE.test(e.name)}),
+      today:k===todayISO(), future:k>todayISO()});
+  }
+  return out;
+}
+function renderExBand(){
+  const daily=S.profile.exDaily||350, resistGoal=S.profile.exResist||3;
+  const weekly=daily*6;
+  const D=weekDays();
+  const total=D.reduce(function(a,b){return a+b.cal},0);
+  const hit=D.filter(function(d){return d.cal>=daily*0.8}).length;
+  const resistDone=D.filter(function(d){return d.resist}).length;
+  const todayIdx=D.findIndex(function(d){return d.today});
+  const elapsed=Math.min(6,todayIdx+1);
+  const pace=daily*elapsed;
+
+  /* --- svg --- */
+  const W=700,H=124, top=20, bot=100, trackH=bot-top;
+  const colW=78, gap=20, x0=10;
+  const maxScale=daily/0.68;                 // a target day fills ~68% of the track
+  const cx=function(i){return x0+i*(colW+gap)+colW/2};
+  var h='';
+  // target hairline
+  const ty=bot-trackH*Math.min(1,daily/maxScale);
+  h+='<line x1="4" y1="'+ty+'" x2="'+(W-4)+'" y2="'+ty+'" stroke="rgba(28,33,24,.32)" stroke-width="1.5" stroke-dasharray="6 5"/>';
+  h+='<text x="'+(W-4)+'" y="'+(ty-6)+'" text-anchor="end" font-family="DM Mono,monospace" font-size="11" fill="#5F6656">'+daily+'</text>';
+  D.forEach(function(d){
+    const x=x0+d.i*(colW+gap);
+    // track
+    h+='<rect x="'+x+'" y="'+top+'" width="'+colW+'" height="'+trackH+'" rx="3" fill="#2B3025" opacity="'+(d.future?.28:1)+'"/>';
+    // fill
+    if(d.cal>0){
+      const fh=Math.max(4,Math.min(1,d.cal/maxScale)*trackH);
+      h+='<rect x="'+x+'" y="'+(bot-fh)+'" width="'+colW+'" height="'+fh+'" rx="3" fill="#C8DDA8"/>';
+      if(d.resist) h+='<rect x="'+x+'" y="'+(bot-fh-1)+'" width="'+colW+'" height="6" rx="2" fill="#A83A26"/>';
+      if(d.cal>maxScale) h+='<polygon points="'+cx(d.i)+','+(top-11)+' '+(cx(d.i)-6)+','+(top-3)+' '+(cx(d.i)+6)+','+(top-3)+'" fill="#A83A26"/>';
+      h+='<text x="'+cx(d.i)+'" y="'+(top-10)+'" text-anchor="middle" font-family="DM Mono,monospace" font-size="12" fill="#1C2118">'+Math.round(d.cal)+'</text>';
+    }
+    // today ring
+    if(d.today) h+='<rect x="'+(x-3)+'" y="'+(top-3)+'" width="'+(colW+6)+'" height="'+(trackH+6)+'" rx="5" fill="none" stroke="#1C2118" stroke-width="2.5"/>';
+    // day letter
+    h+='<text x="'+cx(d.i)+'" y="118" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="'+(d.today?'#1C2118':'#5F6656')+'" font-weight="'+(d.today?'500':'400')+'">'+'MTWTFSS'[d.i]+'</text>';
+  });
+  $('#exBandSvg').innerHTML=h;
+
+  /* --- readout --- */
+  $('#exWeekTotal').textContent=total.toLocaleString();
+  $('#exWeekTotal').className='band-state '+(total>=pace?'ontrack':'behind');
+  $('#exWeekOf').textContent='of '+weekly.toLocaleString()+' kcal this week';
+  $('#exResistTag').textContent=resistDone+' / '+resistGoal;
+  var msg;
+  if(total>=weekly) msg='Week complete. Anything else is a bonus.';
+  else if(total>=pace) msg=hit+' of 6 days hit · '+(weekly-total).toLocaleString()+' kcal to go';
+  else msg=Math.round(pace-total).toLocaleString()+' kcal behind pace · '+hit+' of 6 days hit';
+  if(resistDone<resistGoal) msg+=' · '+(resistGoal-resistDone)+' resistance session'+(resistGoal-resistDone===1?'':'s')+' left';
+  $('#exWeekSub').textContent=msg;
+}
+
+/* ============================================================
+   Report — a readable summary you can share or hand to an AI
+   ============================================================ */
+function pad2(n){return String(n).padStart(2,'0')}
+function minHM(m){if(m==null)return '—';return pad2(Math.floor(m/60))+':'+pad2(m%60)}
+function longDate(d){return new Date(d+'T00:00:00').toLocaleDateString(undefined,{weekday:'short',year:'numeric',month:'short',day:'numeric'})}
+function reportDates(scope){
+  const all=Object.keys(S.log).filter(k=>{const d=S.log[k];return (d.entries&&d.entries.length)||(d.ex&&d.ex.length)}).sort();
+  if(scope==='today'){const t=todayISO();return all.indexOf(t)>=0?[t]:[]}
+  if(scope==='7')return all.slice(-7);
+  return all;
+}
+function targetsFor(type){
+  return type==='low'?{cal:1200,fat:35}:type==='training'?{cal:1800,fat:58}:{cal:1650,fat:50};
+}
+function buildReport(scope){
+  const p=S.profile, n=calcNumbers(), ds=reportDates(scope), L=[];
+  const title=scope==='today'?'Today':scope==='7'?'Last 7 logged days':'Full history';
+  const W=[...S.weights].sort(function(a,b){return a.date<b.date?-1:1});
+
+  L.push('# Weight-loss log — '+title);
+  L.push('');
+  L.push('Generated '+new Date().toLocaleString()+'  |  App v'+VERSION.num+' ('+VERSION.name+')');
+  L.push('');
+
+  L.push('## Profile');
+  L.push('- Height: '+p.heightIn+' in (6 ft 1.5 in)');
+  L.push('- Age: '+p.age);
+  L.push('- Start weight: '+p.startLbs+' lb on '+p.startDate);
+  L.push('- Latest weight: '+n.lbs+' lb'+(W.length?' on '+W[W.length-1].date:' (no weigh-in logged yet)'));
+  L.push('- Goal weight: '+p.goalLbs+' lb');
+  L.push('- Change so far: '+r1(n.lbs-p.startLbs)+' lb  |  Remaining to goal: '+r1(n.lbs-p.goalLbs)+' lb');
+  L.push('- BMI: '+n.bmi);
+  L.push('- Estimated BMR (Mifflin-St Jeor): '+n.bmr+' kcal');
+  L.push('- Estimated burn, sedentary day: '+n.sed+' kcal');
+  L.push('- Estimated burn, lightly active day: '+n.light+' kcal');
+  L.push('- Day '+daysSinceStart()+' of the 28-day block');
+  L.push('');
+
+  L.push('## Plan and targets');
+  L.push('- Daily target: '+p.calTarget+' kcal, '+p.fatTarget+' g fat ceiling, '+p.proTarget+' g protein floor');
+  L.push('- Fasting protocol: 16:8, eating window '+S.window.start+'–'+S.window.end);
+  L.push('- Structure: two full meals plus one protein snack; breakfast usually skipped by choice');
+  L.push('');
+
+  if(!ds.length){
+    L.push('## No entries');
+    L.push('');
+    L.push('Nothing has been logged for this period yet.');
+    return L.join('\n');
+  }
+
+  /* ---- aggregates ---- */
+  var tcb=0,tc=0,tf=0,tp=0,tx=0,xs=0,okCal=0,okFat=0,okPro=0,lowCal=0,spanSum=0,spanN=0,lateN=0;
+  ds.forEach(function(k){
+    const d=S.log[k], T=targetsFor(d.dayType);
+    var c=0,f=0,pr=0;
+    d.entries.forEach(function(e){c+=e.cal;f+=e.fat;pr+=e.pro;tcb+=(e.carb||0)});
+    const x=d.ex.reduce(function(a,b){return a+b.cal},0);
+    tc+=c;tf+=f;tp+=pr;tx+=x;xs+=d.ex.length;
+    if(c<T.cal*0.85)lowCal++; else if(c<=T.cal)okCal++;
+    if(f<=T.fat)okFat++;
+    if(pr>=p.proTarget)okPro++;
+    const mins=d.entries.map(function(e){return e.min}).filter(function(m){return m!=null});
+    if(mins.length>1){spanSum+=Math.max.apply(null,mins)-Math.min.apply(null,mins);spanN++}
+    if(mins.length&&Math.max.apply(null,mins)>hm2min(S.window.end))lateN++;
+  });
+  const N=ds.length;
+  const avgDef=Math.round(n.sed+tx/N-tc/N);
+
+  L.push('## Summary across '+N+' logged day'+(N>1?'s':''));
+  L.push('- Date range: '+ds[0]+' to '+ds[ds.length-1]);
+  L.push('- Average intake: '+Math.round(tc/N)+' kcal/day (target '+p.calTarget+')');
+  L.push('- Average fat: '+r1(tf/N)+' g/day (ceiling '+p.fatTarget+')');
+  L.push('- Average protein: '+Math.round(tp/N)+' g/day (floor '+p.proTarget+')');
+  L.push('- Average carbohydrate: '+Math.round(tcb/N)+' g/day (allowance '+carbAllowance()+')');
+  L.push('- Days landing in range (85-100% of target): '+okCal+' of '+N);
+  L.push('- Days UNDER-eating (below 85% of target): '+lowCal+' of '+N);
+  L.push('- Days over target: '+(N-okCal-lowCal)+' of '+N);
+  L.push('- Days at or under the fat ceiling: '+okFat+' of '+N);
+  L.push('- Days meeting the protein floor: '+okPro+' of '+N);
+  L.push('- Exercise logged: '+Math.round(tx)+' kcal across '+xs+' session'+(xs===1?'':'s')+' ('+Math.round(tx/N)+' kcal/day average)');
+  if(spanN)L.push('- Average eating span: '+minHM(Math.round(spanSum/spanN))+' (target 8h 00m or less)');
+  L.push('- Days with food logged after the window closed: '+lateN+' of '+N);
+  L.push('- Average daily deficit vs sedentary burn plus exercise: '+avgDef+' kcal');
+  L.push('- Implied rate at that deficit: '+r1(avgDef*7/3500)+' lb/week');
+  L.push('');
+
+  var flags=[];
+  if(tc/N < p.calTarget*0.85) flags.push('UNDER-EATING: average intake is '+Math.round(tc/N)+' kcal against a '+p.calTarget+' target. The plan has a hard floor of 1500 kcal. Eating this far below it does not speed fat loss meaningfully and it does cost lean mass, energy and adherence. Either the logging is incomplete or the meals need to get bigger.');
+  if(tp/N < p.proTarget*0.9) flags.push('PROTEIN SHORT: averaging '+Math.round(tp/N)+' g against a '+p.proTarget+' g floor. In a steep deficit this is the single biggest driver of losing muscle instead of fat. Add a protein-only snack rather than a larger meal.');
+  if(lateN>0) flags.push('WINDOW DRIFT: food logged after '+S.window.end+' on '+lateN+' of '+N+' days. The back end of the eating window is the part that matters most.');
+  if(spanN && spanSum/spanN > 8*60) flags.push('EATING SPAN: averaging '+minHM(Math.round(spanSum/spanN))+', longer than the 8-hour target.');
+  if(tf/N > p.fatTarget) flags.push('FAT OVER CEILING: averaging '+r1(tf/N)+' g against a '+p.fatTarget+' g cap.');
+  if(avgDef > 1200) flags.push('DEFICIT TOO STEEP: averaging '+avgDef+' kcal/day. Above roughly 1000-1200 the extra loss comes increasingly from lean tissue.');
+  if(N < 5) flags.push('THIN DATA: only '+N+' day'+(N===1?'':'s')+' logged. Treat every average here as provisional.');
+  if(flags.length){
+    L.push('## Flags');
+    L.push('');
+    flags.forEach(function(f){L.push('- '+f)});
+    L.push('');
+  } else {
+    L.push('## Flags');
+    L.push('');
+    L.push('- None. Intake, fat, protein and the eating window are all tracking as planned.');
+    L.push('');
+  }
+
+  /* ---- weight ---- */
+  if(W.length){
+    L.push('## Weight history');
+    L.push('');
+    L.push('| Date | lb | Change | Cumulative |');
+    L.push('|---|---|---|---|');
+    W.forEach(function(w,i){
+      const ch=i>0?r1(w.lbs-W[i-1].lbs):null;
+      L.push('| '+w.date+' | '+w.lbs+' | '+(ch===null?'—':(ch>0?'+':'')+ch)+' | '+r1(w.lbs-p.startLbs)+' |');
+    });
+    L.push('');
+    if(W.length>1){
+      const span=Math.max(1,Math.round((new Date(W[W.length-1].date)-new Date(W[0].date))/86400000));
+      L.push('Actual measured rate: '+r1((W[W.length-1].lbs-W[0].lbs)/span*7)+' lb/week over '+span+' days.');
+      L.push('');
+    }
+  }
+
+  /* ---- daily detail ---- */
+  L.push('## Daily detail');
+  L.push('');
+  ds.forEach(function(k){
+    const d=S.log[k], T=targetsFor(d.dayType);
+    var c=0,f=0,pr=0,cb=0;
+    d.entries.forEach(function(e){c+=e.cal;f+=e.fat;pr+=e.pro;cb+=(e.carb||0)});
+    const x=d.ex.reduce(function(a,b){return a+b.cal},0);
+    const wt=S.weights.filter(function(w){return w.date===k})[0];
+    L.push('### '+longDate(k)+' — '+(d.dayType||'standard')+' day');
+    const cv = c<T.cal*0.85 ? 'WELL UNDER' : (c<=T.cal?'in range for':'OVER');
+    L.push('Totals: '+Math.round(c)+' kcal ('+cv+' '+T.cal+') | '
+      +r1(f)+' g fat ('+(f<=T.fat?'under':'OVER')+' '+T.fat+') | '
+      +Math.round(pr)+' g protein ('+(pr>=p.proTarget?'met':'SHORT OF')+' '+p.proTarget+') | '
+      +Math.round(cb)+' g carb');
+    L.push('Exercise: '+Math.round(x)+' kcal | Net intake: '+Math.round(c-x)+' kcal | Deficit vs sedentary burn: '+Math.round(n.sed+x-c)+' kcal');
+    if(wt)L.push('Weight: '+wt.lbs+' lb');
+    const mins=d.entries.map(function(e){return e.min}).filter(function(m){return m!=null});
+    if(mins.length)L.push('First food '+minHM(Math.min.apply(null,mins))+', last food '+minHM(Math.max.apply(null,mins))
+      +(mins.length>1?' — span '+minHM(Math.max.apply(null,mins)-Math.min.apply(null,mins)):''));
+    L.push('');
+    ['Breakfast','Lunch','Snack','Dinner'].forEach(function(m){
+      const it=d.entries.filter(function(e){return e.meal===m});
+      if(!it.length)return;
+      L.push('**'+m+'** — '+Math.round(it.reduce(function(a,b){return a+b.cal},0))+' kcal');
+      it.forEach(function(e){
+        L.push('- '+e.name+(e.serv?' ('+e.serv+')':'')+' — '+Math.round(e.cal)+' kcal, '+r1(e.fat)+' g fat, '+r1(e.pro)+' g protein, '+r1(e.carb||0)+' g carb'+(e.min!=null?', logged '+minHM(e.min):''));
+      });
+      L.push('');
+    });
+    if(d.ex.length){
+      L.push('**Exercise**');
+      d.ex.forEach(function(e){L.push('- '+e.name+', '+e.mins+' min — '+e.cal+' kcal')});
+      L.push('');
+    }
+  });
+
+  /* ---- prompt for an AI ---- */
+  L.push('---');
+  L.push('');
+  L.push('## Context for analysis');
+  L.push('');
+  L.push('This is a log from a 16:8 intermittent fasting cut. Goal: reach '+p.goalLbs+' lb from a start of '+p.startLbs+' lb. Protein is deliberately held high to protect lean mass during a steep deficit, and fat is capped rather than minimised. Calorie burn figures are estimates from the Mifflin-St Jeor equation, not measurements, and logged exercise calories are conservative estimates that are likely still 15-30% high.');
+  L.push('');
+  L.push('Useful questions to ask of this data:');
+  L.push('- Does the measured weight trend match the intake and deficit figures? If not, which is more likely to be wrong, and why?');
+  L.push('- Where is protein falling short, and which specific meals are causing it?');
+  L.push('- Which logged foods carry the most fat per gram of protein delivered?');
+  L.push('- Is the eating window actually holding at 8 hours, or drifting?');
+  L.push('- Are there day-of-week patterns in adherence?');
+  L.push('- Is the current rate of loss on track for the goal, and what would need to change?');
+  L.push('');
+  L.push('Note: weight readings swing 2-3 lb overnight from salt, hydration, glycogen and sleep. Judge only the multi-day trend, never single days.');
+  return L.join('\n');
+}
+function reportFilename(scope){
+  return 'weightloss_report_'+(scope==='today'?'day':scope==='7'?'week':'full')+'_'+todayISO()+'.md';
+}
+
+/* ============================================================
+   Wiring
+   ============================================================ */
+$$('nav.tabs button').forEach(b=>b.onclick=()=>{
+  $$('nav.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  $$('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+b.dataset.v));
+  window.scrollTo(0,0);
+  if(b.dataset.v==='weight')renderWeight();
+  if(b.dataset.v==='plan')renderNumbers();
+  if(b.dataset.v==='move')renderEx();
+  if(b.dataset.v==='data')renderReport();
+});
+function go(v){const b=$(`nav.tabs button[data-v="${v}"]`);if(b)b.click()}
+$('#jumpAdd').onclick=()=>go('eat');
+$('#qSearch').oninput=renderSearch;
+
+$('#nfSave').onclick=()=>{
+  const n=$('#nfName').value.trim();
+  if(!n){toast('Name the food first');return}
+  S.foods.unshift({id:uid(),name:n,serv:$('#nfServ').value.trim()||'1 serving',
+    cal:+$('#nfCal').value||0,fat:+$('#nfFat').value||0,pro:+$('#nfPro').value||0,carb:+$('#nfCarb').value||0});
+  save();['nfName','nfServ','nfCal','nfFat','nfPro','nfCarb'].forEach(i=>$('#'+i).value='');
+  toast('Saved — search for it any time');
+};
+$('#nrSave').onclick=()=>{
+  const n=$('#nrName').value.trim();
+  if(!n){toast('Name the recipe first');return}
+  S.recipes.unshift({id:uid(),name:n,meal:$('#nrMeal').value,servings:+$('#nrServ').value||1,
+    cal:+$('#nrCal').value||0,fat:+$('#nrFat').value||0,pro:+$('#nrPro').value||0,carb:+$('#nrCarb').value||0,
+    ing:$('#nrIng').value.split('\n').map(s=>s.trim()).filter(Boolean),
+    steps:$('#nrSteps').value.split('\n').map(s=>s.trim()).filter(Boolean)});
+  save();['nrName','nrCal','nrFat','nrPro','nrCarb','nrIng','nrSteps'].forEach(i=>$('#'+i).value='');
+  renderRecipes();toast('Recipe saved');
+};
+$('#exSave').onclick=()=>{
+  const n=$('#exName').value.trim()||'Activity';
+  const c=+$('#exCal').value||0;
+  if(!c){toast('Add a calorie estimate');return}
+  day().ex.push({id:uid(),name:n,mins:+$('#exMin').value||0,cal:c});
+  save();$('#exName').value='';$('#exMin').value='';$('#exCal').value='';
+  renderEx();renderToday();renderExBand();toast('Activity logged');
+};
+$('#wSave').onclick=()=>{
+  const d=$('#wDate').value||todayISO(), l=+$('#wLbs').value;
+  if(!l){toast('Enter a weight');return}
+  S.weights=S.weights.filter(x=>x.date!==d);
+  S.weights.push({date:d,lbs:r1(l)});save();$('#wLbs').value='';
+  renderWeight();renderToday();toast('Weigh-in saved');
+};
+$('#wQuickBtn').onclick=()=>{
+  const l=+$('#wQuick').value;if(!l){toast('Enter a weight');return}
+  const d=todayISO();S.weights=S.weights.filter(x=>x.date!==d);
+  S.weights.push({date:d,lbs:r1(l)});save();renderToday();renderWeight();toast('Saved');
+};
+$('#winSave').onclick=()=>{
+  S.window.start=$('#eatStart').value||'12:00';
+  S.window.end=$('#eatEnd').value||'20:00';
+  save();renderBand();renderToday();toast('Window updated');
+};
+$('#ageSave').onclick=()=>{
+  S.profile.age=+$('#ageIn').value||40;save();renderNumbers();toast('Numbers recalculated');
+};
+$('#pSave').onclick=()=>{
+  const p=S.profile;
+  p.heightIn=+$('#pHeight').value||p.heightIn;
+  p.startLbs=+$('#pStart').value||p.startLbs;
+  p.goalLbs=+$('#pGoal').value||p.goalLbs;
+  p.startDate=$('#pDate').value||p.startDate;
+  p.calTarget=+$('#pCal').value||p.calTarget;
+  p.fatTarget=+$('#pFat').value||p.fatTarget;
+  p.proTarget=+$('#pPro').value||p.proTarget;
+  p.exDaily=+$('#pExD').value||p.exDaily;
+  p.exResist=+$('#pExR').value||p.exResist;
+  save();renderToday();renderNumbers();renderWeight();renderExBand();toast('Profile saved');
+};
+
+/* report */
+var repScope='all';
+function renderReport(){
+  var opts=[['today','Today'],['7','Last 7 days'],['all','Everything']];
+  $('#repScope').innerHTML=opts.map(function(o){
+    return '<button class="chip" aria-pressed="'+(repScope===o[0])+'" data-rs="'+o[0]+'">'+o[1]+'</button>';
+  }).join('');
+  $$('#repScope [data-rs]').forEach(function(b){b.onclick=function(){repScope=b.dataset.rs;renderReport()}});
+  $('#repPrev').value=buildReport(repScope);
+}
+$('#repDl').onclick=function(){
+  var b=new Blob([buildReport(repScope)],{type:'text/markdown'});
+  var u=URL.createObjectURL(b), a=document.createElement('a');
+  a.href=u;a.download=reportFilename(repScope);
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(function(){URL.revokeObjectURL(u)},1500);
+  toast('Report downloaded');
+};
+$('#repCopy').onclick=async function(){
+  try{await navigator.clipboard.writeText(buildReport(repScope));toast('Report copied — paste it anywhere')}
+  catch(e){$('#repPrev').select();toast('Copy blocked — it\'s selected in the preview, copy it manually')}
+};
+
+/* export / import */
+function backup(){return JSON.stringify(Object.assign({_app:'cut16',_appVersion:VERSION.num,_appBuild:VERSION.name,_exported:new Date().toISOString()},S),null,2)}
+$('#expBtn').onclick=()=>{
+  const b=new Blob([backup()],{type:'application/json'});
+  const u=URL.createObjectURL(b), a=document.createElement('a');
+  a.href=u;a.download='weightloss_data_v'+VERSION.num+'_'+todayISO()+'.json';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(u),1500);
+  toast('Backup downloaded');
+};
+$('#copyBtn').onclick=async()=>{
+  try{await navigator.clipboard.writeText(backup());toast('Backup copied')}
+  catch(e){$('#impText').value=backup();toast('Copy blocked — it\'s in the paste box, select and copy')}
+};
+function doImport(txt){
+  try{
+    const p=JSON.parse(txt);
+    if(!p||typeof p!=='object')throw 0;
+    S=Object.assign(clone(DEFAULTS),p,{profile:Object.assign({},DEFAULTS.profile,p.profile||{})});
+    delete S._app;delete S._v;delete S._appVersion;delete S._appBuild;delete S._exported;
+    save();boot();toast('Imported — everything replaced');
+  }catch(e){toast('That file isn\'t a Cut 16 backup')}
+}
+$('#impBtn').onclick=()=>{
+  const t=$('#impText').value.trim();
+  if(!t){toast('Choose a file or paste a backup');return}
+  doImport(t);
+};
+$('#impFile').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=()=>doImport(r.result);r.readAsText(f);
+};
+$('#wipeBtn').onclick=()=>{
+  if(!confirm('Erase every logged meal, weigh-in and workout on this device? Export a backup first if you want to keep it.'))return;
+  if(HAS_LS)localStorage.removeItem(KEY);
+  mem=null;S=clone(DEFAULTS);save();boot();toast('Erased');
+};
+
+/* ============================================================
+   Boot
+   ============================================================ */
+function renderVersion(){
+  const f='weightloss_app_ver_'+VERSION.num+'_'+VERSION.name.replace(/[^a-z0-9]+/gi,'_').toLowerCase()+'.html';
+  $('#vTag').textContent='v'+VERSION.num;
+  $('#vNum').textContent='v'+VERSION.num;
+  $('#vName').textContent=VERSION.name;
+  $('#vDate').textContent=new Date(VERSION.date+'T00:00:00').toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'});
+  $('#vFile').innerHTML='<span class="mono" style="font-size:11px">'+esc(f)+'</span>';
+  $('#vNote').textContent=VERSION.note;
+  $('#vLog').innerHTML=CHANGELOG.map(([n,nm,dt,note])=>
+    `<div class="row"><div class="nm"><b>v${esc(n)} \u00b7 ${esc(nm)}</b><small>${esc(dt)}</small></div>
+     <div class="kc" style="flex:2;text-align:left;font-family:Archivo,sans-serif;font-size:12.5px;color:var(--soft);white-space:normal">${esc(note)}</div></div>`).join('');
+}
+
+function boot(){
+  const p=S.profile;
+  $('#eatStart').value=S.window.start;
+  $('#eatEnd').value=S.window.end;
+  $('#ageIn').value=p.age;
+  $('#pHeight').value=p.heightIn;$('#pStart').value=p.startLbs;$('#pGoal').value=p.goalLbs;
+  $('#pDate').value=p.startDate;$('#pCal').value=p.calTarget;$('#pFat').value=p.fatTarget;$('#pPro').value=p.proTarget;
+  $('#pExD').value=p.exDaily;$('#pExR').value=p.exResist;
+  $('#wDate').value=todayISO();
+  renderToday();renderBand();renderExBand();renderSearch();renderSug();renderDayTemplates();
+  renderRecipes();renderEx();renderWeight();renderNumbers();renderVersion();renderReport();
+  if(!HAS_LS)toast('Private mode — data won\'t persist. Export before closing.');
+}
+boot();
+setInterval(renderBand,30000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){renderBand();renderExBand();renderToday()}});
+</script>
+</body>
+</html>
