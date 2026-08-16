@@ -8,10 +8,11 @@
 <meta name="apple-mobile-web-app-title" content="Cut 16">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="mobile-web-app-capable" content="yes">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="cut16-icon-180-v2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="cut16-icon-180-v2.png">
+<link rel="apple-touch-icon-precomposed" sizes="180x180" href="cut16-icon-180-v2.png">
+<link rel="icon" type="image/png" sizes="192x192" href="cut16-icon-192-v2.png">
+<link rel="icon" type="image/png" sizes="32x32" href="cut16-icon-32-v2.png">
 <link rel="manifest" href="manifest.json">
 <title>Cut 16 — fasting &amp; fat tracker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -944,7 +945,7 @@ ul.ingl li span{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;
       <ol class="steps">
         <li>Create a new repository on GitHub. Public is fine — there's nothing sensitive in the file itself.</li>
         <li>Upload this file and make sure it's named <b class="mono">index.html</b> at the top level.</li>
-        <li>Upload <b class="mono">apple-touch-icon.png</b>, <b class="mono">icon-192.png</b>, <b class="mono">icon-512.png</b>, <b class="mono">favicon-32.png</b> and <b class="mono">manifest.json</b> alongside it, in the same folder — not in a subfolder.</li>
+        <li>Upload <b class="mono">cut16-icon-180-v2.png</b>, <b class="mono">cut16-icon-192-v2.png</b>, <b class="mono">cut16-icon-512-v2.png</b>, <b class="mono">cut16-icon-32-v2.png</b> and <b class="mono">manifest.json</b> alongside it, in the same folder — not in a subfolder. Check one worked by visiting <b class="mono">https://YOURNAME.github.io/REPO/cut16-icon-180-v2.png</b> directly; if that 404s, the file is in the wrong place.</li>
         <li>Repository → <b>Settings</b> → <b>Pages</b> → set Source to <b>Deploy from a branch</b>, branch <b class="mono">main</b>, folder <b class="mono">/ (root)</b>. Save.</li>
         <li>Wait about a minute. Your app is at <b class="mono">https://YOURNAME.github.io/REPONAME/</b></li>
         <li>Open that on your iPhone. Tap the share icon → <b>Add to Home Screen</b> so it opens like an app with its own icon.</li>
@@ -1003,13 +1004,14 @@ ul.ingl li span{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;
    then re-save the file as weightloss_app_ver_N_short_name.html
    ============================================================ */
 const VERSION={
-  num:'14',
-  name:'home screen icon',
+  num:'15',
+  name:'icon cache fix',
   date:'2026-08-09',
-  note:'Added home-screen icon support: apple-touch-icon, favicon and web app manifest, so adding the app to an iPhone home screen shows the app icon rather than a grey placeholder. Full history is in the CHANGELOG below.'
+  note:'Icon files renamed with a version suffix so iOS treats them as new URLs and cannot serve a stale cached icon, plus an apple-touch-icon-precomposed fallback for older iOS. Full history is in the CHANGELOG below.'
 };
 /* Older versions, newest first. Add a line each time you update. */
 const CHANGELOG=[
+  ['15','icon cache fix','2026-08-13','Versioned icon filenames to defeat the iOS home-screen icon cache; added precomposed fallback.'],
   ['14','home screen icon','2026-08-13','Apple touch icon, favicon and web app manifest wired up for home-screen installation.'],
   ['13','sleep and full sync','2026-08-09','Bed and wake time tracking with report integration. Merge extended to sleep, day type and optionally profile and settings, so one import brings a device fully current.'],
   ['12','merge import','2026-08-09','Merge a second device\u2019s backup into this one without losing anything, with a preview of what will be added and content-based duplicate detection.'],
