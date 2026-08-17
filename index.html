@@ -35,6 +35,15 @@
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
+/* Selected-day tint: today is green, each step back is warmer and darker. */
+body[data-back="1"]{--sage:#F0DDD5;--masa:#FBF1EC;--line:rgba(60,26,18,.16);--line2:rgba(60,26,18,.3)}
+body[data-back="2"]{--sage:#EBCFC4;--masa:#F8EAE3;--line:rgba(60,26,18,.18);--line2:rgba(60,26,18,.32)}
+body[data-back="3"]{--sage:#E4BEB1;--masa:#F5E2D9;--line:rgba(60,26,18,.2);--line2:rgba(60,26,18,.34)}
+body[data-back="4"]{--sage:#DCAC9D;--masa:#F1D9CE;--line:rgba(60,26,18,.22);--line2:rgba(60,26,18,.36)}
+body[data-back="5"]{--sage:#D19A8A;--masa:#EDD0C3;--line:rgba(60,26,18,.24);--line2:rgba(60,26,18,.38)}
+body[data-back="6"]{--sage:#C68878;--masa:#E8C6B8;--line:rgba(60,26,18,.26);--line2:rgba(60,26,18,.4)}
+body[data-back="7"]{--sage:#B87767;--masa:#E2BCAC;--line:rgba(60,26,18,.28);--line2:rgba(60,26,18,.42)}
+body{transition:background-color .3s}
 html,body{margin:0;padding:0}
 body{
   background:var(--sage);
@@ -109,7 +118,8 @@ details.acc[open]>summary{border-bottom:1px solid var(--line)}
 .headline{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
   border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:12px}
 .hl{background:#fff;padding:11px 10px 12px}
-.hl span{display:block;font-size:11px;line-height:1.3;color:var(--soft);min-height:28px}
+.hl span{display:block;font-size:11px;line-height:1.35;color:var(--soft);min-height:30px}
+.hl span i{font-style:normal;font-weight:600;color:var(--ink)}
 .hl b{display:block;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:24px;letter-spacing:-.03em;margin:3px 0 1px}
 .hl em{font-style:normal;font-family:'DM Mono',monospace;font-size:10px;color:var(--soft)}
 .hl.done b{color:var(--tomatillo)}
@@ -288,13 +298,41 @@ ul.ingl li span{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;
 .datenav{display:flex;align-items:center;gap:8px;margin-bottom:10px}
 .datenav b{flex:1;text-align:center;font-family:'DM Mono',monospace;font-size:12.5px}
 .datenav button{background:none;border:1px solid var(--line2);border-radius:var(--r);color:var(--ink);padding:3px 10px;font-size:15px;line-height:1.3}
-.daybar{display:flex;align-items:center;gap:12px;padding:10px 12px;margin-bottom:12px;
-  border:1px solid var(--line);border-radius:var(--r);background:var(--masa)}
-.daybar.past{background:rgba(182,122,24,.14);border-color:rgba(182,122,24,.45)}
-.db-txt{flex:1;min-width:0;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
-.db-lab{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft)}
-.db-txt b{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:16px;letter-spacing:-.02em}
-.db-note{font-size:12px;color:var(--soft);width:100%;line-height:1.4}
+.bkbar{display:flex;align-items:center;gap:10px;padding:10px 12px;margin-bottom:12px;
+  border:1px solid rgba(168,58,38,.45);background:rgba(168,58,38,.12);border-radius:var(--r)}
+.bk-txt{flex:1;min-width:0}
+.bk-txt b{display:block;font-weight:600;font-size:14px;line-height:1.25}
+.bk-txt span{font-size:12.5px;color:var(--soft);line-height:1.4}
+.db-back{font-family:'DM Mono',monospace;font-size:11px;color:var(--soft)}
+.db-back.stale{color:var(--guajillo)}
+.dayhead{position:sticky;top:calc(env(safe-area-inset-top) + 44px);z-index:35;
+  display:flex;align-items:center;gap:10px;padding:9px 12px;margin:0 0 10px;
+  border-radius:var(--r);border:2px solid var(--tomatillo);background:var(--masa)}
+body:not([data-back="0"]) .dayhead{border-color:#A8442C}
+.dh-main{flex:1;min-width:0;display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+.dh-tag{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.16em;padding:2px 7px;border-radius:99px;
+  background:var(--tomatillo);color:#fff;white-space:nowrap}
+body:not([data-back="0"]) .dh-tag{background:#A8442C}
+.dh-main b{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:17px;letter-spacing:-.02em}
+.db-note,.db-back{font-family:'DM Mono',monospace;font-size:10.5px;color:var(--soft)}
+.db-back.stale{color:var(--guajillo)}
+.daystrip-wrap{display:flex;align-items:stretch;gap:6px;margin-bottom:12px}
+.stripnav{flex:0 0 30px;background:var(--masa);border:1px solid var(--line2);border-radius:var(--r);
+  color:var(--ink);font-size:19px;line-height:1}
+.daystrip{flex:1;display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.dbox{background:var(--masa);border:1px solid var(--line2);border-radius:var(--r);
+  padding:7px 2px 8px;text-align:center;cursor:pointer;transition:transform .12s}
+.dbox:active{transform:scale(.94)}
+.dbox .dw{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.06em;color:var(--soft);display:block}
+.dbox .dd{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:16px;letter-spacing:-.02em;display:block;line-height:1.15}
+.dbox .dot{display:block;height:4px;width:4px;border-radius:99px;margin:3px auto 0;background:transparent}
+.dbox .dot.on{background:var(--tomatillo)}
+.dbox.today{border-color:var(--tomatillo)}
+.dbox.sel{background:var(--char);border-color:var(--char)}
+.dbox.sel .dw{color:rgba(247,244,236,.66)}
+.dbox.sel .dd{color:var(--masa)}
+.dbox.sel .dot.on{background:#C8DDA8}
+.dbox.future{opacity:.32;pointer-events:none}
 .row.tap{cursor:pointer}
 #toast{
   position:fixed;left:50%;transform:translateX(-50%) translateY(20px);
@@ -331,16 +369,29 @@ ul.ingl li span{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;
 
 <!-- ============ TODAY ============ -->
 <section class="view on" id="v-today">
-  <div class="daybar" id="dayBar">
-    <div class="db-txt">
-      <span class="db-lab" id="dbLab">Today</span>
-      <b id="dbDate"></b>
-      <span class="db-note" id="dbNote"></span>
+  <div class="dayhead" id="dayHead">
+    <div class="dh-main">
+      <span class="dh-tag" id="dhTag">TODAY</span>
+      <b id="dhDate"></b>
+      <span class="db-back" id="dbBack"></span>
     </div>
-    <button class="btn sm" id="backToday" hidden>Back to today</button>
+    <button class="btn sm" id="backToday2" hidden>Jump to today</button>
   </div>
+
+  <div class="daystrip-wrap">
+    <button class="stripnav" id="stripPrev" aria-label="Earlier week">&#8249;</button>
+    <div class="daystrip" id="dayStrip"></div>
+    <button class="stripnav" id="stripNext" aria-label="Later week">&#8250;</button>
+  </div>
+
+  <div class="bkbar" id="bkBar" hidden>
+    <div class="bk-txt"><b id="bkTitle"></b><span id="bkNote"></span></div>
+    <button class="btn sm" id="bkNow">Back up</button>
+    <button class="x" id="bkDismiss" aria-label="Dismiss">&times;</button>
+  </div>
+
   <div class="band-wrap">
-    <div class="eyebrow" style="margin-bottom:9px">Fasting clock</div>
+    <div class="eyebrow" style="margin-bottom:9px" id="clockLab">Fasting clock</div>
     <div class="band-top">
       <div>
         <div class="band-state" id="fastState">—</div>
@@ -358,7 +409,7 @@ ul.ingl li span{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;
   </div>
 
   <div class="card">
-    <div class="eyebrow" style="margin-bottom:9px">Where the day stands</div>
+    <div class="eyebrow" style="margin-bottom:9px" id="standsLab">Where the day stands</div>
     <div class="verdict">
       <div class="v-state" id="vState">—</div>
       <div class="v-sub" id="vSub"></div>
@@ -366,9 +417,9 @@ ul.ingl li span{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;
     <div class="chiprow" id="vChips" style="margin-bottom:14px"></div>
 
     <div class="headline">
-      <div class="hl"><span>Calories to eat today</span><b id="hEat">—</b><em id="hEatSub"></em></div>
-      <div class="hl"><span>Calories consumed</span><b id="hAte">—</b><em id="hAteSub"></em></div>
-      <div class="hl"><span>Calories to burn moving</span><b id="hBurn">—</b><em id="hBurnSub"></em></div>
+      <div class="hl"><span>Calories left to eat<br><i id="hEatDay"></i></span><b id="hEat">—</b><em id="hEatSub"></em></div>
+      <div class="hl"><span>Calories consumed<br><i id="hAteDay"></i></span><b id="hAte">—</b><em id="hAteSub"></em></div>
+      <div class="hl"><span>Calories left to burn<br><i id="hBurnDay"></i></span><b id="hBurn">—</b><em id="hBurnSub"></em></div>
     </div>
 
     <details class="acc sub" id="accLedger">
@@ -419,10 +470,10 @@ ul.ingl li span{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;
       <div class="meter"><i id="carbBar" style="width:0"></i></div>
     </div>
   </div>
-  <p class="tilekey">Big number is what's <b>left</b> for the day. Calories and protein are targets to reach; fat and carbs are ceilings to stay under.</p>
+  <p class="tilekey">Big number is what's <b>left</b> for <b id="tileDay">today</b>. Calories and protein are targets to reach; fat and carbs are ceilings to stay under.</p>
 
   <div class="band-wrap">
-    <div class="eyebrow" style="margin-bottom:9px">Exercise this week</div>
+    <div class="eyebrow" style="margin-bottom:9px" id="exWeekLab">Exercise this week</div>
     <div class="band-top">
       <div>
         <div class="band-state" id="exWeekTotal">0</div>
@@ -439,6 +490,7 @@ ul.ingl li span{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;
       <span style="display:flex;gap:12px">
         <span><i style="display:inline-block;width:10px;height:5px;background:#C8DDA8;vertical-align:middle;margin-right:4px"></i>burn</span>
         <span><i style="display:inline-block;width:10px;height:5px;background:#A83A26;vertical-align:middle;margin-right:4px"></i>resistance</span>
+        <span>tap a day to open it</span>
       </span>
     </div>
   </div>
@@ -450,16 +502,11 @@ ul.ingl li span{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;
       <span class="caret">&#9656;</span>
     </summary>
     <div class="acc-body">
-      <div class="datenav">
-        <button id="dPrev" aria-label="Previous day">&#8249;</button>
-        <b id="dLabel"></b>
-        <button id="dNext" aria-label="Next day">&#8250;</button>
-      </div>
       <div id="logList"></div>
       <button class="btn full ghost" id="jumpAdd" style="margin-top:12px">Add food</button>
 
       <div class="acc-sec">
-        <div class="eyebrow">Log today's weight</div>
+        <div class="eyebrow" id="wLab">Log today's weight</div>
         <div style="display:flex;gap:9px">
           <input type="number" step="0.1" id="wQuick" placeholder="206.3" inputmode="decimal">
           <button class="btn" id="wQuickBtn">Save</button>
@@ -489,6 +536,8 @@ ul.ingl li span{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;
       <div class="acc-sec">
         <div class="eyebrow">Day type</div>
         <div class="chiprow" id="dayTypeRow"></div>
+        <div class="chiprow" style="margin-top:9px"><button class="chip" id="estChip">Reconstructed from memory</button></div>
+        <div class="mono" id="estNote" style="font-size:11px;color:var(--soft);margin-top:8px;line-height:1.5"></div>
         <div class="mono" style="font-size:11.5px;color:var(--soft);margin-top:10px;line-height:1.5" id="dayTypeNote"></div>
       </div>
     </div>
@@ -624,7 +673,7 @@ ul.ingl li span{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;
   </div>
 
   <div class="card">
-    <div class="card-h"><h3>Today's activity</h3><span class="mono" style="font-size:12px;color:var(--soft)" id="exTotal"></span></div>
+    <div class="card-h"><h3 id="exTitle">Today's activity</h3><span class="mono" style="font-size:12px;color:var(--soft)" id="exTotal"></span></div>
     <div id="exList"></div>
   </div>
 
@@ -1004,13 +1053,15 @@ ul.ingl li span{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;
    then re-save the file as weightloss_app_ver_N_short_name.html
    ============================================================ */
 const VERSION={
-  num:'15',
-  name:'icon cache fix',
+  num:'17',
+  name:'day context',
   date:'2026-08-09',
-  note:'Icon files renamed with a version suffix so iOS treats them as new URLs and cannot serve a stale cached icon, plus an apple-touch-icon-precomposed fallback for older iOS. Full history is in the CHANGELOG below.'
+  note:'Rebuilt day navigation so it is always obvious which day you are looking at. A sticky header names the day and how far back it is, seven tappable date boxes replace the small arrows, and the whole page tints progressively redder the further back you go while today stays green. Every label now names the selected day rather than saying today. Exercise week columns are tappable to open that day. Full history is in the CHANGELOG below.'
 };
 /* Older versions, newest first. Add a line each time you update. */
 const CHANGELOG=[
+  ['17','day context','2026-08-16','Sticky day header, tappable date strip, progressive colour tint for past days, day-named labels throughout, and clickable exercise week columns.'],
+  ['16','backup reminder','2026-08-16','Days-since-backup line on Today plus an overdue prompt; per-day reconstructed marker carried into the report and merge.'],
   ['15','icon cache fix','2026-08-13','Versioned icon filenames to defeat the iOS home-screen icon cache; added precomposed fallback.'],
   ['14','home screen icon','2026-08-13','Apple touch icon, favicon and web app manifest wired up for home-screen installation.'],
   ['13','sleep and full sync','2026-08-09','Bed and wake time tracking with report integration. Merge extended to sleep, day type and optionally profile and settings, so one import brings a device fully current.'],
@@ -1040,6 +1091,7 @@ const DEFAULTS={
            calTarget:1650,fatTarget:50,proTarget:150,exDaily:350,exResist:3},
   window:{start:'12:00',end:'20:00'},
   settings:{fastHours:16,eatHours:8,autoWindow:false},
+  meta:{lastBackup:null,promptSeen:null},
   foods:[],      // user-created
   recipes:[],    // user-created
   log:{},        // date -> {entries:[],ex:[],dayType:'standard'}
@@ -1064,6 +1116,26 @@ function save(){
 }
 var VIEW=todayISO();
 function isToday(){return VIEW===todayISO()}
+var STRIP=0;
+function daysBack(){
+  return Math.round((new Date(todayISO()+'T00:00:00')-new Date(VIEW+'T00:00:00'))/86400000);
+}
+function dObj(iso){return new Date(iso+'T00:00:00')}
+/* "Today" or "Saturday, Aug 15" */
+function dayFull(iso){
+  const k=iso||VIEW;
+  return k===todayISO()?'Today':dObj(k).toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'});
+}
+/* short form for tight labels: "today" or "Sat, Aug 15" */
+function dayShort(iso){
+  const k=iso||VIEW;
+  return k===todayISO()?'today':dObj(k).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
+}
+/* possessive-ish phrase: "today" / "on Saturday" */
+function dayOn(iso){
+  const k=iso||VIEW;
+  return k===todayISO()?'today':'on '+dObj(k).toLocaleDateString(undefined,{weekday:'long'});
+}
 function shiftDate(iso,n){const d=new Date(iso+'T00:00:00');d.setDate(d.getDate()+n);return todayISO(d)}
 function day(d){
   const k=d||VIEW;
@@ -1412,7 +1484,7 @@ function renderBand(){
   const st=$('#fastState'), sub=$('#fastSub');
   if(!isToday()){
     st.textContent='Past day';st.className='band-state idle';
-    sub.textContent='Editing '+new Date(VIEW+'T00:00:00').toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
+    sub.textContent=dayFull()+' \u2014 anything you add saves to this date';
     return;
   }
   function fmt(mins){const h=Math.floor(mins/60),m=Math.round(mins%60);return h+'h '+String(m).padStart(2,'0')+'m'}
@@ -1505,9 +1577,10 @@ function renderToday(){
   renderLedger();
 
   // weight quick
-  const w=S.weights.find(x=>x.date===todayISO());
+  const w=S.weights.find(x=>x.date===VIEW);
   $('#wQuick').value=w?w.lbs:'';
-  $('#wQuickNote').textContent=w?('Logged today: '+w.lbs+' lb'):('Last: '+latestWeight()+' lb');
+  $('#wLab').textContent=isToday()?"Log today's weight":'Weight for '+dayFull();
+  $('#wQuickNote').textContent=w?('Recorded '+dayOn()+': '+w.lbs+' lb'):('Nothing recorded '+dayOn()+'. Latest is '+latestWeight()+' lb.');
 
   // day counter
   const dd=daysSinceStart();
@@ -1518,18 +1591,12 @@ function renderToday(){
   $('#logSum').textContent=nItems?(nItems+' item'+(nItems>1?'s':'')+' \u00b7 '+Math.round(t.cal)+' kcal'):'nothing logged';
 
   // date navigation
-  $('#dLabel').textContent=new Date(VIEW+'T00:00:00').toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
-  $('#dNext').disabled=isToday();
-  $('#logTitle').textContent=isToday()?"Today's log":"Log for this day";
-  const vd=new Date(VIEW+'T00:00:00');
-  const dayNames=vd.toLocaleDateString(undefined,{weekday:'long', month:'long', day:'numeric', year:'numeric'});
-  $('#dbDate').textContent=dayNames;
-  $('#dbLab').textContent=isToday()?'Today':'Viewing';
-  $('#dayBar').className='daybar'+(isToday()?'':' past');
-  $('#backToday').hidden=isToday();
-  $('#dbNote').textContent=isToday()
-    ? 'Day '+daysSinceStart()+' of 28'
-    : 'Editing a past day \u2014 anything you add or change is saved to this date, not today.';
+  renderDayNav();
+  $('#standsLab').textContent=isToday()?'Where today stands':'Where '+dayFull()+' stood';
+  $('#clockLab').textContent=isToday()?'Fasting clock':'Fasting clock \u2014 '+dayFull();
+  $('#tileDay').textContent=dayShort();
+  $('#logTitle').textContent=isToday()?"Today's log":dayFull()+' log';
+  renderBackupState();
   renderWindowCard();
   renderSleepCard();
 
@@ -1542,6 +1609,16 @@ function renderToday(){
     S.profile.fatTarget = d.dayType==='low'?35:d.dayType==='training'?58:50;
     save();renderToday();
   });
+  const ec=$('#estChip');
+  ec.setAttribute('aria-pressed',!!d.estimated);
+  ec.onclick=function(){
+    if(d.estimated)delete d.estimated; else d.estimated=true;
+    save();renderToday();
+  };
+  $('#estNote').textContent = d.estimated
+    ? 'Marked as reconstructed. It still counts toward your totals, but the report flags it so you know these numbers were recalled rather than logged at the time.'
+    : 'Turn this on for a day you filled in later from memory.';
+
   $('#dayTypeNote').textContent = d.dayType==='low'
     ? 'Target drops to 1,200 kcal / 35 g fat. Keep protein at 150 g — the cut comes out of fat and carbs, never protein.'
     : d.dayType==='training'
@@ -1586,6 +1663,7 @@ function renderLedger(){
 
   const exGoal=p.exDaily||350, exLeft=Math.max(0,exGoal-ex);
   const eatLeft=p.calTarget-eaten;
+  ['hEatDay','hAteDay','hBurnDay'].forEach(function(i){$('#'+i).textContent=dayShort()});
   $('#hEat').textContent=(eatLeft>0?eatLeft:0).toLocaleString();
   $('#hEat').parentElement.className='hl'+(eatLeft<=0?' done':'');
   $('#hEatSub').textContent=eatLeft>0?'left of '+p.calTarget.toLocaleString():'target of '+p.calTarget.toLocaleString()+' reached';
@@ -1653,6 +1731,66 @@ function renderLedger(){
     }
   }
   st.textContent=head; st.className='v-state '+cls; sub.textContent=msg;
+}
+function daysSinceBackup(){
+  const m=(S.meta&&S.meta.lastBackup)||null;
+  if(!m)return null;
+  return Math.floor((new Date(todayISO()+'T00:00:00')-new Date(m.slice(0,10)+'T00:00:00'))/86400000);
+}
+function markBackedUp(){
+  if(!S.meta)S.meta={};
+  S.meta.lastBackup=new Date().toISOString();
+  save();renderBackupState();
+}
+function renderDayNav(){
+  const back=daysBack();
+  document.body.dataset.back=String(Math.min(7,Math.max(0,back)));
+  $('#dhTag').textContent = back===0?'TODAY':(back===1?'YESTERDAY':back+' DAYS BACK');
+  $('#dhDate').textContent = dObj(VIEW).toLocaleDateString(undefined,{weekday:'long', month:'long', day:'numeric'});
+  $('#backToday2').hidden=isToday();
+
+  /* seven boxes, oldest left. STRIP shifts the window a week at a time. */
+  const anchor=shiftDate(todayISO(),-STRIP*7);
+  var h='';
+  for(var i=6;i>=0;i--){
+    const k=shiftDate(anchor,-i), o=dObj(k), l=S.log[k];
+    const has=l&&((l.entries||[]).length||(l.ex||[]).length);
+    const cls=['dbox'];
+    if(k===VIEW)cls.push('sel');
+    if(k===todayISO())cls.push('today');
+    if(k>todayISO())cls.push('future');
+    h+='<div class="'+cls.join(' ')+'" data-d="'+k+'" role="button" tabindex="0">'
+      +'<span class="dw">'+o.toLocaleDateString(undefined,{weekday:'short'}).slice(0,3)+'</span>'
+      +'<span class="dd">'+o.getDate()+'</span>'
+      +'<span class="dot'+(has?' on':'')+'"></span></div>';
+  }
+  $('#dayStrip').innerHTML=h;
+  $$('#dayStrip .dbox').forEach(function(b){b.onclick=function(){goDay(b.dataset.d)}});
+  $('#stripNext').disabled=STRIP===0;
+}
+function goDay(iso){
+  if(iso>todayISO())return;
+  VIEW=iso;
+  const anchor=shiftDate(todayISO(),-STRIP*7);
+  if(iso>anchor||iso<shiftDate(anchor,-6))STRIP=Math.floor(Math.round((dObj(todayISO())-dObj(iso))/86400000)/7);
+  renderToday();renderBand();renderEx();renderExBand();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function renderBackupState(){
+  const n=daysSinceBackup(), line=$('#dbBack');
+  if(line){
+    if(n===null){line.textContent='never backed up';line.className='db-back stale'}
+    else if(n===0){line.textContent='backed up today';line.className='db-back'}
+    else{line.textContent='last backup '+n+' day'+(n>1?'s':'')+' ago';line.className='db-back'+(n>=2?' stale':'')}
+  }
+  const bar=$('#bkBar'), seen=(S.meta&&S.meta.promptSeen)||null;
+  const overdue = n===null || n>=2;
+  const anyData = Object.keys(S.log).some(function(k){return (S.log[k].entries||[]).length});
+  bar.hidden = !(overdue && anyData && seen!==todayISO());
+  if(!bar.hidden){
+    $('#bkTitle').textContent = n===null?'No backup yet':'It\'s been '+n+' days since your last backup';
+    $('#bkNote').textContent = 'Browser storage can be cleared without warning. Copy a backup into a note and this can\'t cost you days of logging.';
+  }
 }
 function renderSleepCard(){
   const d=day();
@@ -1863,10 +2001,12 @@ function renderEx(){
   $('#exMin').oninput=updateBurnEstimate;
   updateBurnEstimate();
   const d=day();
+  $('#exTitle').textContent=isToday()?"Today's activity":'Activity, '+dayFull();
+  $('#exSave').textContent=isToday()?'Add to today':'Add to '+dayFull();
   $('#exTotal').textContent=d.ex.reduce((a,b)=>a+b.cal,0)+' kcal';
   $('#exList').innerHTML=d.ex.length?d.ex.map(e=>`<div class="row"><div class="nm"><b>${esc(e.name)}</b><small>${e.mins} min</small></div>
     <div class="kc">${e.cal}<em>kcal</em></div><button class="x" data-exdel="${e.id}">×</button></div>`).join('')
-    :'<div class="empty">No activity logged today.</div>';
+    :'<div class="empty">No activity logged '+dayOn()+'.</div>';
   $$('#exList [data-exdel]').forEach(b=>b.onclick=()=>{
     d.ex=d.ex.filter(x=>x.id!==b.dataset.exdel);save();renderEx();renderToday();renderExBand();
   });
@@ -2248,7 +2388,7 @@ function renderCalibration(){
    ============================================================ */
 const RESIST_RE=/weight|resist|bodyweight|strength|lift|circuit|push|squat|kettle/i;
 function weekDays(){
-  const t=new Date(todayISO()+'T00:00:00');
+  const t=new Date(VIEW+'T00:00:00');
   const off=(t.getDay()+6)%7;              // week starts Monday
   const ws=new Date(t); ws.setDate(t.getDate()-off);
   const out=[];
@@ -2260,7 +2400,7 @@ function weekDays(){
     out.push({k:k,i:i,
       cal:ex.reduce(function(a,b){return a+b.cal},0),
       resist:ex.some(function(e){return RESIST_RE.test(e.name)}),
-      today:k===todayISO(), future:k>todayISO()});
+      today:k===todayISO(), sel:k===VIEW, future:k>todayISO()});
   }
   return out;
 }
@@ -2299,12 +2439,23 @@ function renderExBand(){
     }
     // today ring
     if(d.today) h+='<rect x="'+(x-3)+'" y="'+(top-3)+'" width="'+(colW+6)+'" height="'+(trackH+6)+'" rx="5" fill="none" stroke="#1C2118" stroke-width="2.5"/>';
+    // selected-day marker
+    if(d.k===VIEW&&!d.today)
+      h+='<rect x="'+(x-3)+'" y="'+(top-3)+'" width="'+(colW+6)+'" height="'+(trackH+6)+'" rx="5" fill="none" stroke="#A83A26" stroke-width="2.5" stroke-dasharray="6 4"/>';
     // day letter
     h+='<text x="'+cx(d.i)+'" y="118" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="'+(d.today?'#1C2118':'#5F6656')+'" font-weight="'+(d.today?'500':'400')+'">'+'MTWTFSS'[d.i]+'</text>';
+    // invisible hit area so the whole column is tappable
+    if(!d.future)
+      h+='<rect x="'+(x-8)+'" y="0" width="'+(colW+16)+'" height="124" fill="transparent" style="cursor:pointer" data-exd="'+d.k+'"/>';
   });
   $('#exBandSvg').innerHTML=h;
+  $$('#exBandSvg [data-exd]').forEach(function(el){
+    el.addEventListener('click',function(){goDay(el.getAttribute('data-exd'))});
+  });
 
   /* --- readout --- */
+  const wl=$('#exWeekLab');
+  if(wl)wl.textContent=isToday()?'Exercise this week':'Exercise \u2014 week of '+dObj(D[0].k).toLocaleDateString(undefined,{month:'short',day:'numeric'});
   $('#exWeekTotal').textContent=total.toLocaleString()+' kcal';
   $('#exWeekTotal').className='band-state '+(total>=pace?'ontrack':'behind');
   $('#exWeekOf').textContent='of '+weekly.toLocaleString()+' kcal this week';
@@ -2416,7 +2567,10 @@ function buildReport(scope){
     L.push('');
   }
 
+  var estN=ds.filter(function(k){return S.log[k].estimated}).length;
+
   var flags=[];
+  if(estN)flags.push('ESTIMATED DAYS: '+estN+' of '+N+' were filled in later from memory rather than logged at the time. Treat their intake figures as approximate, and give less weight to the burn calibration over any window that includes them.');
   if(tc/N < p.calTarget*0.85) flags.push('UNDER-EATING: average intake is '+Math.round(tc/N)+' kcal against a '+p.calTarget+' target. The plan has a hard floor of 1500 kcal. Eating this far below it does not speed fat loss meaningfully and it does cost lean mass, energy and adherence. Either the logging is incomplete or the meals need to get bigger.');
   if(tp/N < p.proTarget*0.9) flags.push('PROTEIN SHORT: averaging '+Math.round(tp/N)+' g against a '+p.proTarget+' g floor. In a steep deficit this is the single biggest driver of losing muscle instead of fat. Add a protein-only snack rather than a larger meal.');
   if(lateN>0) flags.push('WINDOW DRIFT: food logged after '+S.window.end+' on '+lateN+' of '+N+' days. The back end of the eating window is the part that matters most.');
@@ -2464,7 +2618,7 @@ function buildReport(scope){
     d.entries.forEach(function(e){c+=e.cal;f+=e.fat;pr+=e.pro;cb+=(e.carb||0)});
     const x=d.ex.reduce(function(a,b){return a+b.cal},0);
     const wt=S.weights.filter(function(w){return w.date===k})[0];
-    L.push('### '+longDate(k)+' — '+(d.dayType||'standard')+' day');
+    L.push('### '+longDate(k)+' — '+(d.dayType||'standard')+' day'+(d.estimated?'  [RECONSTRUCTED FROM MEMORY]':''));
     const cv = c<T.cal*0.85 ? 'WELL UNDER' : (c<=T.cal?'in range for':'OVER');
     L.push('Totals: '+Math.round(c)+' kcal ('+cv+' '+T.cal+') | '
       +r1(f)+' g fat ('+(f<=T.fat?'under':'OVER')+' '+T.fat+') | '
@@ -2583,7 +2737,7 @@ $('#wSave').onclick=()=>{
 };
 $('#wQuickBtn').onclick=()=>{
   const l=+$('#wQuick').value;if(!l){toast('Enter a weight');return}
-  const d=todayISO();S.weights=S.weights.filter(x=>x.date!==d);
+  const d=VIEW;S.weights=S.weights.filter(x=>x.date!==d);
   S.weights.push({date:d,lbs:r1(l)});save();renderToday();renderWeight();toast('Saved');
 };
 $('#winSave').onclick=()=>{
@@ -2795,10 +2949,19 @@ $('#nrServ').oninput=renderRecipeTotals;
 ['nfRefN','nfCal','nfFat','nfPro','nfCarb','nfEqN2'].forEach(function(i){$('#'+i).oninput=nfPreview});
 ['nfRefU','nfEqU','nfEqU2'].forEach(function(i){$('#'+i).onchange=nfPreview});
 
+$('#bkNow').onclick=function(){
+  $$('nav.tabs button').forEach(function(b){if(b.dataset.v==='data')b.click()});
+  setTimeout(function(){const el=$('#copyBtn');if(el&&el.scrollIntoView)el.scrollIntoView({behavior:'smooth',block:'center'})},120);
+};
+$('#bkDismiss').onclick=function(){
+  if(!S.meta)S.meta={};
+  S.meta.promptSeen=todayISO();save();renderBackupState();
+};
+
 /* date navigation */
-$('#dPrev').onclick=function(){VIEW=shiftDate(VIEW,-1);renderToday();renderBand();renderEx()};
-$('#dNext').onclick=function(){if(!isToday()){VIEW=shiftDate(VIEW,1);renderToday();renderBand();renderEx()}};
-$('#backToday').onclick=function(){VIEW=todayISO();renderToday();renderBand();renderEx()};
+$('#backToday2').onclick=function(){STRIP=0;goDay(todayISO())};
+$('#stripPrev').onclick=function(){STRIP++;renderDayNav()};
+$('#stripNext').onclick=function(){if(STRIP>0){STRIP--;renderDayNav()}};
 
 $('#bedTime').onchange=function(){
   const d=day(); if(this.value)d.bed=hm2min(this.value); else delete d.bed;
@@ -2926,6 +3089,7 @@ function applyMerge(inc,takeTheirWeights,takeSettings){
       cur.ex.push(x);xids[x.id]=1;xkeys[exKey(x)]=1;
     });
     cur.entries.sort(function(a,b){return (a.min||0)-(b.min||0)});
+    if(src.estimated&&!cur.estimated)cur.estimated=true;
     ['firstEat','lastEat','bed','wake'].forEach(function(f){
       if(src[f]!=null&&cur[f]==null)cur[f]=src[f];
     });
@@ -2938,6 +3102,10 @@ function applyMerge(inc,takeTheirWeights,takeSettings){
     else if(takeTheirWeights)S.weights[idx[w.date]].lbs=w.lbs;
   });
   S.weights.sort(function(a,b){return a.date<b.date?-1:1});
+  if(inc.meta&&inc.meta.lastBackup){
+    if(!S.meta)S.meta={};
+    if(!S.meta.lastBackup||inc.meta.lastBackup>S.meta.lastBackup)S.meta.lastBackup=inc.meta.lastBackup;
+  }
   const fids={},fkeys={};
   (S.foods||[]).forEach(function(f){fids[f.id]=1;fkeys[foodKey(f)]=1});
   (inc.foods||[]).forEach(function(f){
@@ -2961,6 +3129,7 @@ function parseBackup(txt){
 /* export / import */
 function backup(){return JSON.stringify(Object.assign({_app:'cut16',_appVersion:VERSION.num,_appBuild:VERSION.name,_exported:new Date().toISOString()},S),null,2)}
 $('#expBtn').onclick=()=>{
+  markBackedUp();
   const b=new Blob([backup()],{type:'application/json'});
   const u=URL.createObjectURL(b), a=document.createElement('a');
   a.href=u;a.download='weightloss_data_v'+VERSION.num+'_'+todayISO()+'.json';
@@ -2969,7 +3138,7 @@ $('#expBtn').onclick=()=>{
   toast('Backup downloaded');
 };
 $('#copyBtn').onclick=async()=>{
-  try{await navigator.clipboard.writeText(backup());toast('Backup copied')}
+  try{await navigator.clipboard.writeText(backup());markBackedUp();toast('Backup copied \u2014 paste it into a note')}
   catch(e){$('#impText').value=backup();toast('Copy blocked — it\'s in the paste box, select and copy')}
 };
 var INC=null;
