@@ -633,7 +633,7 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
   <div id="recList"></div>
 
   <div class="card" style="margin-top:18px">
-    <div class="card-h"><h3>Write your own recipe</h3></div>
+    <div class="card-h"><h3 id="nrTitle">Write your own recipe</h3><button class="btn sm ghost" id="nrCancel" hidden>Cancel</button></div>
     <label class="f"><span>Name</span><input id="nrName" placeholder="Guajillo pork, cabbage slaw"></label>
     <div class="grid2">
       <label class="f"><span>Meal</span><select id="nrMeal"><option>Breakfast</option><option>Lunch</option><option>Snack</option><option>Dinner</option></select></label>
@@ -1033,7 +1033,24 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
     </div>
     <div class="chiprow" id="shQuick" style="margin-bottom:10px"></div>
     <p class="mono" id="shHint" style="font-size:10.5px;color:var(--soft);line-height:1.5;margin:0 0 12px"></p>
+    <details class="acc sub" id="shAdj" style="margin:0 0 12px">
+      <summary><h3>Change portion size or type</h3><span class="caret">&#9656;</span></summary>
+      <div class="acc-body">
+        <p style="font-size:13px;line-height:1.55;color:var(--soft);margin:0 0 10px">Name what one piece is called and what it weighs, and you can then log this by weight as well as by count. Useful when a "serving" is vague — tell it a serving is 350 g and you can log 250 g of it.</p>
+        <div class="grid3">
+          <label class="f"><span>One</span><select id="shPieceU"></select></label>
+          <label class="f"><span>Weighs</span><input type="number" step="0.01" id="shPieceN" inputmode="decimal"></label>
+          <label class="f"><span>Unit</span><select id="shPieceU2"></select></label>
+        </div>
+        <label class="f" style="display:flex;align-items:flex-start;gap:9px;margin-bottom:10px">
+          <input type="checkbox" id="shPieceSave" style="width:auto;margin-top:3px" checked>
+          <span style="letter-spacing:0;text-transform:none;font-family:Archivo,sans-serif;font-size:13px;color:var(--ink);margin:0;line-height:1.5">Remember this for next time</span>
+        </label>
+        <button class="btn full sm" id="shPieceApply">Apply</button>
+      </div>
+    </details>
     <div class="shprev" id="shPrev"></div>
+    <div class="mono" id="shWeight" style="font-size:11px;color:var(--soft);text-align:center;margin-top:7px"></div>
     <div class="grid2" style="margin-top:12px">
       <label class="f"><span>Meal</span><select id="shMeal"><option>Breakfast</option><option>Lunch</option><option>Snack</option><option>Dinner</option></select></label>
       <label class="f"><span>Time eaten</span><input type="time" id="shTime"></label>
@@ -1053,13 +1070,15 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
    then re-save the file as weightloss_app_ver_N_short_name.html
    ============================================================ */
 const VERSION={
-  num:'17',
-  name:'day context',
+  num:'19',
+  name:'weights everywhere',
   date:'2026-08-09',
-  note:'Rebuilt day navigation so it is always obvious which day you are looking at. A sticky header names the day and how far back it is, seven tappable date boxes replace the small arrows, and the whole page tints progressively redder the further back you go while today stays green. Every label now names the selected day rather than saying today. Exercise week columns are tappable to open that day. Full history is in the CHANGELOG below.'
+  note:'Every pantry item now carries a weight, so anything can be logged in grams, ounces, pounds or kilos rather than only portions. Recipes total their own weight from their ingredients and state it, so a recipe that makes 465 g can be logged as the 100 g you actually weighed out. The logging sheet shows the weight equivalent live, so half a portion reads as 233 g. Full history is in the CHANGELOG below.'
 };
 /* Older versions, newest first. Add a line each time you update. */
 const CHANGELOG=[
+  ['19','weights everywhere','2026-08-17','Gram weights added across the pantry; recipes compute and store their yield; live weight equivalence when logging and on log rows.'],
+  ['18','recipe editing','2026-08-17','Edit and duplicate saved recipes; portion size and type editable at the point of logging, unlocking weight units for meals and recipes.'],
   ['17','day context','2026-08-16','Sticky day header, tappable date strip, progressive colour tint for past days, day-named labels throughout, and clickable exercise week columns.'],
   ['16','backup reminder','2026-08-16','Days-since-backup line on Today plus an overdue prompt; per-day reconstructed marker carried into the report and merge.'],
   ['15','icon cache fix','2026-08-13','Versioned icon filenames to defeat the iOS home-screen icon cache; added precomposed fallback.'],
@@ -1153,57 +1172,57 @@ const r1=n=>Math.round(n*10)/10;
    name | serving | kcal | fat g | protein g
    ============================================================ */
 const PANTRY=[
- ['Chicken breast, raw','4 oz / 113 g',136,3,25,0],
- ['Chicken breast, raw','6 oz / 170 g',204,4.4,38,0],
- ['Pork loin, thin sliced','4 oz / 113 g',160,5.6,25,0],
- ['Pork loin, thin sliced','6 oz / 170 g',240,8.4,37,0],
- ['Tilapia fillet','6 oz / 170 g',163,2.9,34,0],
- ['Swai fillet','6 oz / 170 g',153,5.1,26,0],
- ['Salmon fillet','5 oz / 142 g',260,16,29,0],
- ['Egg, large','1 egg',72,5,6,0.4],
- ['Egg white','1 white',17,0,3.6,0.2],
- ['Canned tuna in water','1 can drained',110,1,26,0],
- ['Kirkland extra lean ham','1 slice / 28 g',30,0.5,5,1],
- ['Cheddar cheese','1 oz / 28 g',114,9.4,7,0.9],
- ['Pinto beans, home cooked','1 cup',245,1,15,45],
- ['Pinto beans, home cooked','1/2 cup',123,0.5,7.5,22.5],
- ['White rice, cooked','1 cup',205,0.4,4.3,45],
- ['White rice, cooked','1/2 cup',103,0.2,2.2,22.5],
- ['Brown rice, cooked','1 cup',218,1.6,5,46],
- ['Brown rice, cooked','1/2 cup',109,0.8,2.5,23],
- ['Pasta, dry','2 oz / 56 g',200,1,7,42],
- ['Pasta, dry','1 oz / 28 g',100,0.5,3.5,21],
- ['Rolled oats, dry','1/2 cup / 40 g',150,3,5,27],
- ['Ciabatta roll, Kirkland','1 roll',255,3,8,48],
- ['Ciabatta roll, Kirkland','1/2 roll',128,1.5,4,24],
- ['Sweet potato','1 medium',112,0.1,2,26],
- ['Zucchini','1 cup sliced',21,0.4,1.5,3.9],
- ['Poblano pepper','1 medium',25,0.2,1,5],
- ['Jalapeno','1 pepper',4,0,0.1,0.9],
- ['Tomato','1 medium',22,0.2,1.1,4.8],
- ['Canned tomatoes','1/2 cup',20,0.1,1,4.5],
- ['Onion','1/2 cup chopped',32,0.1,0.9,7.5],
- ['Romaine lettuce','2 cups',16,0.3,1.2,3.1],
- ['Spinach, raw','2 cups',14,0.2,1.7,2.2],
- ['Cabbage, shredded','1 cup',22,0.1,1.1,5.2],
- ['Broccoli, raw','1 cup',31,0.3,2.6,6],
- ['Avocado','1/2 medium',120,11,1.5,6.4],
- ['Avocado','1/4 medium',60,5.5,0.8,3.2],
- ['Garlic','2 cloves',8,0,0.4,2],
- ['Cilantro','1/4 cup',1,0,0.1,0.2],
- ['Nori sheet','1 sheet',5,0.1,0.6,0.7],
- ['Dashi packet (Gremlin)','1 packet / 8 g',25,0,4,2],
- ['Chicken stock powder','1 tsp',10,0.2,0.5,1.5],
- ['Chicken broth, homemade','1 cup',15,0.5,2,1],
- ['Salsa verde, homemade','1/4 cup',20,0.2,0.7,4],
- ['Guajillo sauce, homemade','1/4 cup',25,0.3,1,5],
- ['Extra virgin olive oil','1 tbsp',119,13.5,0,0],
- ['Extra virgin olive oil','1 tsp',40,4.5,0,0],
- ['Oat milk','1/2 cup / 120 ml',55,3,1,8.5],
- ['Oat milk','1 cup / 240 ml',110,6,2,17],
- ['Decaf coffee, black','1.5 cups',3,0,0.3,0],
- ['YOUR COFFEE - 1.5c decaf + 0.5c oat milk','1 mug',58,3,1.3,8.5],
- ['Lime juice','1 tbsp',4,0,0,1.3],
+ ['Chicken breast, raw','4 oz / 113 g',136,3,25,0,0],
+ ['Chicken breast, raw','6 oz / 170 g',204,4.4,38,0,0],
+ ['Pork loin, thin sliced','4 oz / 113 g',160,5.6,25,0,0],
+ ['Pork loin, thin sliced','6 oz / 170 g',240,8.4,37,0,0],
+ ['Tilapia fillet','6 oz / 170 g',163,2.9,34,0,0],
+ ['Swai fillet','6 oz / 170 g',153,5.1,26,0,0],
+ ['Salmon fillet','5 oz / 142 g',260,16,29,0,0],
+ ['Egg, large','1 egg',72,5,6,0.4,50],
+ ['Egg white','1 white',17,0,3.6,0.2,33],
+ ['Canned tuna in water','1 can drained',110,1,26,0,142],
+ ['Kirkland extra lean ham','1 slice / 28 g',30,0.5,5,1,0],
+ ['Cheddar cheese','1 oz / 28 g',114,9.4,7,0.9,0],
+ ['Pinto beans, home cooked','1 cup',245,1,15,45,171],
+ ['Pinto beans, home cooked','1/2 cup',123,0.5,7.5,22.5,86],
+ ['White rice, cooked','1 cup',205,0.4,4.3,45,158],
+ ['White rice, cooked','1/2 cup',103,0.2,2.2,22.5,79],
+ ['Brown rice, cooked','1 cup',218,1.6,5,46,195],
+ ['Brown rice, cooked','1/2 cup',109,0.8,2.5,23,98],
+ ['Pasta, dry','2 oz / 56 g',200,1,7,42,0],
+ ['Pasta, dry','1 oz / 28 g',100,0.5,3.5,21,0],
+ ['Rolled oats, dry','1/2 cup / 40 g',150,3,5,27,0],
+ ['Ciabatta roll, Kirkland','1 roll',255,3,8,48,85],
+ ['Ciabatta roll, Kirkland','1/2 roll',128,1.5,4,24,43],
+ ['Sweet potato','1 medium',112,0.1,2,26,130],
+ ['Zucchini','1 cup sliced',21,0.4,1.5,3.9,113],
+ ['Poblano pepper','1 medium',25,0.2,1,5,45],
+ ['Jalapeno','1 pepper',4,0,0.1,0.9,14],
+ ['Tomato','1 medium',22,0.2,1.1,4.8,123],
+ ['Canned tomatoes','1/2 cup',20,0.1,1,4.5,121],
+ ['Onion','1/2 cup chopped',32,0.1,0.9,7.5,80],
+ ['Romaine lettuce','2 cups',16,0.3,1.2,3.1,94],
+ ['Spinach, raw','2 cups',14,0.2,1.7,2.2,60],
+ ['Cabbage, shredded','1 cup',22,0.1,1.1,5.2,89],
+ ['Broccoli, raw','1 cup',31,0.3,2.6,6,91],
+ ['Avocado','1/2 medium',120,11,1.5,6.4,100],
+ ['Avocado','1/4 medium',60,5.5,0.8,3.2,50],
+ ['Garlic','2 cloves',8,0,0.4,2,6],
+ ['Cilantro','1/4 cup',1,0,0.1,0.2,4],
+ ['Nori sheet','1 sheet',5,0.1,0.6,0.7,3],
+ ['Dashi packet (Gremlin)','1 packet / 8 g',25,0,4,2,0],
+ ['Chicken stock powder','1 tsp',10,0.2,0.5,1.5,3],
+ ['Chicken broth, homemade','1 cup',15,0.5,2,1,240],
+ ['Salsa verde, homemade','1/4 cup',20,0.2,0.7,4,60],
+ ['Guajillo sauce, homemade','1/4 cup',25,0.3,1,5,60],
+ ['Extra virgin olive oil','1 tbsp',119,13.5,0,0,13.5],
+ ['Extra virgin olive oil','1 tsp',40,4.5,0,0,4.5],
+ ['Oat milk','1/2 cup / 120 ml',55,3,1,8.5,0],
+ ['Oat milk','1 cup / 240 ml',110,6,2,17,0],
+ ['Decaf coffee, black','1.5 cups',3,0,0.3,0,355],
+ ['YOUR COFFEE - 1.5c decaf + 0.5c oat milk','1 mug',58,3,1.3,8.5,475],
+ ['Lime juice','1 tbsp',4,0,0,1.3,15],
 ];
 
 /* ============================================================
@@ -1559,7 +1578,9 @@ function renderToday(){
     h+=`<div class="mealhead"><span class="eyebrow">${m}</span><span class="tot">${Math.round(sub)} kcal</span></div>`;
     items.forEach(e=>{
       normEntry(e);
-      h+=`<div class="row tap" data-edit="${e.id}"><div class="nm"><b>${esc(e.name)}</b><small>${esc(amountLabel(e))} · ${r1(e.fat)}f · ${r1(e.pro)}p · ${r1(e.carb||0)}c</small></div>
+      var eg=e.food?gramsOf(foodRec(e.food),e.amount,e.unit):null;
+      if(e.unit==='g'||e.unit==='kg')eg=null;   /* already shown in the amount */
+      h+=`<div class="row tap" data-edit="${e.id}"><div class="nm"><b>${esc(e.name)}</b><small>${esc(amountLabel(e))}${eg!=null?' · '+esc(gramLabel(eg)):''} · ${r1(e.fat)}f · ${r1(e.pro)}p · ${r1(e.carb||0)}c</small></div>
       <div class="kc">${Math.round(e.cal)}<em>kcal</em></div>
       <button class="x" data-del="${e.id}" aria-label="Remove">×</button></div>`;
     });
@@ -1878,10 +1899,11 @@ function library(){
     out.push(foodRec({name:f.name,serv:f.serv,ref:f.ref||{n:1,u:'portion'},eq:f.eq||null,
       cal:f.cal,fat:f.fat,pro:f.pro,carb:f.carb||0,src:'yours'}));
   });
-  PANTRY.forEach(function(r){out.push(fromServ(r[0],r[1],r[2],r[3],r[4],r[5]||0,'pantry'))});
+  PANTRY.forEach(function(r){out.push(fromServ(r[0],r[1],r[2],r[3],r[4],r[5]||0,'pantry',r[6]||0))});
   MEALS.forEach(function(m){out.push(fromServ(m.name,'1 serving',m.cal,m.fat,m.pro,m.carb||0,'meal'))});
   [].concat(RECIPES,S.recipes||[]).forEach(function(r){
-    out.push(fromServ(r.name+' (recipe)','1 serving',r.cal,r.fat,r.pro,r.carb||0,'recipe'))});
+    const sv=Math.max(1,r.servings||1), gper=r.grams?r.grams/sv:0;
+    out.push(fromServ(r.name+' (recipe)','1 serving',r.cal,r.fat,r.pro,r.carb||0,'recipe',gper))});
   return out;
 }
 function libSearch(q,n){
@@ -1890,7 +1912,7 @@ function libSearch(q,n){
   return library().filter(function(f){return f.name.toLowerCase().indexOf(s)>=0}).slice(0,n||14);
 }
 function allFoods(){
-  const base=PANTRY.map(([n,s,c,f,p,cb])=>({name:n,serv:s,cal:c,fat:f,pro:p,carb:cb||0}));
+  const base=PANTRY.map(([n,s,c,f,p,cb,g])=>fromServ(n,s,c,f,p,cb||0,'pantry',g||0));
   const mine=S.foods.map(f=>({name:f.name,serv:f.serv,cal:f.cal,fat:f.fat,pro:f.pro,carb:f.carb||0,mine:true}));
   const recs=[...RECIPES,...S.recipes].map(r=>({name:r.name+' (recipe)',serv:'1 serving',cal:r.cal,fat:r.fat,pro:r.pro,carb:r.carb||0}));
   const meals=MEALS.map(m=>({name:m.name,serv:m.meal+' suggestion',cal:m.cal,fat:m.fat,pro:m.pro,carb:m.carb||0}));
@@ -1968,13 +1990,15 @@ function renderRecipes(){
     <details class="rec">
       <summary><b>${esc(r.name)}</b><span class="arw">›</span></summary>
       <div class="rec-body">
-        <div class="macros" style="margin-bottom:10px"><b>${r.cal}</b> kcal · <b>${r.fat}</b>g fat · <b>${r.pro}</b>g protein · <b>${r.carb||0}</b>g carb${r.mins?' · '+r.mins+' min':''}</div>
+        <div class="macros" style="margin-bottom:10px"><b>${r.cal}</b> kcal · <b>${r.fat}</b>g fat · <b>${r.pro}</b>g protein · <b>${r.carb||0}</b>g carb${r.mins?' · '+r.mins+' min':''}${r.grams?' · makes '+esc(gramLabel(r.grams))+(r.servings>1?' ('+esc(gramLabel(r.grams/r.servings))+' a serving)':''):''}</div>
         <div class="eyebrow" style="margin-bottom:6px">Ingredients</div>
         <ul class="ingl">${(r.ing||[]).map(x=>Array.isArray(x)?`<li>${esc(x[0])}<span>${esc(x[1])}</span></li>`:`<li>${esc(x)}</li>`).join('')}</ul>
         <div class="eyebrow" style="margin-bottom:6px">Method</div>
         <ol class="steps">${(r.steps||[]).map(s=>`<li>${esc(s)}</li>`).join('')}</ol>
-        <div style="display:flex;gap:8px;margin-top:12px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
           <button class="btn sm" data-rlog="${i}">Log this</button>
+          ${r.mine?`<button class="btn sm ghost" data-redit="${i}">Edit</button>`:''}
+          <button class="btn sm ghost" data-rclone="${i}">Duplicate</button>
           ${r.mine?`<button class="btn sm ghost" data-rdel="${esc(r.id||'')}">Delete</button>`:''}
         </div>
       </div>
@@ -1984,6 +2008,8 @@ function renderRecipes(){
     $('#qMeal').value=r.meal;
     openSheet(fromServ(r.name,'1 serving',r.cal,r.fat,r.pro,r.carb||0),'add');
   });
+  $$('#recList [data-redit]').forEach(b=>b.onclick=()=>loadRecipe(all[+b.dataset.redit],false));
+  $$('#recList [data-rclone]').forEach(b=>b.onclick=()=>loadRecipe(all[+b.dataset.rclone],true));
   $$('#recList [data-rdel]').forEach(b=>b.onclick=()=>{
     S.recipes=S.recipes.filter(x=>x.id!==b.dataset.rdel);save();renderRecipes();toast('Recipe deleted');
   });
@@ -2140,11 +2166,27 @@ function foodRec(o){
     cal:+o.cal||0, fat:+o.fat||0, pro:+o.pro||0, carb:+o.carb||0, src:o.src||''};
 }
 /* legacy pantry rows: "6 oz / 170 g" -> ref 170 g, and 1 portion = 170 g */
-function fromServ(name,serv,cal,fat,pro,carb,src){
+function servPiece(serv){
+  const t=String(serv||'').toLowerCase();
+  const map=[['slice','slice'],['roll','roll'],['can','can'],['packet','packet'],['sheet','sheet'],
+             ['clove','clove'],['egg','egg'],['white','each'],['fillet','fillet'],['mug','each'],
+             ['medium','each'],['pepper','each'],['cup','portion'],['tbsp','portion'],['tsp','portion']];
+  for(var i=0;i<map.length;i++)if(t.indexOf(map[i][0])>=0)return map[i][1];
+  return 'portion';
+}
+function fromServ(name,serv,cal,fat,pro,carb,src,grams){
   const m=String(serv||'').match(/(\d+(?:\.\d+)?)\s*(g|ml)\b/i);
+  const piece=servPiece(serv);
   if(m){
     const n=parseFloat(m[1]), u=m[2].toLowerCase();
-    return foodRec({name:name,serv:serv,ref:{n:n,u:u},eq:{n:1,u:'portion',n2:n,u2:u},
+    return foodRec({name:name,serv:serv,ref:{n:n,u:u},eq:{n:1,u:piece,n2:n,u2:u},
+      cal:cal,fat:fat,pro:pro,carb:carb,src:src});
+  }
+  if(grams>0){
+    /* liquids measured in cups are closer to millilitres, everything else grams */
+    const isVol=/cup|tbsp|tsp|ml|fl/.test(String(serv||'').toLowerCase())&&/coffee|broth|milk|juice|oil|water|stock/.test(String(name||'').toLowerCase());
+    const u=isVol?'ml':'g';
+    return foodRec({name:name,serv:serv,ref:{n:grams,u:u},eq:{n:1,u:piece,n2:grams,u2:u},
       cal:cal,fat:fat,pro:pro,carb:carb,src:src});
   }
   return foodRec({name:name,serv:serv,ref:{n:1,u:'portion'},eq:null,cal:cal,fat:fat,pro:pro,carb:carb,src:src});
@@ -2186,6 +2228,27 @@ function multiplier(f,amount,unit){
 function macrosOf(f,amount,unit){
   const q=multiplier(f,amount,unit);
   return {q:q,cal:f.cal*q,fat:f.fat*q,pro:f.pro*q,carb:f.carb*q};
+}
+/* Grams for any amount of any food, where the food carries enough
+   information to know. Volume is counted at 1 g per ml, which is close
+   enough for broths, sauces and water and is stated wherever it shows. */
+function gramsOf(f,amount,unit){
+  const a=parseFloat(amount)||0;
+  /* direct, or bridged by the food's own equivalence */
+  var v=convert(a,unit,'g',f.eq);
+  if(v==null)v=convert(a,unit,'ml',f.eq);
+  if(v!=null)return v;
+  /* a portion is one reference amount, so weigh that instead */
+  if(unit==='portion'){
+    var per=convert(f.ref.n,f.ref.u,'g',f.eq);
+    if(per==null)per=convert(f.ref.n,f.ref.u,'ml',f.eq);
+    if(per!=null)return per*a;
+  }
+  return null;
+}
+function gramLabel(g){
+  if(g==null)return '';
+  return g>=1000?fmtNum(g/1000)+' kg':Math.round(g)+' g';
 }
 function refLabel(f){
   var t=fmtNum(f.ref.n)+' '+uShort(f.ref.u);
@@ -2246,13 +2309,27 @@ function openSheet(src,mode,entry){
   $('#shHint').textContent=unitOptions(src).length>1
     ? 'Change the unit to enter this any way you like \u2014 the numbers below follow.'
     : 'This item scales by portion only.';
+  const pn=pieceName(src);
+  unitSelect('#shPieceU',COUNT_UNITS.concat(ALL_UNITS),kindOf(pn)==='c'?pn:'serving');
+  unitSelect('#shPieceU2',ALL_UNITS,'g');
+  $('#shPieceN').value=(src.eq&&kindOf(src.eq.u)==='c')?fmtNum(src.eq.n2):'';
+  if(src.eq&&kindOf(src.eq.u)==='c')$('#shPieceU2').value=src.eq.u2;
+  $('#shAdj').open=false;
   sheetPreview();
   $('#sheetWrap').hidden=false;
   document.body.style.overflow='hidden';
 }
 function closeSheet(){$('#sheetWrap').hidden=true;document.body.style.overflow=''}
 function sheetPreview(){
-  const m=macrosOf(SH.src,$('#shAmt').value,$('#shUnit').value);
+  const amt=$('#shAmt').value, un=$('#shUnit').value;
+  const m=macrosOf(SH.src,amt,un);
+  const g=gramsOf(SH.src,amt,un);
+  const wl=$('#shWeight');
+  if(wl){
+    if(g==null)wl.textContent='No weight known for this item — set one below to log it by grams or ounces.';
+    else if(kindOf(un)==='c'||un==='portion')wl.textContent=fmtNum(amt)+' '+uShort(un==='portion'?pieceName(SH.src):un)+' = '+gramLabel(g)+'  ·  '+fmtNum(g/28.3495)+' oz';
+    else wl.textContent='= '+gramLabel(g)+'  ·  '+fmtNum(g/28.3495)+' oz';
+  }
   $('#shPrev').innerHTML=
      '<div class="pv"><b>'+Math.round(m.cal)+'</b><span>kcal</span></div>'
     +'<div class="pv"><b>'+r1(m.fat)+'</b><span>g fat</span></div>'
@@ -2700,6 +2777,7 @@ $('#nfSave').onclick=()=>{
   toast(n+' saved \u2014 it\'s in the library now');
 };
 $('#nfCancel').onclick=resetFoodForm;
+$('#nrCancel').onclick=resetRecipeForm;
 $('#nfEqN2').addEventListener('input',function(){EQ_DIRTY=true});
 $('#nfEqU2').addEventListener('change',function(){EQ_DIRTY=true});
 $('#nrSave').onclick=()=>{
@@ -2711,14 +2789,20 @@ $('#nrSave').onclick=()=>{
     const m=macrosOf(r.f,r.amount,r.unit);
     return [r.f.name, fmtNum(r.amount)+' '+uShort(r.unit)+'  ('+Math.round(m.cal)+' kcal)'];
   }).concat($('#nrIng').value.split('\n').map(function(x){return x.trim()}).filter(Boolean));
-  S.recipes.unshift({id:uid(),name:n,meal:$('#nrMeal').value,servings:sv,
+  const W=recipeWeight();
+  const rec={id:EDIT_RECIPE||uid(),name:n,meal:$('#nrMeal').value,servings:sv,
+    grams:W.g||0, gramsPartial:W.unknown>0,
     cal:Math.round(t.cal/sv),fat:r1(t.fat/sv),pro:r1(t.pro/sv),carb:r1(t.carb/sv),
     items:RB.map(function(r){return {food:r.f,amount:r.amount,unit:r.unit}}),
-    ing:ing, steps:$('#nrSteps').value.split('\n').map(function(x){return x.trim()}).filter(Boolean)});
+    ing:ing, steps:$('#nrSteps').value.split('\n').map(function(x){return x.trim()}).filter(Boolean)};
+  if(EDIT_RECIPE){
+    const i=S.recipes.map(function(x){return x.id}).indexOf(EDIT_RECIPE);
+    if(i>=0)S.recipes[i]=rec; else S.recipes.unshift(rec);
+  }else S.recipes.unshift(rec);
   save();
-  RB=[];['nrName','nrIng','nrSteps'].forEach(i=>$('#'+i).value='');
-  $('#nrServ').value=1;renderIngList();renderRecipes();
-  toast(n+' saved \u2014 '+Math.round(t.cal/sv)+' kcal per serving');
+  const was=EDIT_RECIPE;
+  resetRecipeForm();renderRecipes();
+  toast(n+(was?' updated \u2014 ':' saved \u2014 ')+Math.round(t.cal/sv)+' kcal per serving');
 };
 $('#exSave').onclick=()=>{
   const n=$('#exName').value.trim()||'Activity';
@@ -2842,13 +2926,21 @@ function renderIngMacros(){
     row.querySelector('small').textContent=Math.round(m.cal)+' kcal \u00b7 '+r1(m.fat)+'f \u00b7 '+r1(m.pro)+'p \u00b7 '+r1(m.carb)+'c';
   });
 }
+function recipeWeight(){
+  var g=0, unknown=0;
+  RB.forEach(function(r){
+    const x=gramsOf(r.f,r.amount,r.unit);
+    if(x==null)unknown++; else g+=x;
+  });
+  return {g:g,unknown:unknown};
+}
 function recipeTotals(){
   var t={cal:0,fat:0,pro:0,carb:0};
   RB.forEach(function(r){const m=macrosOf(r.f,r.amount,r.unit);t.cal+=m.cal;t.fat+=m.fat;t.pro+=m.pro;t.carb+=m.carb});
   return t;
 }
 function renderRecipeTotals(){
-  const t=recipeTotals(), sv=Math.max(1,+$('#nrServ').value||1), box=$('#nrReceipt');
+  const t=recipeTotals(), sv=Math.max(1,+$('#nrServ').value||1), box=$('#nrReceipt'), W=recipeWeight();
   if(!RB.length){box.innerHTML='';$('#nrPerServ').textContent='';return}
   var rows='';
   RB.forEach(function(r){
@@ -2856,16 +2948,57 @@ function renderRecipeTotals(){
     const u=r.unit==='portion'?pieceName(r.f):r.unit;
     rows+='<tr><td>'+esc(r.f.name)+'<span class="amt">'+fmtNum(r.amount)+' '+esc(uShort(u))
       +(r.unit==='portion'&&pieceName(r.f)==='portion'?' \u00d7 '+fmtNum(r.f.ref.n)+' '+uShort(r.f.ref.u):'')
-      +'</span></td><td>'+Math.round(m.cal)+'</td><td>'+r1(m.fat)+'</td><td>'+r1(m.pro)+'</td><td>'+r1(m.carb)+'</td></tr>';
+      +'</span></td><td>'+(gramsOf(r.f,r.amount,r.unit)==null?'—':gramLabel(gramsOf(r.f,r.amount,r.unit)))
+      +'</td><td>'+Math.round(m.cal)+'</td><td>'+r1(m.fat)+'</td><td>'+r1(m.pro)+'</td><td>'+r1(m.carb)+'</td></tr>';
   });
-  box.innerHTML='<table class="rcpt"><thead><tr><th>Ingredient</th><th>kcal</th><th>fat</th><th>prot</th><th>carb</th></tr></thead><tbody>'
+  box.innerHTML='<table class="rcpt"><thead><tr><th>Ingredient</th><th>weight</th><th>kcal</th><th>fat</th><th>prot</th><th>carb</th></tr></thead><tbody>'
     +rows
-    +'<tr class="tot"><td>Whole recipe</td><td>'+Math.round(t.cal)+'</td><td>'+r1(t.fat)+'</td><td>'+r1(t.pro)+'</td><td>'+r1(t.carb)+'</td></tr>'
-    +(sv>1?'<tr class="per"><td>Per serving \u00f7 '+sv+'</td><td>'+Math.round(t.cal/sv)+'</td><td>'+r1(t.fat/sv)+'</td><td>'+r1(t.pro/sv)+'</td><td>'+r1(t.carb/sv)+'</td></tr>':'')
+    +'<tr class="tot"><td>Whole recipe</td><td>'+(W.g?gramLabel(W.g):'—')+'</td><td>'+Math.round(t.cal)+'</td><td>'+r1(t.fat)+'</td><td>'+r1(t.pro)+'</td><td>'+r1(t.carb)+'</td></tr>'
+    +(sv>1?'<tr class="per"><td>Per serving \u00f7 '+sv+'</td><td>'+(W.g?gramLabel(W.g/sv):'—')+'</td><td>'+Math.round(t.cal/sv)+'</td><td>'+r1(t.fat/sv)+'</td><td>'+r1(t.pro/sv)+'</td><td>'+r1(t.carb/sv)+'</td></tr>':'')
     +'</tbody></table>';
-  $('#nrPerServ').textContent=sv>1
+  $('#nrPerServ').innerHTML=(sv>1
     ? 'Saved as '+Math.round(t.cal/sv)+' kcal per serving \u2014 '+sv+' servings from '+Math.round(t.cal)+' kcal total.'
-    : 'Saved as '+Math.round(t.cal)+' kcal, one serving.';
+    : 'Saved as '+Math.round(t.cal)+' kcal, one serving.')
+    +(W.g?'<br>Makes about <b>'+gramLabel(W.g)+'</b>, so you can log this by weight \u2014 weigh out 100 g and the app works out the rest.':'')
+    +(W.unknown?'<br><span style="color:var(--guajillo)">'+W.unknown+' ingredient'+(W.unknown>1?'s have':' has')+' no weight defined, so the total weight is understated.</span>':'');
+}
+
+/* ---------- recipe edit / clone ---------- */
+var EDIT_RECIPE=null;
+function loadRecipe(r,asClone){
+  EDIT_RECIPE=asClone?null:(r.id||null);
+  $('#nrName').value=asClone?(r.name+' (copy)'):r.name;
+  $('#nrMeal').value=r.meal||'Lunch';
+  $('#nrServ').value=r.servings||1;
+  $('#nrSteps').value=(r.steps||[]).join('\n');
+  RB=[];
+  var note='';
+  if(r.items&&r.items.length){
+    r.items.forEach(function(it){RB.push({f:foodRec(it.food),amount:it.amount,unit:it.unit})});
+    note=(r.ing||[]).filter(function(x){return typeof x==='string'}).join('\n');
+  }else{
+    /* built-ins and pre-v11 recipes have no itemised ingredients, so seed the
+       original as one line and let ingredients be added or swapped around it */
+    RB.push({f:fromServ(r.name+' (original recipe)','1 serving',r.cal,r.fat,r.pro,r.carb||0),
+             amount:r.servings||1,unit:'portion'});
+    note=(r.ing||[]).map(function(x){return Array.isArray(x)?x[0]+' \u2014 '+x[1]:x}).join('\n');
+    toast('This recipe was not itemised, so it is seeded as one line. Remove it and add ingredients to rebuild it.');
+  }
+  $('#nrIng').value=note;
+  $('#nrTitle').textContent=asClone?'Duplicate recipe':'Edit recipe';
+  $('#nrSave').textContent=asClone?'Save as new recipe':'Save changes';
+  $('#nrCancel').hidden=false;
+  renderIngList();
+  if($('#nrName').scrollIntoView)$('#nrName').scrollIntoView({behavior:'smooth',block:'center'});
+}
+function resetRecipeForm(){
+  EDIT_RECIPE=null;RB=[];
+  ['nrName','nrIng','nrSteps'].forEach(function(i){$('#'+i).value=''});
+  $('#nrServ').value=1;
+  $('#nrTitle').textContent='Write your own recipe';
+  $('#nrSave').textContent='Save recipe';
+  $('#nrCancel').hidden=true;
+  renderIngList();
 }
 
 /* ---------- saved-food manager ---------- */
@@ -2921,6 +3054,37 @@ $('#shQuick').onclick=function(ev){
   const b=ev.target.closest('button'); if(!b)return;
   $('#shUnit').value=b.dataset.qu;$('#shAmt').value=b.dataset.q;sheetPreview();
 };
+$('#shPieceApply').onclick=function(){
+  const p=$('#shPieceU').value, n=parseFloat($('#shPieceN').value), u=$('#shPieceU2').value;
+  if(!(n>0)){toast('Enter what one weighs');return}
+  const src=SH.src;
+  if(kindOf(src.ref.u)==='c'){
+    /* macros stay per one piece; the piece just gains a name and a weight */
+    src.ref={n:src.ref.n,u:p};
+    src.eq={n:src.ref.n,u:p,n2:n*src.ref.n,u2:u};
+  }else{
+    src.eq={n:1,u:p,n2:n,u2:u};
+  }
+  const opts=unitOptions(src), keep=$('#shUnit').value;
+  $('#shUnit').innerHTML=opts.map(function(x){return '<option value="'+x+'">'+uLabelFor(src,x)+'</option>'}).join('');
+  $('#shUnit').value=opts.indexOf(keep)>=0?keep:src.ref.u;
+  $('#shServ').textContent='Per '+refLabel(src)+'  \u00b7  '
+    +Math.round(src.cal)+' kcal, '+r1(src.fat)+' g fat, '+r1(src.pro)+' g protein, '+r1(src.carb)+' g carb';
+  const cu=opts.filter(function(x){return kindOf(x)==='c'})[0];
+  $('#shQuick').innerHTML=(cu?[0.5,1,1.5,2,3].map(function(qq){
+      return '<button class="chip" data-q="'+qq+'" data-qu="'+cu+'">'+fmtNum(qq)+' '+uShort(cu)+'</button>'}).join(''):'')
+    +'<button class="chip" data-q="'+src.ref.n+'" data-qu="'+src.ref.u+'">'+fmtNum(src.ref.n)+' '+uShort(src.ref.u)+'</button>';
+  if($('#shPieceSave').checked){
+    const i=(S.foods||[]).map(function(f){return f.name.toLowerCase()}).indexOf(src.name.toLowerCase());
+    const rec={id:i>=0?S.foods[i].id:uid(),name:src.name,serv:'',ref:src.ref,eq:src.eq,
+      cal:src.cal,fat:src.fat,pro:src.pro,carb:src.carb};
+    if(i>=0)S.foods[i]=rec; else S.foods.unshift(rec);
+    save();renderMyFoods();
+  }
+  $('#shAdj').open=false;sheetPreview();
+  toast('Now loggable by weight');
+};
+
 $('#shSave').onclick=function(){
   const amt=parseFloat($('#shAmt').value);
   if(!amt||amt<=0){toast('Enter an amount above zero');return}
