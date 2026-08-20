@@ -1070,13 +1070,14 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
    then re-save the file as weightloss_app_ver_N_short_name.html
    ============================================================ */
 const VERSION={
-  num:'19',
-  name:'weights everywhere',
+  num:'20',
+  name:'weight-first logging',
   date:'2026-08-09',
-  note:'Every pantry item now carries a weight, so anything can be logged in grams, ounces, pounds or kilos rather than only portions. Recipes total their own weight from their ingredients and state it, so a recipe that makes 465 g can be logged as the 100 g you actually weighed out. The logging sheet shows the weight equivalent live, so half a portion reads as 233 g. Full history is in the CHANGELOG below.'
+  note:'Every logged item now shows its weight first, then the piece count, then the macros \u2014 so a slice of keto bread reads 45 g, 1 slice, and switching it to 60 g reads 60 g, 1.33 slices. Suggested meals and built-in recipes carry weights, so nothing is stuck on portions. Entries logged under earlier versions are upgraded when you open them, keeping their macros while gaining weight units. Full history is in the CHANGELOG below.'
 };
 /* Older versions, newest first. Add a line each time you update. */
 const CHANGELOG=[
+  ['20','weight-first logging','2026-08-18','Weight shown first on every log row and in the report; weights added to suggested meals and built-in recipes; older portion-only entries upgrade to weight units on edit.'],
   ['19','weights everywhere','2026-08-17','Gram weights added across the pantry; recipes compute and store their yield; live weight equivalence when logging and on log rows.'],
   ['18','recipe editing','2026-08-17','Edit and duplicate saved recipes; portion size and type editable at the point of logging, unlocking weight units for meals and recipes.'],
   ['17','day context','2026-08-16','Sticky day header, tappable date strip, progressive colour tint for past days, day-named labels throughout, and clickable exercise week columns.'],
@@ -1230,73 +1231,73 @@ const PANTRY=[
    ============================================================ */
 const MEALS=[
  // ---- BREAKFAST ----
- {meal:'Breakfast',name:'Black decaf, nothing else',cal:3,fat:0,pro:0.3,carb:0,
+ {meal:'Breakfast',name:'Black decaf, nothing else',cal:3,fat:0,pro:0.3,carb:0,grams:355,
   ing:'1.5 cups decaf coffee, black',
   note:'The default on 16:8. Unlimited before noon — it genuinely blunts morning hunger.',flag:'good',flagT:'Free · does not break the fast'},
- {meal:'Breakfast',name:'Ham & egg-white scramble',cal:200,fat:1.5,pro:30,carb:13,
+ {meal:'Breakfast',name:'Ham & egg-white scramble',cal:200,fat:1.5,pro:30,carb:13,grams:399,
   ing:'3 slices lean ham · 4 egg whites · 1 tomato · salsa verde',
   note:'If you ever do want breakfast, this is the version that costs you almost nothing.'},
- {meal:'Breakfast',name:'Oats with your coffee',cal:205,fat:6,pro:6,carb:36,
+ {meal:'Breakfast',name:'Oats with your coffee',cal:205,fat:6,pro:6,carb:36,grams:280,
   ing:'40 g rolled oats · 1/2 cup oat milk · water · cinnamon',
   note:'Low protein for the calories — pair with two eggs if this is a real meal.'},
- {meal:'Breakfast',name:'Two eggs, spinach, salsa verde',cal:218,fat:14.5,pro:14,carb:7,
+ {meal:'Breakfast',name:'Two eggs, spinach, salsa verde',cal:218,fat:14.5,pro:14,carb:7,grams:225,
   ing:'2 eggs · 2 cups spinach · 1 tsp EVOO · salsa verde',
   note:'Tasty, but 14.5 g is nearly a third of your daily fat before noon.',flag:'warn',flagT:'Fat-heavy for the calories'},
 
  // ---- LUNCH ----
- {meal:'Lunch',name:'Tuna & pinto power bowl',cal:388,fat:6.3,pro:40,carb:47,
+ {meal:'Lunch',name:'Tuna & pinto power bowl',cal:388,fat:6.3,pro:40,carb:47,grams:532,
   ing:'1 can tuna · 3/4 cup pinto beans · 2 cups romaine · tomato · onion · cilantro · lime · 1 tsp EVOO',
   note:'Fiber plus protein — the most filling 388 calories on this list. No cooking.',flag:'good',flagT:'Highest satiety per calorie'},
- {meal:'Lunch',name:'Salsa verde chicken rice bowl',cal:366,fat:4,pro:35,carb:43,
+ {meal:'Lunch',name:'Salsa verde chicken rice bowl',cal:366,fat:4,pro:35,carb:43,grams:410,
   ing:'5 oz chicken breast · 3/4 cup white rice · 1 cup cabbage · 1/4 cup salsa verde · cilantro',
   note:'Uses leftover chicken. Swap in brown rice and cut to 1/2 cup for the same volume with more fiber.'},
- {meal:'Lunch',name:'Dashi chicken & nori soup',cal:256,fat:4.2,pro:34,carb:15,
+ {meal:'Lunch',name:'Dashi chicken & nori soup',cal:256,fat:4.2,pro:34,carb:15,grams:1050,
   ing:'1 dashi packet · 5 oz chicken · 1 cup zucchini · 1 cup cabbage · 2 nori sheets · garlic',
   note:'Enormous bowl, tiny number. The one to make on a low day.',flag:'good',flagT:'Low-day staple'},
- {meal:'Lunch',name:'Ham, cheddar & tomato half-ciabatta',cal:327,fat:8.2,pro:28,carb:35,
+ {meal:'Lunch',name:'Ham, cheddar & tomato half-ciabatta',cal:327,fat:8.2,pro:28,carb:35,grams:259,
   ing:'1/2 ciabatta roll · 4 slices ham · 1/2 oz cheddar · romaine · tomato · mustard',
   note:'Half a roll, not a whole one. A whole roll adds 128 calories for no extra fullness.'},
- {meal:'Lunch',name:'Tilapia cabbage tacos, guajillo',cal:272,fat:7.4,pro:35,carb:21,
+ {meal:'Lunch',name:'Tilapia cabbage tacos, guajillo',cal:272,fat:7.4,pro:35,carb:21,grams:438,
   ing:'6 oz tilapia · 2 cups cabbage · 1/4 cup guajillo sauce · onion · cilantro · lime · 1 tsp EVOO',
   note:'Cabbage leaves instead of tortillas saves ~200 calories and you barely notice.'},
 
  // ---- SNACK ----
- {meal:'Snack',name:'Your coffee — decaf + oat milk',cal:58,fat:3,pro:1.3,carb:9,
+ {meal:'Snack',name:'Your coffee — decaf + oat milk',cal:58,fat:3,pro:1.3,carb:9,grams:475,
   ing:'1.5 cups decaf · 1/2 cup oat milk',
   note:'The 3–4 pm one. Doubles as a bridge to dinner.'},
- {meal:'Snack',name:'Ham & cheddar roll-ups',cal:177,fat:6.7,pro:24,carb:5,
+ {meal:'Snack',name:'Ham & cheddar roll-ups',cal:177,fat:6.7,pro:24,carb:5,grams:126,
   ing:'4 slices lean ham · 1/2 oz cheddar · jalapeño',
   note:'24 g protein in 30 seconds. This is the snack that makes the two-meal day work.',flag:'good',flagT:'Best protein-to-effort ratio'},
- {meal:'Snack',name:'Two boiled eggs + salsa verde',cal:164,fat:10,pro:12,carb:5,
+ {meal:'Snack',name:'Two boiled eggs + salsa verde',cal:164,fat:10,pro:12,carb:5,grams:160,
   ing:'2 hard-boiled eggs · salsa verde · salt',
   note:'Boil six on Sunday. Fat is on the high side — skip the avocado at dinner.'},
- {meal:'Snack',name:'Raw broccoli with guajillo dip',cal:87,fat:1,pro:5,carb:17,
+ {meal:'Snack',name:'Raw broccoli with guajillo dip',cal:87,fat:1,pro:5,carb:17,grams:242,
   ing:'2 cups raw broccoli · 1/4 cup guajillo sauce',
   note:'For the day you\'ve already spent your calories and still want to chew something.'},
- {meal:'Snack',name:'Tuna scoop on romaine',cal:126,fat:1,pro:26,carb:4,
+ {meal:'Snack',name:'Tuna scoop on romaine',cal:126,fat:1,pro:26,carb:4,grams:236,
   ing:'1 can tuna · romaine leaves · lime · black pepper',
   note:'26 g protein for 126 calories — nothing else on your list beats this ratio.',flag:'good',flagT:'Leanest protein available'},
- {meal:'Snack',name:'Half an avocado, lime, salt',cal:120,fat:11,pro:1.5,carb:6,
+ {meal:'Snack',name:'Half an avocado, lime, salt',cal:120,fat:11,pro:1.5,carb:6,grams:100,
   ing:'1/2 avocado · lime · flaky salt',
   note:'Delicious and 22% of your daily fat. Have it instead of cheese today, not as well as.',flag:'warn',flagT:'11 g fat — pick one fat today'},
 
  // ---- DINNER ----
- {meal:'Dinner',name:'Seared tilapia, charred poblano, brown rice',cal:378,fat:8.3,pro:38,carb:36,
+ {meal:'Dinner',name:'Seared tilapia, charred poblano, brown rice',cal:378,fat:8.3,pro:38,carb:36,grams:490,
   ing:'6 oz tilapia · 1 poblano · 1 cup zucchini · 1/2 cup brown rice · 1 tsp EVOO · salsa verde',
   note:'20 minutes start to finish. The poblano char is doing all the work.'},
- {meal:'Dinner',name:'Guajillo pork with cabbage slaw & sweet potato',cal:437,fat:11.7,pro:34,carb:49,
+ {meal:'Dinner',name:'Guajillo pork with cabbage slaw & sweet potato',cal:437,fat:11.7,pro:34,carb:49,grams:555,
   ing:'5 oz thin pork · 1/4 cup guajillo · 2 cups cabbage · onion · 1 medium sweet potato · 1 tsp EVOO',
   note:'Thin-sliced pork cooks in 90 seconds a side. Don\'t crowd the pan.'},
- {meal:'Dinner',name:'Sheet-pan chicken, sweet potato, broccoli',cal:418,fat:9.6,pro:45,carb:40,
+ {meal:'Dinner',name:'Sheet-pan chicken, sweet potato, broccoli',cal:418,fat:9.6,pro:45,carb:40,grams:493,
   ing:'6 oz chicken · 1 sweet potato · 2 cups broccoli · garlic · 1 tsp EVOO',
   note:'45 g protein and one pan. Make two portions and lunch is handled.',flag:'good',flagT:'Highest protein dinner'},
- {meal:'Dinner',name:'Pinto & poblano stew with a soft egg',cal:427,fat:6.4,pro:22,carb:66,
+ {meal:'Dinner',name:'Pinto & poblano stew with a soft egg',cal:427,fat:6.4,pro:22,carb:66,grams:481,
   ing:'1 cup pinto beans · 1 poblano · 1/2 cup canned tomato · onion · garlic · 1 dashi packet · 1 egg',
   note:'No meat, still 22 g protein and 15 g fiber. The cheapest meal on the list.'},
- {meal:'Dinner',name:'Salmon over garlic spinach & rice',cal:438,fat:21.5,pro:33,carb:28,
+ {meal:'Dinner',name:'Salmon over garlic spinach & rice',cal:438,fat:21.5,pro:33,carb:28,grams:341,
   ing:'5 oz salmon · 3 cups spinach · 1/2 cup brown rice · garlic · 1 tsp EVOO',
   note:'Worth it for the omega-3s, but it uses 43% of your fat budget. Salmon night = no cheese, no avocado.',flag:'warn',flagT:'21.5 g fat — plan the day around it'},
- {meal:'Dinner',name:'Zucchini-noodle tuna "pasta"',cal:320,fat:6.5,pro:31,carb:35,
+ {meal:'Dinner',name:'Zucchini-noodle tuna "pasta"',cal:320,fat:6.5,pro:31,carb:35,grams:531,
   ing:'2 cups zucchini ribbons · 1 oz dry pasta · 1 can tuna · 1/2 cup canned tomato · garlic · 1 tsp EVOO',
   note:'Half noodles, half zucchini — you get a full bowl of pasta for a third of the calories.'},
 ];
@@ -1346,7 +1347,7 @@ const DAYS=[
    Recipes with instructions
    ============================================================ */
 const RECIPES=[
- {meal:'Dinner',name:'Charred poblano tilapia',cal:378,fat:8.3,pro:38,carb:36,mins:20,
+ {meal:'Dinner',name:'Charred poblano tilapia',cal:378,fat:8.3,pro:38,carb:36,grams:490,mins:20,
   ing:[['Tilapia fillet','6 oz'],['Poblano pepper','1 large'],['Zucchini','1 cup, half-moons'],
        ['Brown rice, cooked','1/2 cup'],['EVOO','1 tsp — measured'],['Salsa verde','1/4 cup'],['Salt, lime','to taste']],
   steps:['Put the poblano directly on a gas burner or under the broiler. Turn it every couple of minutes until it is blistered black on all sides, about 8 minutes.',
@@ -1356,7 +1357,7 @@ const RECIPES=[
          'Lift the fish out. Throw the zucchini into the same pan with the poblano strips and a pinch of salt, 3 minutes on high so it browns rather than sweats.',
          'Rice down, vegetables over, fish on top, salsa verde spooned across, hard squeeze of lime.']},
 
- {meal:'Dinner',name:'Guajillo pork with cabbage slaw',cal:437,fat:11.7,pro:34,carb:49,mins:25,
+ {meal:'Dinner',name:'Guajillo pork with cabbage slaw',cal:437,fat:11.7,pro:34,carb:49,grams:555,mins:25,
   ing:[['Pork loin, thin sliced','5 oz'],['Guajillo sauce','1/4 cup'],['Cabbage','2 cups, shredded thin'],
        ['Onion','1/2, sliced'],['Sweet potato','1 medium'],['EVOO','1 tsp'],['Lime, cilantro, salt','to taste']],
   steps:['Prick the sweet potato, microwave 6–8 minutes until it gives when squeezed. Do this first; everything else takes ten minutes.',
@@ -1366,7 +1367,7 @@ const RECIPES=[
          'Lay the pork in a single layer. 90 seconds a side, no more — thin pork goes from done to leather fast. Work in two batches rather than crowding the pan.',
          'Add the rest of the guajillo, let it bubble 30 seconds and coat the meat. Plate with the slaw and the split sweet potato.']},
 
- {meal:'Dinner',name:'Sheet-pan chicken, sweet potato & broccoli',cal:418,fat:9.6,pro:45,carb:40,mins:35,
+ {meal:'Dinner',name:'Sheet-pan chicken, sweet potato & broccoli',cal:418,fat:9.6,pro:45,carb:40,grams:493,mins:35,
   ing:[['Chicken breast','6 oz'],['Sweet potato','1 medium, 1-inch cubes'],['Broccoli','2 cups florets'],
        ['Garlic','4 cloves, smashed'],['EVOO','1 tsp total'],['Salt, pepper, chile powder','to taste']],
   steps:['Oven to 425°F. Toss the sweet potato cubes with half the oil, salt and chile powder. Spread them on the pan with room between them — crowded vegetables steam.',
@@ -1376,7 +1377,7 @@ const RECIPES=[
          'Back in for 14–16 minutes, until the chicken hits 165°F at the thickest point.',
          'Rest the chicken 5 minutes before slicing or the juice ends up on the board. Double everything and tomorrow\'s lunch is done.']},
 
- {meal:'Dinner',name:'Pinto & poblano stew with a soft egg',cal:427,fat:6.4,pro:22,carb:66,mins:25,
+ {meal:'Dinner',name:'Pinto & poblano stew with a soft egg',cal:427,fat:6.4,pro:22,carb:66,grams:481,mins:25,
   ing:[['Pinto beans, home cooked','1 cup with their liquid'],['Poblano pepper','1, diced'],['Canned tomatoes','1/2 cup'],
        ['Onion','1/2, diced'],['Garlic','3 cloves'],['Dashi packet','1'],['Egg','1'],['Cilantro, lime, salt','to taste']],
   steps:['Sweat the onion and poblano in a dry non-stick pan with a splash of water for 5 minutes. No oil needed — the water does the same job for zero calories.',
@@ -1386,7 +1387,7 @@ const RECIPES=[
          'Crack the egg straight into the simmering stew, cover, 3 minutes for a set white and a running yolk.',
          'Cilantro, lime, salt. Salt it more than feels right — beans cooked without salt need it at the end.']},
 
- {meal:'Lunch',name:'Tuna & pinto power bowl',cal:388,fat:6.3,pro:40,carb:47,mins:5,
+ {meal:'Lunch',name:'Tuna & pinto power bowl',cal:388,fat:6.3,pro:40,carb:47,grams:532,mins:5,
   ing:[['Canned tuna','1 can, drained'],['Pinto beans, home cooked','3/4 cup'],['Romaine','2 cups, chopped'],
        ['Tomato','1, diced'],['Onion','1/4, minced'],['EVOO','1 tsp'],['Lime, cilantro, salt, pepper','to taste']],
   steps:['Drain the tuna properly — press it against the lid. Wet tuna makes a sad bowl.',
@@ -1394,7 +1395,7 @@ const RECIPES=[
          'Combine everything, dress with the teaspoon of oil and the lime-onion mixture, season aggressively.',
          'Eat it immediately or the romaine wilts. If packing it for later, keep the lettuce separate.']},
 
- {meal:'Lunch',name:'Dashi chicken & nori soup',cal:256,fat:4.2,pro:34,carb:15,mins:15,
+ {meal:'Lunch',name:'Dashi chicken & nori soup',cal:256,fat:4.2,pro:34,carb:15,grams:1050,mins:15,
   ing:[['Chicken breast','5 oz, sliced thin'],['Dashi packet','1'],['Zucchini','1 cup'],['Cabbage','1 cup'],
        ['Nori sheet','2, torn'],['Garlic','2 cloves'],['Water','3 cups'],['Salt, chile flake','to taste']],
   steps:['Bring the water to a simmer with the dashi packet and the garlic. Give it 5 minutes — the packet needs time to give up its flavour.',
@@ -1403,7 +1404,7 @@ const RECIPES=[
          'Zucchini in for the last 90 seconds so it keeps some bite.',
          'Off the heat, tear the nori in and let it soften for a minute. Salt to taste, chile flake on top.']},
 
- {meal:'Dinner',name:'Zucchini-noodle tuna pasta',cal:320,fat:6.5,pro:31,carb:35,mins:15,
+ {meal:'Dinner',name:'Zucchini-noodle tuna pasta',cal:320,fat:6.5,pro:31,carb:35,grams:531,mins:15,
   ing:[['Zucchini','2 cups, ribboned or spiralized'],['Pasta, dry','1 oz'],['Canned tuna','1 can'],
        ['Canned tomatoes','1/2 cup'],['Garlic','3 cloves, sliced'],['EVOO','1 tsp'],['Chile flake, salt','to taste']],
   steps:['Boil the ounce of pasta in well-salted water. Keep half a cup of the water when you drain it.',
@@ -1413,12 +1414,12 @@ const RECIPES=[
          'Zucchini ribbons and the drained pasta into the pan with a splash of the pasta water. Toss over high heat for 60 seconds. Any longer and the zucchini turns to water.',
          'Off the heat immediately and serve. The zucchini keeps cooking in the pan.']},
 
- {meal:'Snack',name:'Ham & cheddar roll-ups',cal:177,fat:6.7,pro:24,carb:5,mins:2,
+ {meal:'Snack',name:'Ham & cheddar roll-ups',cal:177,fat:6.7,pro:24,carb:5,grams:126,mins:2,
   ing:[['Kirkland extra lean ham','4 slices'],['Cheddar cheese','1/2 oz, in batons'],['Jalapeño','sliced thin']],
   steps:['Lay out the ham, a baton of cheddar and a couple of jalapeño slices on each, roll tight.',
          'That is it. Make eight on Sunday, keep them in a container, and the 3:30 protein problem is solved for the week.']},
 
- {meal:'Lunch',name:'Tilapia cabbage tacos, guajillo',cal:272,fat:7.4,pro:35,carb:21,mins:15,
+ {meal:'Lunch',name:'Tilapia cabbage tacos, guajillo',cal:272,fat:7.4,pro:35,carb:21,grams:438,mins:15,
   ing:[['Tilapia fillet','6 oz'],['Cabbage','2 cups — leaves kept whole for wrapping, rest shredded'],
        ['Guajillo sauce','1/4 cup'],['Onion','1/4, thin sliced'],['EVOO','1 tsp'],['Lime, cilantro','to taste']],
   steps:['Peel four big outer cabbage leaves off whole and blanch them 60 seconds in boiling water so they fold without cracking. Shred the rest.',
@@ -1426,7 +1427,7 @@ const RECIPES=[
          'Sear the strips in the teaspoon of oil, 2 minutes a side. Do not stir them around — let them sit and colour.',
          'Fill the leaves with fish, shredded cabbage, onion, the rest of the guajillo, cilantro and lime.']},
 
- {meal:'Breakfast',name:'Ham & egg-white scramble',cal:200,fat:1.5,pro:30,carb:13,mins:8,
+ {meal:'Breakfast',name:'Ham & egg-white scramble',cal:200,fat:1.5,pro:30,carb:13,grams:399,mins:8,
   ing:[['Kirkland extra lean ham','3 slices, diced'],['Egg white','4'],['Tomato','1, diced'],['Salsa verde','1/4 cup']],
   steps:['Crisp the diced ham in a dry non-stick pan for 2 minutes. It has enough fat of its own.',
          'Tomato in, 1 minute, to drive off some water.',
@@ -1578,9 +1579,8 @@ function renderToday(){
     h+=`<div class="mealhead"><span class="eyebrow">${m}</span><span class="tot">${Math.round(sub)} kcal</span></div>`;
     items.forEach(e=>{
       normEntry(e);
-      var eg=e.food?gramsOf(foodRec(e.food),e.amount,e.unit):null;
-      if(e.unit==='g'||e.unit==='kg')eg=null;   /* already shown in the amount */
-      h+=`<div class="row tap" data-edit="${e.id}"><div class="nm"><b>${esc(e.name)}</b><small>${esc(amountLabel(e))}${eg!=null?' · '+esc(gramLabel(eg)):''} · ${r1(e.fat)}f · ${r1(e.pro)}p · ${r1(e.carb||0)}c</small></div>
+
+      h+=`<div class="row tap" data-edit="${e.id}"><div class="nm"><b>${esc(e.name)}</b><small>${esc(entryLabel(e))} · ${r1(e.fat)}f · ${r1(e.pro)}p · ${r1(e.carb||0)}c</small></div>
       <div class="kc">${Math.round(e.cal)}<em>kcal</em></div>
       <button class="x" data-del="${e.id}" aria-label="Remove">×</button></div>`;
     });
@@ -1591,8 +1591,16 @@ function renderToday(){
     d.entries=d.entries.filter(e=>e.id!==b.dataset.del);save();renderToday();renderBand();
   });
   $$('#logList [data-edit]').forEach(r=>r.onclick=()=>{
-    const e=normEntry(d.entries.filter(x=>x.id===r.dataset.edit)[0]);
-    if(e) openSheet(foodRec(e.food),'edit',e);
+    var e=normEntry(d.entries.filter(x=>x.id===r.dataset.edit)[0]);
+    if(e){
+      const f=resolveFood(e);
+      const upgraded = f.ref.u!==e.food.ref.u || (!!f.eq)!==(!!e.food.eq);
+      if(upgraded&&e.unit==='portion'){
+        /* same quantity, expressed in the richer unit */
+        e=Object.assign({},e,{amount:(e.qty||1)*f.ref.n,unit:f.ref.u});
+      }
+      openSheet(f,'edit',e);
+    }
   });
 
   renderLedger();
@@ -1900,7 +1908,7 @@ function library(){
       cal:f.cal,fat:f.fat,pro:f.pro,carb:f.carb||0,src:'yours'}));
   });
   PANTRY.forEach(function(r){out.push(fromServ(r[0],r[1],r[2],r[3],r[4],r[5]||0,'pantry',r[6]||0))});
-  MEALS.forEach(function(m){out.push(fromServ(m.name,'1 serving',m.cal,m.fat,m.pro,m.carb||0,'meal'))});
+  MEALS.forEach(function(m){out.push(fromServ(m.name,'1 serving',m.cal,m.fat,m.pro,m.carb||0,'meal',m.grams||0))});
   [].concat(RECIPES,S.recipes||[]).forEach(function(r){
     const sv=Math.max(1,r.servings||1), gper=r.grams?r.grams/sv:0;
     out.push(fromServ(r.name+' (recipe)','1 serving',r.cal,r.fat,r.pro,r.carb||0,'recipe',gper))});
@@ -2170,7 +2178,8 @@ function servPiece(serv){
   const t=String(serv||'').toLowerCase();
   const map=[['slice','slice'],['roll','roll'],['can','can'],['packet','packet'],['sheet','sheet'],
              ['clove','clove'],['egg','egg'],['white','each'],['fillet','fillet'],['mug','each'],
-             ['medium','each'],['pepper','each'],['cup','portion'],['tbsp','portion'],['tsp','portion']];
+             ['medium','each'],['pepper','each'],['serving','serving'],
+             ['cup','portion'],['tbsp','portion'],['tsp','portion']];
   for(var i=0;i<map.length;i++)if(t.indexOf(map[i][0])>=0)return map[i][1];
   return 'portion';
 }
@@ -2277,11 +2286,44 @@ function normEntry(e){
   }
   return e;
 }
+/* An entry stores a snapshot of the food as it was when logged. If the
+   library has since learned that food's weight, adopt the richer version
+   so the entry becomes editable by weight without changing its macros. */
+function resolveFood(e){
+  normEntry(e);
+  const stored=foodRec(e.food);
+  if(gramsOf(stored,1,stored.ref.u)!=null)return stored;
+  const hit=library().filter(function(f){return f.name.toLowerCase()===String(e.name||'').toLowerCase()})[0];
+  if(!hit||gramsOf(hit,1,hit.ref.u)==null)return stored;
+  if(Math.abs(hit.cal-stored.cal)>Math.max(2,stored.cal*0.02))return stored;
+  return hit;
+}
 function amountLabel(e){
   normEntry(e);
   const n=fmtNum(e.amount);
   if(kindOf(e.unit)==='c') return n+' '+(e.amount==1?uShort(e.unit):uLabel(e.unit));
   return n+' '+uShort(e.unit);
+}
+/* "45 g · 1 slice" — weight always first when it can be worked out */
+function entryLabel(e){
+  normEntry(e);
+  const f=resolveFood(e), g=gramsOf(f,e.amount,e.unit);
+  const parts=[];
+  if(g!=null){
+    const vol=kindOf(f.ref.u)==='v'||(f.eq&&kindOf(f.eq.u2)==='v');
+    parts.push(vol?fmtNum(g)+' ml':gramLabel(g));
+  }
+  const piece=pieceName(f);
+  if(kindOf(e.unit)==='c'){
+    if(!(g!=null&&e.unit===piece&&false))parts.push(fmtNum(e.amount)+' '+(e.amount==1?uShort(e.unit):uLabel(e.unit)));
+  }else if(g!=null&&piece!=='portion'){
+    const per=gramsOf(f,1,piece);
+    if(per>0){const c=g/per;parts.push(fmtNum(Math.round(c*100)/100)+' '+(c==1?uShort(piece):uLabel(piece)))}
+  }else if(g==null){
+    parts.push(amountLabel(e));
+  }
+  if(!parts.length)parts.push(amountLabel(e));
+  return parts.join(' \u00b7 ');
 }
 
 /* ============================================================
@@ -2713,7 +2755,7 @@ function buildReport(scope){
       if(!it.length)return;
       L.push('**'+m+'** — '+Math.round(it.reduce(function(a,b){return a+b.cal},0))+' kcal');
       it.forEach(function(e){
-        L.push('- '+e.name+(e.serv?' ('+e.serv+')':'')+' — '+Math.round(e.cal)+' kcal, '+r1(e.fat)+' g fat, '+r1(e.pro)+' g protein, '+r1(e.carb||0)+' g carb'+(e.min!=null?', logged '+minHM(e.min):''));
+        L.push('- '+e.name+' ('+entryLabel(e)+') — '+Math.round(e.cal)+' kcal, '+r1(e.fat)+' g fat, '+r1(e.pro)+' g protein, '+r1(e.carb||0)+' g carb'+(e.min!=null?', logged '+minHM(e.min):''));
       });
       L.push('');
     });
