@@ -192,6 +192,9 @@ details.acc.sub .acc-body{padding:12px}
 }
 .chip[aria-pressed="true"]{background:var(--char);color:var(--masa);border-color:var(--char)}
 .chiprow{display:flex;flex-wrap:wrap;gap:7px}
+.typerow{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.typerow .chiprow{display:contents}
+.typerow .chip{flex:1 1 0;min-width:0;text-align:center;padding:6px 4px;font-size:12px;white-space:nowrap}
 
 /* ---------- forms ---------- */
 label.f{display:block;margin-bottom:10px}
@@ -273,7 +276,11 @@ ul.ingl li span{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;
 @media(min-width:560px){.sheetwrap{align-items:center}.sheet{border-radius:6px}}
 .sheet-h{display:flex;align-items:flex-start;gap:10px;margin-bottom:6px}
 .sheet-h b{flex:1;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:19px;letter-spacing:-.02em;line-height:1.15}
-.shserv{font-size:10.5px;color:var(--soft);line-height:1.5;margin-bottom:13px}
+.shserv{font-size:10.5px;color:var(--soft);line-height:1.5;margin-bottom:11px}
+.whole{border:1px solid var(--line2);border-radius:var(--r);background:#fff;padding:10px 12px;margin-bottom:9px}
+.whole b{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:19px;letter-spacing:-.02em;display:block}
+.whole span{font-family:'DM Mono',monospace;font-size:10.5px;color:var(--soft);display:block;margin-top:2px}
+.askline{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:15px;letter-spacing:-.01em;margin-bottom:9px}
 .shprev{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
 .shprev .pv{background:#fff;padding:9px 6px;text-align:center}
 .shprev .pv b{display:block;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:19px;letter-spacing:-.02em}
@@ -301,11 +308,13 @@ ul.ingl li span{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;
 .datenav{display:flex;align-items:center;gap:8px;margin-bottom:10px}
 .datenav b{flex:1;text-align:center;font-family:'DM Mono',monospace;font-size:12.5px}
 .datenav button{background:none;border:1px solid var(--line2);border-radius:var(--r);color:var(--ink);padding:3px 10px;font-size:15px;line-height:1.3}
-.bkbar{display:flex;align-items:center;gap:10px;padding:10px 12px;margin-bottom:12px;
-  border:1px solid rgba(168,58,38,.45);background:rgba(168,58,38,.12);border-radius:var(--r)}
-.bk-txt{flex:1;min-width:0}
-.bk-txt b{display:block;font-weight:600;font-size:14px;line-height:1.25}
-.bk-txt span{font-size:12.5px;color:var(--soft);line-height:1.4}
+.bkbar{display:flex;align-items:center;gap:8px;padding:5px 10px;margin-bottom:9px;
+  border:1px solid rgba(168,58,38,.45);background:rgba(168,58,38,.12);border-radius:var(--r);
+  font-size:12px;line-height:1.3}
+.bkbar b{font-weight:600;white-space:nowrap}
+.bkbar>span{flex:1;min-width:0;color:var(--soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bkbar .btn.sm{padding:3px 8px;font-size:11.5px}
+.bkbar .x{font-size:16px;padding:0 2px}
 .db-back{font-family:'DM Mono',monospace;font-size:11px;color:var(--soft)}
 .db-back.stale{color:var(--guajillo)}
 .dayhead{position:sticky;top:calc(env(safe-area-inset-top) + 44px);z-index:35;
@@ -320,15 +329,20 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
 .db-note,.db-back{font-family:'DM Mono',monospace;font-size:10.5px;color:var(--soft)}
 .db-back.stale{color:var(--guajillo)}
 .daystrip-wrap{display:flex;align-items:stretch;gap:6px;margin-bottom:12px}
-.stripnav{flex:0 0 30px;background:var(--masa);border:1px solid var(--line2);border-radius:var(--r);
-  color:var(--ink);font-size:19px;line-height:1}
+.stripnav{flex:0 0 30px;background:transparent;border:0;color:var(--soft);font-size:20px;line-height:1;padding:0}
+.stripnav:disabled{opacity:.25}
 .daystrip{flex:1;display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
-.dbox{background:var(--masa);border:1px solid var(--line2);border-radius:var(--r);
-  padding:7px 2px 8px;text-align:center;cursor:pointer;transition:transform .12s}
+.dbox{position:relative;background:var(--masa);border:1px solid var(--line2);border-radius:var(--r);
+  padding:7px 2px 20px;text-align:center;cursor:pointer;transition:transform .12s;overflow:hidden}
 .dbox:active{transform:scale(.94)}
 .dbox .dw{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.06em;color:var(--soft);display:block}
 .dbox .dd{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:16px;letter-spacing:-.02em;display:block;line-height:1.15}
-.dbox .dot{display:block;height:4px;width:4px;border-radius:99px;margin:3px auto 0;background:transparent}
+.dbox .dwt{position:absolute;left:0;right:0;bottom:0;display:block;
+  font-family:'DM Mono',monospace;font-size:12px;font-weight:500;line-height:18px;
+  color:var(--ink);background:rgba(28,33,24,.07);letter-spacing:-.01em}
+.dbox .dwt:empty{background:transparent}
+.dbox.sel .dwt{color:var(--masa);background:rgba(247,244,236,.16)}
+.dbox .dot{display:block;height:4px;width:4px;border-radius:99px;margin:2px auto 0;background:transparent}
 .dbox .dot.on{background:var(--tomatillo)}
 .dbox.today{border-color:var(--tomatillo)}
 .dbox.sel{background:var(--char);border-color:var(--char)}
@@ -336,6 +350,67 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
 .dbox.sel .dd{color:var(--masa)}
 .dbox.sel .dot.on{background:#C8DDA8}
 .dbox.future{opacity:.32;pointer-events:none}
+
+/* ---- aligned mini strips ---- */
+.striprow{margin-bottom:10px}
+.striplab{display:flex;align-items:baseline;gap:8px;padding:0 36px 5px}
+.striplab span{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft)}
+.striplab em{font-style:normal;font-size:11px;color:var(--soft);margin-left:auto}
+.strip-align{padding:0 36px}
+.ministrip{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.mbox{background:var(--masa);border:1px solid var(--line2);border-radius:var(--r);
+  padding:6px 2px 5px;text-align:center;cursor:pointer;position:relative;overflow:hidden;min-height:42px}
+.mbox .mv{font-family:'DM Mono',monospace;font-size:11px;line-height:1.2;position:relative;z-index:1;display:block}
+.mbox .mu{font-family:'DM Mono',monospace;font-size:8.5px;color:var(--soft);position:relative;z-index:1;display:block}
+.mbox .fill{position:absolute;left:0;right:0;bottom:0;background:rgba(79,112,49,.28)}
+.mbox .fill.warn{background:rgba(182,122,24,.3)}
+.mbox .fill.over{background:rgba(168,58,38,.3)}
+.mbox .rdot{position:absolute;top:3px;left:50%;transform:translateX(-50%);width:12px;height:3px;border-radius:2px;background:var(--guajillo);z-index:2}
+.mbox.empty .mv{color:var(--soft)}
+.mbox.sel{border-color:var(--char);border-width:2px}
+.mbox.future{opacity:.32;pointer-events:none}
+
+/* ---- quad summary ---- */
+.grid7{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin:0 36px 6px}
+.macgrid{margin-bottom:12px}
+.cbox{background:var(--masa);border:1px solid var(--line);border-radius:var(--r);padding:5px 2px 6px;text-align:center}
+.cbox .cl{display:block;font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.08em;color:var(--soft);line-height:1.2}
+.cbox .cv{display:block;font-family:'DM Mono',monospace;font-size:13px;font-weight:500;line-height:1.3}
+.cbox .cv.ok{color:var(--tomatillo)}
+.cbox .cv.over{color:var(--guajillo)}
+@media(max-width:560px){.grid7{margin-left:0;margin-right:0;gap:3px}
+  .cbox .cv{font-size:11px}
+  .cbox .cl{font-size:7.5px}}
+.qbox{background:var(--masa);border:1px solid var(--line);border-radius:var(--r);padding:9px 8px 10px}
+.qbox h4{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);margin:0 0 6px;font-weight:400}
+.qline{display:flex;justify-content:space-between;align-items:baseline;gap:5px;padding:2px 0}
+.qline span{font-size:10px;color:var(--soft);line-height:1.2}
+.qline b{font-family:'DM Mono',monospace;font-size:12.5px;font-weight:500;white-space:nowrap}
+.qbox .big{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:20px;letter-spacing:-.03em;line-height:1.05;display:block;margin-bottom:1px}
+.qbox .big.ok{color:var(--tomatillo)}
+.qbox .big.over{color:var(--guajillo)}
+.ledgerwrap{margin-bottom:12px}
+#v-today>.card,#v-today>.ledgerwrap,#v-today>details.acc,#v-today>.band-wrap,#v-today>.dayhead,#v-today>.bkbar{
+  margin-left:36px;margin-right:36px}
+@media(max-width:560px){
+  #v-today>.card,#v-today>.ledgerwrap,#v-today>details.acc,#v-today>.band-wrap,#v-today>.dayhead,#v-today>.bkbar{
+    margin-left:0;margin-right:0}
+}
+
+/* ---- timing row ---- */
+.timerow{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin:0 36px 12px}
+.tbox{background:var(--masa);border:1px solid var(--line);border-radius:var(--r);padding:8px 6px 9px;text-align:center}
+.tbox h4{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);margin:0 0 4px;font-weight:400;line-height:1.2;white-space:nowrap}
+.tbox input{padding:5px 2px;font-size:13px;text-align:center;font-family:'DM Mono',monospace;border-color:var(--line)}
+.tbox .val{font-family:'DM Mono',monospace;font-weight:500;font-size:14px;letter-spacing:-.02em;line-height:1.5}
+.tbox .val.ok{color:var(--tomatillo)}
+.tbox .val.warn{color:var(--amber)}
+.tbox .val.bad{color:var(--guajillo)}
+@media(max-width:560px){
+  .quad{grid-template-columns:repeat(2,1fr)}
+  .timerow{grid-template-columns:repeat(3,1fr);margin-left:0;margin-right:0}
+  .striplab,.strip-align{padding-left:0;padding-right:0}
+}
 .row.tap{cursor:pointer}
 #toast{
   position:fixed;left:50%;transform:translateX(-50%) translateY(20px);
@@ -381,16 +456,56 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
     <button class="btn sm" id="backToday2" hidden>Jump to today</button>
   </div>
 
+  <div class="bkbar" id="bkBar" hidden>
+    <b id="bkTitle"></b><span id="bkNote"></span>
+    <button class="btn sm" id="bkNow">Back up</button>
+    <button class="x" id="bkDismiss" aria-label="Dismiss">&times;</button>
+  </div>
+
   <div class="daystrip-wrap">
     <button class="stripnav" id="stripPrev" aria-label="Earlier week">&#8249;</button>
     <div class="daystrip" id="dayStrip"></div>
     <button class="stripnav" id="stripNext" aria-label="Later week">&#8250;</button>
   </div>
 
-  <div class="bkbar" id="bkBar" hidden>
-    <div class="bk-txt"><b id="bkTitle"></b><span id="bkNote"></span></div>
-    <button class="btn sm" id="bkNow">Back up</button>
-    <button class="x" id="bkDismiss" aria-label="Dismiss">&times;</button>
+  <div class="striprow">
+    <div class="striplab"><span>Food</span><em id="foodStripNote">tap a day to log a meal</em></div>
+    <div class="strip-align"><div class="ministrip" id="foodStrip"></div></div>
+  </div>
+
+  <div class="grid7" id="calRow"></div>
+  <div class="grid7 macgrid" id="macRow"></div>
+
+  <div class="ledgerwrap">
+    <details class="acc sub" id="accLedger">
+      <summary><h3>Full breakdown</h3><span class="sum" id="ledSum"></span><span class="caret">&#9656;</span></summary>
+      <div class="acc-body">
+        <div class="lrow"><span>Burn just being you — age, height, weight, normal daily moving about</span><b id="lBase">—</b></div>
+        <div class="lrow"><span>Plus exercise you logged today</span><b id="lEx">—</b></div>
+        <div class="lrow tot"><span>Total burned today</span><b id="lBurn">—</b></div>
+        <div class="lrow"><span>Minus everything you ate</span><b id="lEat">—</b></div>
+        <div class="lrow big"><span id="lDefLab">Deficit so far</span><b id="lDef">—</b></div>
+        <div class="lmeter"><i id="lDefBar" style="width:0"></i></div>
+        <div class="lnote mono" id="lDefNote"></div>
+        <div class="rule"></div>
+        <div class="kv"><span>Eat this much today and your weight holds steady</span><b id="lHold">—</b></div>
+        <div class="kv"><span>Eat this much and you lose about 2 lb a week</span><b id="lLose">—</b></div>
+        <p style="font-size:13px;line-height:1.6;color:var(--soft);margin:12px 0 0">These are one goal, not two. The eating target was worked out from the deficit target, so hitting the first delivers the second. Eating is the part you control and can measure; the deficit is the scoreboard, and every burn figure in it is an estimate.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="striprow">
+    <div class="striplab"><span>Move</span><em id="exWeekLab"></em></div>
+    <div class="strip-align"><div class="ministrip" id="exStrip"></div></div>
+  </div>
+
+
+  <div class="timerow" id="timeRow"></div>
+
+  <div class="card">
+    <div class="card-h"><h3>Tomorrow's window</h3></div>
+    <div id="fastPlan"></div>
   </div>
 
   <div class="band-wrap">
@@ -411,91 +526,12 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
     </div>
   </div>
 
+
   <div class="card">
-    <div class="eyebrow" style="margin-bottom:9px" id="standsLab">Where the day stands</div>
-    <div class="verdict">
-      <div class="v-state" id="vState">—</div>
-      <div class="v-sub" id="vSub"></div>
-    </div>
-    <div class="chiprow" id="vChips" style="margin-bottom:14px"></div>
-
-    <div class="headline">
-      <div class="hl"><span>Calories left to eat<br><i id="hEatDay"></i></span><b id="hEat">—</b><em id="hEatSub"></em></div>
-      <div class="hl"><span>Calories consumed<br><i id="hAteDay"></i></span><b id="hAte">—</b><em id="hAteSub"></em></div>
-      <div class="hl"><span>Calories left to burn<br><i id="hBurnDay"></i></span><b id="hBurn">—</b><em id="hBurnSub"></em></div>
-    </div>
-
-    <details class="acc sub" id="accLedger">
-      <summary><h3>Full breakdown</h3><span class="sum" id="ledSum"></span><span class="caret">&#9656;</span></summary>
-      <div class="acc-body">
-        <div class="lrow"><span>Burn just being you — age, height, weight, normal daily moving about</span><b id="lBase">—</b></div>
-        <div class="lrow"><span>Plus exercise you logged today</span><b id="lEx">—</b></div>
-        <div class="lrow tot"><span>Total burned today</span><b id="lBurn">—</b></div>
-        <div class="lrow"><span>Minus everything you ate</span><b id="lEat">—</b></div>
-        <div class="lrow big"><span id="lDefLab">Deficit so far</span><b id="lDef">—</b></div>
-        <div class="lmeter"><i id="lDefBar" style="width:0"></i></div>
-        <div class="lnote mono" id="lDefNote"></div>
-        <div class="rule"></div>
-        <div class="kv"><span>Eat this much today and your weight holds steady</span><b id="lHold">—</b></div>
-        <div class="kv"><span>Eat this much and you lose about 2 lb a week</span><b id="lLose">—</b></div>
-        <p style="font-size:13px;line-height:1.6;color:var(--soft);margin:12px 0 0">These are one goal, not two. The eating target was worked out from the deficit target, so hitting the first delivers the second. Eating is the part you control and can measure; the deficit is the scoreboard, and every burn figure in it is an estimate.</p>
-      </div>
-    </details>
-  </div>
-
-  <div class="budgets">
-    <div class="bud">
-      <div class="lab">Calories</div>
-      <div class="num" id="calLeft">—</div>
-      <div class="sub2" id="calSub">still to eat</div>
-      <div class="of" id="calOf"></div>
-      <div class="meter"><i id="calBar" style="width:0"></i></div>
-    </div>
-    <div class="bud">
-      <div class="lab">Fat</div>
-      <div class="num" id="fatLeft">—</div>
-      <div class="sub2" id="fatSub">room left under cap</div>
-      <div class="of" id="fatOf"></div>
-      <div class="meter"><i id="fatBar" style="width:0"></i></div>
-    </div>
-    <div class="bud">
-      <div class="lab">Protein</div>
-      <div class="num" id="proNum">—</div>
-      <div class="sub2" id="proSub">still to eat</div>
-      <div class="of" id="proOf"></div>
-      <div class="meter"><i id="proBar" style="width:0"></i></div>
-    </div>
-    <div class="bud">
-      <div class="lab">Carbs</div>
-      <div class="num" id="carbLeft">—</div>
-      <div class="sub2" id="carbSub">room left</div>
-      <div class="of" id="carbOf"></div>
-      <div class="meter"><i id="carbBar" style="width:0"></i></div>
-    </div>
-  </div>
-  <p class="tilekey">Big number is what's <b>left</b> for <b id="tileDay">today</b>. Calories and protein are targets to reach; fat and carbs are ceilings to stay under.</p>
-
-  <div class="band-wrap">
-    <div class="eyebrow" style="margin-bottom:9px" id="exWeekLab">Exercise this week</div>
-    <div class="band-top">
-      <div>
-        <div class="band-state" id="exWeekTotal">0</div>
-        <div class="band-sub" id="exWeekSub"></div>
-      </div>
-      <div class="band-cta">
-        <div class="eyebrow">Resistance</div>
-        <div class="mono" style="font-size:13px" id="exResistTag"></div>
-      </div>
-    </div>
-    <div class="exband"><svg id="exBandSvg" viewBox="0 0 700 124" aria-label="Exercise this week"></svg></div>
-    <div class="band-scale" style="margin-top:6px">
-      <span id="exWeekOf"></span>
-      <span style="display:flex;gap:12px">
-        <span><i style="display:inline-block;width:10px;height:5px;background:#C8DDA8;vertical-align:middle;margin-right:4px"></i>burn</span>
-        <span><i style="display:inline-block;width:10px;height:5px;background:#A83A26;vertical-align:middle;margin-right:4px"></i>resistance</span>
-        <span>tap a day to open it</span>
-      </span>
-    </div>
+    <div class="card-h"><h3>Day type</h3></div>
+    <div class="typerow"><div class="chiprow" id="dayTypeRow"></div><button class="chip" id="estChip">Reconstructed</button></div>
+    <div class="mono" id="dayTypeNote" style="font-size:11.5px;color:var(--soft);margin-top:10px;line-height:1.5"></div>
+    <div class="mono" id="estNote" style="font-size:11px;color:var(--soft);margin-top:7px;line-height:1.5"></div>
   </div>
 
   <details class="acc" id="accLog" open>
@@ -517,32 +553,11 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
         <div class="mono" style="font-size:11px;color:var(--soft);margin-top:8px" id="wQuickNote"></div>
       </div>
 
-      <div class="acc-sec">
-        <div class="eyebrow">Eating window <span class="mono" style="text-transform:none;letter-spacing:0;color:var(--soft)" id="spanTag"></span></div>
-        <div class="grid2">
-          <label class="f"><span>First bite</span><input type="time" id="firstEat"></label>
-          <label class="f"><span>Last bite</span><input type="time" id="lastEat"></label>
-        </div>
-        <p class="mono" style="font-size:11px;color:var(--soft);margin:-4px 0 10px;line-height:1.5">Filled in from what you log. Override either one if you ate something you didn't record.</p>
-        <div id="spanBox"></div>
-      </div>
+      
 
-      <div class="acc-sec">
-        <div class="eyebrow">Sleep <span class="mono" style="text-transform:none;letter-spacing:0;color:var(--soft)" id="sleepTag"></span></div>
-        <div class="grid2">
-          <label class="f"><span>Went to bed</span><input type="time" id="bedTime"></label>
-          <label class="f"><span>Woke up</span><input type="time" id="wakeTime"></label>
-        </div>
-        <div id="sleepBox"></div>
-      </div>
+      
 
-      <div class="acc-sec">
-        <div class="eyebrow">Day type</div>
-        <div class="chiprow" id="dayTypeRow"></div>
-        <div class="chiprow" style="margin-top:9px"><button class="chip" id="estChip">Reconstructed from memory</button></div>
-        <div class="mono" id="estNote" style="font-size:11px;color:var(--soft);margin-top:8px;line-height:1.5"></div>
-        <div class="mono" style="font-size:11.5px;color:var(--soft);margin-top:10px;line-height:1.5" id="dayTypeNote"></div>
-      </div>
+      
     </div>
   </details>
 </section>
@@ -645,7 +660,7 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
     <div class="grid2">
     <div class="acc-sec" style="border-top:1px solid var(--line);padding-top:14px">
       <div class="eyebrow" style="margin-bottom:7px">Ingredients</div>
-      <p style="font-size:13px;line-height:1.55;color:var(--soft);margin:0 0 10px">Search the food library, set the amount, and the totals build themselves. Anything not in the library yet can be saved under "Save a new food" on the Eat tab and it'll appear here.</p>
+      <p style="font-size:13px;line-height:1.55;color:var(--soft);margin:0 0 10px">Search the food library, set the amount, and the totals build themselves. <b>Your other recipes are in here too</b> — search one by name to fold it into this dish, so "tuna with yogurt" plus half an egg plus a slice of keto bread becomes an open-faced sandwich. Any amount works: 0.5, 1.25, grams, or a percentage.</p>
       <label class="f"><span>Find an ingredient</span><input id="ingSearch" placeholder="ham, ciabatta, romaine…" autocomplete="off"></label>
       <div id="ingResults" style="margin-bottom:10px"></div>
       <div id="ingList"></div>
@@ -1029,7 +1044,9 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
   <div class="sheetbg" id="sheetBg"></div>
   <div class="sheet">
     <div class="sheet-h"><b id="shName"></b><button class="x" id="shClose" aria-label="Close">&times;</button></div>
+    <div class="whole" id="shWhole"></div>
     <div class="mono shserv" id="shServ"></div>
+    <div class="askline" id="shAsk">How much of it did you have?</div>
     <div class="grid2">
       <label class="f"><span>Amount</span><input type="number" step="0.01" id="shAmt" inputmode="decimal"></label>
       <label class="f"><span>Measured in</span><select id="shUnit"></select></label>
@@ -1037,9 +1054,9 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
     <div class="chiprow" id="shQuick" style="margin-bottom:10px"></div>
     <p class="mono" id="shHint" style="font-size:10.5px;color:var(--soft);line-height:1.5;margin:0 0 12px"></p>
     <details class="acc sub" id="shAdj" style="margin:0 0 12px">
-      <summary><h3>Change portion size or type</h3><span class="caret">&#9656;</span></summary>
+      <summary><h3>Set a standard serving size</h3><span class="caret">&#9656;</span></summary>
       <div class="acc-body">
-        <p style="font-size:13px;line-height:1.55;color:var(--soft);margin:0 0 10px">Name what one piece is called and what it weighs, and you can then log this by weight as well as by count. Useful when a "serving" is vague — tell it a serving is 350 g and you can log 250 g of it.</p>
+        <p style="font-size:13px;line-height:1.55;color:var(--soft);margin:0 0 10px"><b>This changes the food itself, not just what you're logging now.</b> Say a serving of this is 110 g and every future entry can be counted in servings as well as grams — useful for splitting a recipe into repeatable portions.</p>
         <div class="grid3">
           <label class="f"><span>One</span><select id="shPieceU"></select></label>
           <label class="f"><span>Weighs</span><input type="number" step="0.01" id="shPieceN" inputmode="decimal"></label>
@@ -1073,13 +1090,18 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
    then re-save the file as weightloss_app_ver_N_short_name.html
    ============================================================ */
 const VERSION={
-  num:'21',
-  name:'weight everywhere',
+  num:'26',
+  name:'weight readable',
   date:'2026-08-09',
-  note:'Weight now appears wherever a food does: recipe cards, suggested meals, day templates, search results, the ingredient picker, saved foods, the logging sheet and log rows. Recipe weight is recalculated from its ingredients every time it is shown, so recipes saved before weights existed now report correctly and the figure follows any edit. Also fixed the piece-name dropdown carrying over from the previously saved food. Full history is in the CHANGELOG below.'
+  note:'The weight on each calendar square is now a readable 12px, sitting flush along the bottom edge and spanning the full width of the box with a faint tint behind it. Days without a weigh-in show nothing rather than an empty band. Full history is in the CHANGELOG below.'
 };
 /* Older versions, newest first. Add a line each time you update. */
 const CHANGELOG=[
+  ['26','weight readable','2026-08-20','Larger, full-width weight readout anchored to the bottom of each calendar square.'],
+  ['25','symmetry','2026-08-20','Seven equal macro boxes, borderless week arrows, and a shared horizontal inset so every row on Today lines up.'],
+  ['24','aligned grid','2026-08-20','Seven-column grid across every Today row; weight folded into the calendar boxes; compact abbreviated calorie and macro boxes; exercise chart reduced to an aligned strip.'],
+  ['23','dashboard','2026-08-20','Today page reorganised into aligned week strips for food, exercise and weight, four macro boxes, a timing row, and a next-day fasting window planner.'],
+  ['22','how much did you have','2026-08-19','Logging sheet reframed around the whole item and the share eaten, fraction shortcuts, percent as a unit, and clearer separation between recording an entry and redefining a food.'],
   ['21','weight everywhere','2026-08-19','Weight shown in every view of a food or recipe, computed live from ingredients rather than a stored field; tidier unit labels; fixed the piece dropdown retaining the previous food\u2019s value.'],
   ['20','weight-first logging','2026-08-18','Weight shown first on every log row and in the report; weights added to suggested meals and built-in recipes; older portion-only entries upgrade to weight units on edit.'],
   ['19','weights everywhere','2026-08-17','Gram weights added across the pantry; recipes compute and store their yield; live weight equivalence when logging and on log rows.'],
@@ -1549,30 +1571,171 @@ function carbAllowance(){
   const p=S.profile;
   return Math.max(20,Math.round((p.calTarget-p.proTarget*4-p.fatTarget*9)/4));
 }
+function daysSinceBackup(){
+  const m=(S.meta&&S.meta.lastBackup)||null;
+  if(!m)return null;
+  return Math.floor((new Date(todayISO()+'T00:00:00')-new Date(m.slice(0,10)+'T00:00:00'))/86400000);
+}
+function markBackedUp(){
+  if(!S.meta)S.meta={};
+  S.meta.lastBackup=new Date().toISOString();
+  save();renderBackupState();
+}
+function renderDayNav(){
+  const back=daysBack();
+  document.body.dataset.back=String(Math.min(7,Math.max(0,back)));
+  $('#dhTag').textContent = back===0?'TODAY':(back===1?'YESTERDAY':back+' DAYS BACK');
+  $('#dhDate').textContent = dObj(VIEW).toLocaleDateString(undefined,{weekday:'long', month:'long', day:'numeric'});
+  $('#backToday2').hidden=isToday();
+
+  /* seven boxes, oldest left. STRIP shifts the window a week at a time. */
+  const anchor=shiftDate(todayISO(),-STRIP*7);
+  const wByDate={}; (S.weights||[]).forEach(function(x){wByDate[x.date]=x.lbs});
+  var h='';
+  for(var i=6;i>=0;i--){
+    const k=shiftDate(anchor,-i), o=dObj(k), l=S.log[k];
+    const has=l&&((l.entries||[]).length||(l.ex||[]).length);
+    const wt=wByDate[k];
+    const cls=['dbox'];
+    if(k===VIEW)cls.push('sel');
+    if(k===todayISO())cls.push('today');
+    if(k>todayISO())cls.push('future');
+    h+='<div class="'+cls.join(' ')+'" data-d="'+k+'" role="button" tabindex="0">'
+      +'<span class="dw">'+o.toLocaleDateString(undefined,{weekday:'short'}).slice(0,3)+'</span>'
+      +'<span class="dd">'+o.getDate()+'</span>'
+      +'<span class="dwt">'+(wt!=null?fmtNum(wt):'')+'</span>'
+      +'<span class="dot'+(has?' on':'')+'"></span></div>';
+  }
+  $('#dayStrip').innerHTML=h;
+  $$('#dayStrip .dbox').forEach(function(b){b.onclick=function(){goDay(b.dataset.d)}});
+  $('#stripNext').disabled=STRIP===0;
+}
+function goDay(iso){
+  if(iso>todayISO())return;
+  VIEW=iso;
+  const anchor=shiftDate(todayISO(),-STRIP*7);
+  if(iso>anchor||iso<shiftDate(anchor,-6))STRIP=Math.floor(Math.round((dObj(todayISO())-dObj(iso))/86400000)/7);
+  renderToday();renderBand();renderEx();renderExBand();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function renderBackupState(){
+  const n=daysSinceBackup(), line=$('#dbBack');
+  if(line){
+    if(n===null){line.textContent='never backed up';line.className='db-back stale'}
+    else if(n===0){line.textContent='backed up today';line.className='db-back'}
+    else{line.textContent='last backup '+n+' day'+(n>1?'s':'')+' ago';line.className='db-back'+(n>=2?' stale':'')}
+  }
+  const bar=$('#bkBar'), seen=(S.meta&&S.meta.promptSeen)||null;
+  const overdue = n===null || n>=2;
+  const anyData = Object.keys(S.log).some(function(k){return (S.log[k].entries||[]).length});
+  bar.hidden = !(overdue && anyData && seen!==todayISO());
+  if(!bar.hidden){
+    $('#bkTitle').textContent = n===null?'No backup yet':'It\'s been '+n+' days since your last backup';
+    $('#bkNote').textContent = 'Browser storage can be cleared without warning. Copy a backup into a note and this can\'t cost you days of logging.';
+  }
+}
+
+/* ---- aligned week strips for food and weight ---- */
+function stripDays(){
+  const anchor=shiftDate(todayISO(),-STRIP*7), out=[];
+  for(var i=6;i>=0;i--)out.push(shiftDate(anchor,-i));
+  return out;
+}
+function renderFoodStrip(){
+  const p=S.profile, box=$('#foodStrip');
+  box.innerHTML=stripDays().map(function(k){
+    const l=S.log[k], cal=l?(l.entries||[]).reduce(function(a,b){return a+b.cal},0):0;
+    const tgt=l&&l.dayType==='low'?1200:l&&l.dayType==='training'?1800:p.calTarget;
+    const frac=tgt?Math.min(1,cal/tgt):0;
+    const cls=cal>tgt?'over':cal>tgt*0.9?'warn':'';
+    return '<div class="mbox'+(cal?'':' empty')+(k===VIEW?' sel':'')+(k>todayISO()?' future':'')+'" data-fd="'+k+'">'
+      +'<span class="fill '+cls+'" style="height:'+Math.round(frac*100)+'%"></span>'
+      +'<span class="mv">'+(cal?Math.round(cal):'\u2013')+'</span><span class="mu">'+(cal?'kcal':'')+'</span></div>';
+  }).join('');
+  $$('#foodStrip [data-fd]').forEach(function(b){b.onclick=function(){
+    goDay(b.dataset.fd);
+    $$('nav.tabs button').forEach(function(t){if(t.dataset.v==='eat')t.click()});
+    setTimeout(function(){const el=$('#qSearch');if(el)el.focus()},150);
+  }});
+  $('#foodStripNote').textContent=isToday()?'tap a day to log a meal':'logging to '+dayShort();
+}
+function renderQuad(){
+  const p=S.profile, t=totals(), n=calcNumbers();
+  const ex=Math.round(t.ex), eaten=Math.round(t.cal);
+  const exGoal=p.exDaily||350, carbAllow=carbAllowance();
+  const eatLeft=p.calTarget-eaten, deficit=n.sed+ex-eaten;
+  function c(lab,val,cls){
+    return '<div class="cbox"><span class="cl">'+lab+'</span><span class="cv '+(cls||'')+'">'+val+'</span></div>';
+  }
+  $('#calRow').innerHTML=
+     c('goal',p.calTarget.toLocaleString())
+    +c('ate',eaten.toLocaleString(),eaten>p.calTarget?'over':'')
+    +c('left',(eatLeft>0?eatLeft:0).toLocaleString(),eatLeft<0?'over':eatLeft===0?'ok':'')
+    +c('burn',exGoal.toLocaleString())
+    +c('did',ex.toLocaleString(),ex>=exGoal?'ok':'')
+    +c('to go',Math.max(0,exGoal-ex).toLocaleString())
+    +c('deficit',Math.max(0,Math.round(deficit)).toLocaleString(),deficit>=(n.sed+exGoal-p.calTarget)*0.9?'ok':'');
+  $('#calRow').lastElementChild.title='Deficit = everything you burned today minus everything you ate. About 3,500 of it is a pound of fat, so 1,000 a day is roughly 2 lb a week.';
+  const proPerLb=n.lbs?t.pro/n.lbs:0;
+  $('#macRow').innerHTML=
+     c('fat goal',p.fatTarget+'g')
+    +c('fat ate',r1(t.fat)+'g',t.fat>p.fatTarget?'over':'')
+    +c('pro goal',p.proTarget+'g')
+    +c('pro ate',Math.round(t.pro)+'g',t.pro>=p.proTarget?'ok':'')
+    +c('carb goal',carbAllow+'g')
+    +c('carb ate',Math.round(t.carb)+'g',t.carb>carbAllow?'over':'')
+    +c('pro / lb',r1(proPerLb),proPerLb>=0.7?'ok':'');
+}
+function renderTimeRow(){
+  const d=day(), t=eatTimes(), st=S.settings||{};
+  var span=null, fast=null;
+  if(t.first!=null&&t.last!=null&&t.last>t.first)span=t.last-t.first;
+  const prev=eatTimes(shiftDate(VIEW,-1));
+  if(prev.last!=null&&t.first!=null){fast=t.first-prev.last;if(fast<0)fast+=1440}
+  const tgtFast=(st.fastHours||16)*60, tgtEat=(st.eatHours||8)*60;
+  function tb(lab,html){return '<div class="tbox"><h4>'+lab+'</h4>'+html+'</div>'}
+  function ti(id,val){return '<input type="time" id="'+id+'" value="'+(val!=null?m2hm(val):'')+'">'}
+  function val(v,cls){return '<div class="val '+(cls||'')+'">'+v+'</div>'}
+  $('#timeRow').innerHTML=
+     tb('woke',ti('wakeTime',d.wake))
+    +tb('1st bite',ti('firstEat',t.first))
+    +tb('last bite',ti('lastEat',t.last))
+    +tb('bed',ti('bedTime',d.bed))
+    +tb('fasted',val(fast!=null?dur(fast):'\u2013',fast==null?'':(fast>=tgtFast?'ok':fast>=tgtFast-60?'warn':'bad')))
+    +tb('window',val(span!=null?dur(span):'\u2013',span==null?'':(span<=tgtEat?'ok':'warn')));
+  [['wakeTime','wake'],['bedTime','bed'],['firstEat','firstEat'],['lastEat','lastEat']].forEach(function(x){
+    const el=$('#'+x[0]); if(!el)return;
+    el.onchange=function(){
+      const dd=day();
+      if(this.value)dd[x[1]]=hm2min(this.value); else delete dd[x[1]];
+      save();renderToday();renderBand();
+    };
+  });
+}
+function renderFastPlan(){
+  const t=eatTimes(), st=S.settings||{}, box=$('#fastPlan');
+  const fh=st.fastHours||16;
+  if(t.last==null){
+    box.innerHTML='<p style="font-size:13.5px;line-height:1.6;margin:0">Record a last bite and this works out when to open tomorrow\u2019s window. Nothing to go on '+dayOn()+' yet.</p>';
+    return;
+  }
+  const openN=(t.last+fh*60)%1440, early=(t.last+(fh-1)*60)%1440, late=(t.last+(fh+1)*60)%1440;
+  const close=(openN+(st.eatHours||8)*60)%1440;
+  box.innerHTML=
+     '<div class="kv"><span>Last bite '+dayOn()+'</span><b>'+to12(m2hm(t.last))+'</b></div>'
+    +'<div class="kv"><span><b style="font-family:Archivo">Open tomorrow at</b></span><b style="font-size:17px">'+to12(m2hm(openN))+'</b></div>'
+    +'<div class="kv"><span>Kitchen closes</span><b>'+to12(m2hm(close))+'</b></div>'
+    +'<div class="rule"></div>'
+    +'<div class="kv"><span>Hungry early \u2014 '+to12(m2hm(early))+' is fine</span><b>'+(fh-1)+'h fast</b></div>'
+    +'<div class="kv"><span>Not hungry \u2014 hold to '+to12(m2hm(late))+'</span><b>'+(fh+1)+'h fast</b></div>'
+    +'<p style="font-size:13.5px;line-height:1.62;margin:12px 0 0">An hour either side of '+to12(m2hm(openN))+' changes almost nothing by itself. Opening at '+to12(m2hm(early))+' costs you nothing measurable provided the day\u2019s total still lands; holding to '+to12(m2hm(late))+' only helps if it means you eat less, not if it means you reach dinner ravenous and overshoot. <b>The back end is the half that matters</b> \u2014 closing the kitchen on time is what actually keeps the calories out.</p>';
+}
+
 function renderToday(){
   const p=S.profile, t=totals(), d=day();
   const carbAllow=carbAllowance();
   const calLeft=Math.round(p.calTarget-t.cal), fatLeft=r1(p.fatTarget-t.fat);
-  const proLeft=Math.round(p.proTarget-t.pro);
-  $('#calLeft').textContent=calLeft<0?'+'+Math.abs(calLeft):calLeft;
-  $('#calSub').textContent=calLeft<0?'over your target':'still to eat today';
-  $('#calOf').textContent='eaten '+Math.round(t.cal)+' of '+p.calTarget;
-  $('#fatLeft').textContent=fatLeft+'g';
-  $('#fatSub').textContent=fatLeft<0?'over the cap':'room left under cap';
-  $('#fatOf').textContent='eaten '+r1(t.fat)+' of '+p.fatTarget+'g';
-  $('#proNum').textContent=(proLeft>0?proLeft:0)+'g';
-  $('#proSub').textContent=proLeft>0?'still to eat — this is a floor':'floor reached, more is fine';
-  $('#proOf').textContent='eaten '+Math.round(t.pro)+' of '+p.proTarget+'g';
-  const carbLeft=Math.round(carbAllow-t.carb);
-  $('#carbLeft').textContent=carbLeft+'g';
-  $('#carbSub').textContent=carbLeft<0?'over the allowance':'room left';
-  $('#carbOf').textContent='eaten '+Math.round(t.carb)+' of '+carbAllow+'g';
-  setBar('#carbBar',t.carb/carbAllow);
-  setBar('#calBar',t.cal/p.calTarget);
-  setBar('#fatBar',t.fat/p.fatTarget);
-  const pb=$('#proBar');pb.style.width=Math.min(100,t.pro/p.proTarget*100)+'%';
-  pb.className=t.pro>=p.proTarget*0.85?'':'warn';
-
+  const carbAllow2=carbAllow;
   // log list grouped
   const order=['Breakfast','Lunch','Snack','Dinner'];
   let h='';
@@ -1625,13 +1788,10 @@ function renderToday(){
 
   // date navigation
   renderDayNav();
-  $('#standsLab').textContent=isToday()?'Where today stands':'Where '+dayFull()+' stood';
   $('#clockLab').textContent=isToday()?'Fasting clock':'Fasting clock \u2014 '+dayFull();
-  $('#tileDay').textContent=dayShort();
   $('#logTitle').textContent=isToday()?"Today's log":dayFull()+' log';
   renderBackupState();
-  renderWindowCard();
-  renderSleepCard();
+  renderQuad();renderFoodStrip();renderTimeRow();renderFastPlan();
 
   // day type chips
   const types=[['standard','Standard 16:8'],['low','Low day ~1,200'],['training','Training ~1,800']];
@@ -1679,8 +1839,6 @@ function renderLedger(){
   $('#lLose').textContent=p.calTarget.toLocaleString()+' kcal';
 
   const hasFood=eaten>0;
-  var phase = windowOpen ? 'open' : (ws>we ? 'post' : (nowMin>=we ? 'post' : 'pre'));
-
   const dbar=$('#lDefBar');
   if(hasFood){
     dbar.style.width=Math.max(0,Math.min(100,deficit/targetDef*100))+'%';
@@ -1693,200 +1851,8 @@ function renderLedger(){
     dbar.style.width='0'; dbar.className='';
     $('#lDefNote').textContent='Log some food and the deficit works itself out here.';
   }
-
-  const exGoal=p.exDaily||350, exLeft=Math.max(0,exGoal-ex);
-  const eatLeft=p.calTarget-eaten;
-  ['hEatDay','hAteDay','hBurnDay'].forEach(function(i){$('#'+i).textContent=dayShort()});
-  $('#hEat').textContent=(eatLeft>0?eatLeft:0).toLocaleString();
-  $('#hEat').parentElement.className='hl'+(eatLeft<=0?' done':'');
-  $('#hEatSub').textContent=eatLeft>0?'left of '+p.calTarget.toLocaleString():'target of '+p.calTarget.toLocaleString()+' reached';
-  $('#hAte').textContent=eaten.toLocaleString();
-  $('#hAte').parentElement.className='hl'+(eaten>p.calTarget?' over':'');
-  $('#hAteSub').textContent=eaten>p.calTarget?(eaten-p.calTarget).toLocaleString()+' over target':'so far today';
-  $('#hBurn').textContent=exLeft.toLocaleString();
-  $('#hBurn').parentElement.className='hl'+(exLeft===0?' done':'');
-  $('#hBurnSub').textContent=exLeft>0?'still to burn of '+exGoal.toLocaleString():'burned '+ex.toLocaleString()+', goal met';
   $('#ledSum').textContent=hasFood?('deficit '+Math.max(0,deficit).toLocaleString()+' kcal'):'the full arithmetic';
-
-  const foodOK = eaten<=p.calTarget;
-  const defOK  = hasFood && deficit>=targetDef*0.9;
-  $('#vChips').innerHTML=
-     '<span class="chip stat '+(hasFood?(foodOK?'ok':'no'):'')+'">Food '+eaten.toLocaleString()+' / '+p.calTarget.toLocaleString()+(hasFood?(foodOK?' \u2713':' \u2717'):'')+'</span>'
-    +'<span class="chip stat '+(hasFood?(defOK?'ok':'no'):'')+'">Deficit '+(hasFood?Math.max(0,deficit).toLocaleString()+' / '+targetDef.toLocaleString()+(defOK?' \u2713':' \u2717'):'\u2014')+'</span>';
-
-  const st=$('#vState'), sub=$('#vSub');
-  var cls='good', head, msg;
-
-  if(!hasFood){
-    cls='idle';
-    if(phase==='pre'){
-      head='Fasting';
-      msg='Nothing logged yet, which is the plan. The window opens at '+to12(m2hm(ws))+' with '+p.calTarget.toLocaleString()+' kcal to spend.'
-        +(ex?' Your '+ex.toLocaleString()+' kcal of exercise is already banked.':' A walk before then costs you nothing and widens the day\u2019s deficit.');
-    } else if(phase==='open'){
-      head='Window open';
-      msg='Nothing logged yet. You have '+p.calTarget.toLocaleString()+' kcal and until '+to12(m2hm(we))+' to eat it. Front-load the protein.';
-    } else {
-      cls='warn'; head='Nothing logged';
-      msg='The window closed at '+to12(m2hm(we))+' with no food recorded. If you ate and skipped logging, add it now \u2014 blank days quietly corrupt your weekly averages and the burn calibration.';
-    }
-  }
-  else if(phase==='open'){
-    if(!foodOK){
-      cls='bad'; head='Over budget';
-      msg='You\u2019re '+Math.abs(foodLeft).toLocaleString()+' kcal past the eating target with the window still open. '
-        +(defOK?'Movement has covered it so far \u2014 the deficit still stands at '+deficit.toLocaleString()+'.'
-               :'The deficit is down to '+Math.max(0,deficit).toLocaleString()+' against about '+targetDef.toLocaleString()+'. A 45-minute walk claws back roughly 250.');
-    } else {
-      cls='good'; head=foodLeft>0?foodLeft.toLocaleString()+' kcal left today':'Right on target';
-      msg='Eaten '+eaten.toLocaleString()+' of '+p.calTarget.toLocaleString()+'. '
-        +(defOK?'The deficit is where it should be at '+deficit.toLocaleString()+'.'
-               :'The deficit sits at '+Math.max(0,deficit).toLocaleString()+' against about '+targetDef.toLocaleString()+', so '+(ex?'more movement':'a walk')+' would close the gap.')
-        +' Kitchen closes at '+to12(m2hm(we))+'.';
-    }
-  }
-  else {
-    if(eaten<p.calTarget*0.75){
-      cls='warn'; head='Under-ate';
-      msg='Only '+eaten.toLocaleString()+' logged against a '+p.calTarget.toLocaleString()+' target. Either food went unlogged, or you genuinely under-ate \u2014 and the second doesn\u2019t speed anything up while it does cost muscle.';
-    } else if(!foodOK && !defOK){
-      cls='bad'; head='Missed both';
-      msg='Over on food by '+Math.abs(foodLeft).toLocaleString()+', and the deficit finished at '+Math.max(0,deficit).toLocaleString()+' against about '+targetDef.toLocaleString()+'. One day like this costs roughly '+r1((targetDef-deficit)/3500*7)+' lb of weekly progress. Not a catastrophe \u2014 just don\u2019t let it become the pattern.';
-    } else if(!foodOK && defOK){
-      cls='warn'; head='Over on food, covered by movement';
-      msg='You ate '+Math.abs(foodLeft).toLocaleString()+' over target, but '+ex.toLocaleString()+' kcal of exercise carried the deficit to '+deficit.toLocaleString()+'. The result is fine. Be aware you can\u2019t outrun this every day \u2014 the food target is the reliable lever.';
-    } else if(foodOK && !defOK){
-      cls='warn'; head='Short on movement';
-      msg='Food was fine at '+eaten.toLocaleString()+' against '+p.calTarget.toLocaleString()+'. But with '+(ex?'only '+ex.toLocaleString():'no')+' kcal of exercise the deficit came to '+Math.max(0,deficit).toLocaleString()+' instead of about '+targetDef.toLocaleString()+'. This is the day that quietly costs you half a pound a week \u2014 it looks like success on the food tile and isn\u2019t.';
-    } else {
-      cls='good'; head='Day landed';
-      msg='Ate '+eaten.toLocaleString()+', burned '+burn.toLocaleString()+', deficit '+deficit.toLocaleString()+'. Both targets met. Repeat this and the scale follows.';
-    }
-  }
-  st.textContent=head; st.className='v-state '+cls; sub.textContent=msg;
-}
-function daysSinceBackup(){
-  const m=(S.meta&&S.meta.lastBackup)||null;
-  if(!m)return null;
-  return Math.floor((new Date(todayISO()+'T00:00:00')-new Date(m.slice(0,10)+'T00:00:00'))/86400000);
-}
-function markBackedUp(){
-  if(!S.meta)S.meta={};
-  S.meta.lastBackup=new Date().toISOString();
-  save();renderBackupState();
-}
-function renderDayNav(){
-  const back=daysBack();
-  document.body.dataset.back=String(Math.min(7,Math.max(0,back)));
-  $('#dhTag').textContent = back===0?'TODAY':(back===1?'YESTERDAY':back+' DAYS BACK');
-  $('#dhDate').textContent = dObj(VIEW).toLocaleDateString(undefined,{weekday:'long', month:'long', day:'numeric'});
-  $('#backToday2').hidden=isToday();
-
-  /* seven boxes, oldest left. STRIP shifts the window a week at a time. */
-  const anchor=shiftDate(todayISO(),-STRIP*7);
-  var h='';
-  for(var i=6;i>=0;i--){
-    const k=shiftDate(anchor,-i), o=dObj(k), l=S.log[k];
-    const has=l&&((l.entries||[]).length||(l.ex||[]).length);
-    const cls=['dbox'];
-    if(k===VIEW)cls.push('sel');
-    if(k===todayISO())cls.push('today');
-    if(k>todayISO())cls.push('future');
-    h+='<div class="'+cls.join(' ')+'" data-d="'+k+'" role="button" tabindex="0">'
-      +'<span class="dw">'+o.toLocaleDateString(undefined,{weekday:'short'}).slice(0,3)+'</span>'
-      +'<span class="dd">'+o.getDate()+'</span>'
-      +'<span class="dot'+(has?' on':'')+'"></span></div>';
-  }
-  $('#dayStrip').innerHTML=h;
-  $$('#dayStrip .dbox').forEach(function(b){b.onclick=function(){goDay(b.dataset.d)}});
-  $('#stripNext').disabled=STRIP===0;
-}
-function goDay(iso){
-  if(iso>todayISO())return;
-  VIEW=iso;
-  const anchor=shiftDate(todayISO(),-STRIP*7);
-  if(iso>anchor||iso<shiftDate(anchor,-6))STRIP=Math.floor(Math.round((dObj(todayISO())-dObj(iso))/86400000)/7);
-  renderToday();renderBand();renderEx();renderExBand();
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function renderBackupState(){
-  const n=daysSinceBackup(), line=$('#dbBack');
-  if(line){
-    if(n===null){line.textContent='never backed up';line.className='db-back stale'}
-    else if(n===0){line.textContent='backed up today';line.className='db-back'}
-    else{line.textContent='last backup '+n+' day'+(n>1?'s':'')+' ago';line.className='db-back'+(n>=2?' stale':'')}
-  }
-  const bar=$('#bkBar'), seen=(S.meta&&S.meta.promptSeen)||null;
-  const overdue = n===null || n>=2;
-  const anyData = Object.keys(S.log).some(function(k){return (S.log[k].entries||[]).length});
-  bar.hidden = !(overdue && anyData && seen!==todayISO());
-  if(!bar.hidden){
-    $('#bkTitle').textContent = n===null?'No backup yet':'It\'s been '+n+' days since your last backup';
-    $('#bkNote').textContent = 'Browser storage can be cleared without warning. Copy a backup into a note and this can\'t cost you days of logging.';
-  }
-}
-function renderSleepCard(){
-  const d=day();
-  $('#bedTime').value=d.bed!=null?m2hm(d.bed):'';
-  $('#wakeTime').value=d.wake!=null?m2hm(d.wake):'';
-  const box=$('#sleepBox');
-  if(d.bed==null||d.wake==null){
-    $('#sleepTag').textContent='';
-    box.innerHTML='<p style="font-size:13px;color:var(--soft);margin:0;line-height:1.6">Bed time is recorded against the night that ends on this day. Short sleep raises hunger hormones and measurably increases how much people eat the next day \u2014 it is the cheapest lever on this whole plan.</p>';
-    return;
-  }
-  var mins=d.wake-d.bed; if(mins<0)mins+=1440;
-  $('#sleepTag').textContent=dur(mins);
-  const last7=[]; for(var i=0;i<7;i++){
-    const k=shiftDate(VIEW,-i), l=S.log[k];
-    if(l&&l.bed!=null&&l.wake!=null){var m=l.wake-l.bed;if(m<0)m+=1440;last7.push(m)}
-  }
-  const avg=last7.length?Math.round(last7.reduce(function(a,b){return a+b},0)/last7.length):null;
-  box.innerHTML='<div class="kv"><span>Slept</span><b>'+dur(mins)+'</b></div>'
-    +(avg!=null&&last7.length>1?'<div class="kv"><span>Average, last '+last7.length+' nights</span><b>'+dur(avg)+'</b></div>':'')
-    +'<p style="font-size:13.5px;line-height:1.6;margin:12px 0 0">'
-    +(mins<6*60
-      ? '<b style="color:var(--guajillo)">Under six hours.</b> Expect stronger hunger today, especially mid-afternoon. Worth front-loading protein and not trusting the urge to snack at 4pm.'
-      : mins<7*60
-      ? '<b style="color:var(--amber)">Just under seven hours.</b> Fine occasionally; a run of these makes the eating window harder to hold.'
-      : '<b style="color:var(--tomatillo)">Seven hours or more.</b> This is the version of you that finds the plan easy.')
-    +'</p>';
-}
-function renderWindowCard(){
-  const t=eatTimes(), st=S.settings||{}, tgt=(st.eatHours||8)*60;
-  $('#firstEat').value=t.first!=null?m2hm(t.first):'';
-  $('#lastEat').value =t.last !=null?m2hm(t.last ):'';
-  const box=$('#spanBox');
-  if(t.first==null||t.last==null||t.last<=t.first){
-    $('#spanTag').textContent='';
-    box.innerHTML='<p style="font-size:13.5px;color:var(--soft);margin:0;line-height:1.6">Log at least two items and the span appears here. You can also type the times in directly.</p>';
-    return;
-  }
-  const span=t.last-t.first, diff=tgt-span;
-  $('#spanTag').textContent=dur(span);
-  const prev=eatTimes(shiftDate(VIEW,-1));
-  var fastTxt='';
-  if(prev.last!=null){
-    var fast=t.first-prev.last; if(fast<0)fast+=1440;
-    fastTxt='<div class="kv"><span>Fast before your first bite</span><b>'+dur(fast)+'</b></div>';
-  }
-  const nextStart=(t.last+(st.fastHours||16)*60)%1440;
-  box.innerHTML=
-     '<div class="kv"><span>Ate across</span><b>'+dur(span)+'</b></div>'
-    +'<div class="kv"><span>Your target window</span><b>'+dur(tgt)+'</b></div>'
-    +fastTxt
-    +'<div class="kv"><span>'+((st.autoWindow)?'Tomorrow opens':'Tomorrow would open')+'</span><b>'+to12(m2hm(nextStart))+(st.autoWindow?'':' if rolled')+'</b></div>'
-    +'<p style="font-size:13.5px;line-height:1.6;margin:12px 0 0">'
-    +(diff>=45
-       ? '<b style="color:var(--tomatillo)">Tighter than target by '+dur(diff)+'.</b> You ate inside '+dur(span)+' rather than '+dur(tgt)+', which lengthens the fast on both ends. Good, provided you still hit your protein \u2014 a compressed window is the usual reason protein comes up short.'
-       : diff<=-45
-       ? '<b style="color:var(--guajillo)">Longer than target by '+dur(-diff)+'.</b> The back end is what slips. Set a firm kitchen-closed time rather than trying to start later.'
-       : 'Right on your target window.')
-    +'</p>';
-}
-function setBar(sel,frac){
-  const el=$(sel);el.style.width=Math.min(100,frac*100)+'%';
-  el.className = frac>1?'over':frac>0.85?'warn':'';
+  $('#ledSum').textContent=hasFood?('deficit '+Math.max(0,deficit).toLocaleString()+' kcal'):'the full arithmetic';
 }
 function daysSinceStart(){
   const a=new Date(S.profile.startDate+'T00:00:00'), b=new Date(todayISO()+'T00:00:00');
@@ -2159,10 +2125,10 @@ const U={
 const COUNT_UNITS=['portion','each','slice','piece','serving','roll','clove','fillet',
   'can','packet','sheet','egg','breast','strip','link','scoop','stick','bunch','head','handful'];
 const MASS_ORDER=['g','oz','lb','kg'], VOL_ORDER=['ml','floz','cup','tbsp','tsp','l','pint','qt','gal'];
-function kindOf(u){return U[u]?U[u].k:'c'}
+function kindOf(u){return u==='pct'?'p':(U[u]?U[u].k:'c')}
 function sameKind(a,b){return a===b||(U[a]&&U[b]&&U[a].k===U[b].k)}
 function uLabel(u){return U[u]?U[u].l:(u+'s').replace(/ss$/,'s')}
-function uShort(u){return u==='floz'?'fl oz':u==='qt'?'quart':u}
+function uShort(u){return u==='pct'?'%':u==='floz'?'fl oz':u==='qt'?'quart':u}
 
 function convert(n,from,to,eq){
   if(from===to)return n;
@@ -2223,9 +2189,11 @@ function unitOptions(f){
   if(kinds.m)MASS_ORDER.forEach(push);
   if(kinds.v)VOL_ORDER.forEach(push);
   if(!out.some(function(u){return kindOf(u)==='c'}))push('portion');
+  push('pct');
   return out;
 }
 function uLabelFor(f,u){
+  if(u==='pct')return '% of the whole';
   if(u==='portion'){
     const p=pieceName(f);
     return p==='portion'?('portions of '+fmtNum(f.ref.n)+' '+uShort(f.ref.u)):uLabel(p);
@@ -2234,6 +2202,7 @@ function uLabelFor(f,u){
 }
 function multiplier(f,amount,unit){
   const a=parseFloat(amount)||0;
+  if(unit==='pct')return a/100;
   /* "portion" is universally one reference amount, whatever that is.
      Without this a food defined per 30 g had no bridge to portions
      and silently returned zero. */
@@ -2255,6 +2224,12 @@ function gramsOf(f,amount,unit){
   var v=convert(a,unit,'g',f.eq);
   if(v==null)v=convert(a,unit,'ml',f.eq);
   if(v!=null)return v;
+  if(unit==='pct'){
+    var pw=convert(f.ref.n,f.ref.u,'g',f.eq);
+    if(pw==null)pw=convert(f.ref.n,f.ref.u,'ml',f.eq);
+    if(pw!=null)return pw*a/100;
+    return null;
+  }
   /* a portion is one reference amount, so weigh that instead */
   if(unit==='portion'){
     var per=convert(f.ref.n,f.ref.u,'g',f.eq);
@@ -2349,6 +2324,10 @@ function entryLabel(e){
     parts.push(vol?fmtNum(g)+' ml':gramLabel(g));
   }
   const piece=pieceName(f);
+  if(e.unit==='pct'){
+    parts.push(fmtNum(e.amount)+'% of the whole');
+    return parts.join(' \u00b7 ');
+  }
   if(kindOf(e.unit)==='c'){
     if(!(g!=null&&e.unit===piece&&false))parts.push(fmtNum(e.amount)+' '+(e.amount==1?uShort(e.unit):uLabel(e.unit)));
   }else if(g!=null&&piece!=='portion'){
@@ -2380,13 +2359,26 @@ function openSheet(src,mode,entry){
   $('#shTime').value=pad2(Math.floor(mn/60))+':'+pad2(mn%60);
   $('#shSave').textContent=mode==='edit'?'Save changes':'Add to '+(isToday()?'today':'this day');
   $('#shDel').hidden=mode!=='edit';
+  const wholeG=gramsOf(src,src.ref.n,src.ref.u);
+  const isRecipe=/\(recipe\)$/.test(src.name)||SH.wholeIsRecipe;
+  $('#shWhole').innerHTML='<b>'+(wholeG!=null?esc(weightTag(src)):fmtQty(src.ref.n)+' '+esc(uShort(src.ref.u)))+' in total</b>'
+    +'<span>'+Math.round(src.cal)+' kcal \u00b7 '+r1(src.fat)+' g fat \u00b7 '+r1(src.pro)+' g protein \u00b7 '+r1(src.carb)+' g carb for the whole thing</span>';
+  $('#shAsk').textContent=mode==='edit'?'How much of it did you have?':'How much of it are you having?';
   const cu=unitOptions(src).filter(function(u){return kindOf(u)==='c'})[0];
-  $('#shQuick').innerHTML=(cu?[0.5,1,1.5,2,3].map(function(q){
-      return '<button class="chip" data-q="'+q+'" data-qu="'+cu+'">'+fmtNum(q)+' '+uShort(cu)+'</button>'}).join(''):'')
-    +'<button class="chip" data-q="'+src.ref.n+'" data-qu="'+src.ref.u+'">'+fmtNum(src.ref.n)+' '+uShort(src.ref.u)+'</button>';
-  $('#shHint').textContent=unitOptions(src).length>1
-    ? 'Change the unit to enter this any way you like \u2014 the numbers below follow.'
-    : 'This item scales by portion only.';
+  var chips='';
+  if(wholeG!=null){
+    [['All of it',100],['\u00be',75],['Half',50],['\u2153',33.3],['\u00bc',25]].forEach(function(x){
+      chips+='<button class="chip" data-q="'+x[1]+'" data-qu="pct">'+x[0]+'</button>';
+    });
+  }else if(cu){
+    [0.5,1,1.5,2,3].forEach(function(q){
+      chips+='<button class="chip" data-q="'+q+'" data-qu="'+cu+'">'+fmtNum(q)+' '+uShort(cu)+'</button>';
+    });
+  }
+  $('#shQuick').innerHTML=chips;
+  $('#shHint').textContent = wholeG!=null
+    ? 'Tap a fraction, or type an exact amount \u2014 grams, ounces, or a percentage. This only records what you had; it does not change the recipe.'
+    : 'This item has no weight yet, so it scales by portion. Set a weight below to log it by grams.';
   const pn=pieceName(src);
   unitSelect('#shPieceU',COUNT_UNITS.concat(ALL_UNITS),kindOf(pn)==='c'?pn:'serving');
   unitSelect('#shPieceU2',ALL_UNITS,'g');
@@ -2404,9 +2396,14 @@ function sheetPreview(){
   const g=gramsOf(SH.src,amt,un);
   const wl=$('#shWeight');
   if(wl){
-    if(g==null)wl.textContent='No weight known for this item — set one below to log it by grams or ounces.';
-    else if(kindOf(un)==='c'||un==='portion')wl.textContent=fmtNum(amt)+' '+uShort(un==='portion'?pieceName(SH.src):un)+' = '+gramLabel(g)+'  ·  '+fmtNum(g/28.3495)+' oz';
-    else wl.textContent='= '+gramLabel(g)+'  ·  '+fmtNum(g/28.3495)+' oz';
+    if(g==null){
+      wl.textContent='No weight known for this item yet \u2014 set a serving size below to log it by grams.';
+    }else{
+      const whole=gramsOf(SH.src,SH.src.ref.n,SH.src.ref.u);
+      const share=(whole&&whole>0)?g/whole:null;
+      wl.textContent='Logging '+gramLabel(g)+'  \u00b7  '+fmtNum(Math.round(g/28.3495*10)/10)+' oz'
+        +(share!=null?'  \u00b7  '+fmtNum(Math.round(share*1000)/10)+'% of the whole ('+fmtNum(Math.round(share*100)/100)+' of it)':'');
+    }
   }
   $('#shPrev').innerHTML=
      '<div class="pv"><b>'+Math.round(m.cal)+'</b><span>kcal</span></div>'
@@ -2561,66 +2558,30 @@ function weekDays(){
 }
 function renderExBand(){
   const daily=S.profile.exDaily||350, resistGoal=S.profile.exResist||3;
-  const weekly=daily*6;
-  const D=weekDays();
+  /* same seven dates as every other strip, so the columns line up */
+  const D=stripDays().map(function(k){
+    const l=S.log[k], ex=(l&&l.ex)?l.ex:[];
+    return {k:k,cal:ex.reduce(function(a,b){return a+b.cal},0),
+      resist:ex.some(function(e){return RESIST_RE.test(e.name)}),
+      future:k>todayISO()};
+  });
+  const box=$('#exStrip');
+  if(!box)return;
   const total=D.reduce(function(a,b){return a+b.cal},0);
-  const hit=D.filter(function(d){return d.cal>=daily*0.8}).length;
   const resistDone=D.filter(function(d){return d.resist}).length;
-  const todayIdx=D.findIndex(function(d){return d.today});
-  const elapsed=Math.min(6,todayIdx+1);
-  const pace=daily*elapsed;
-
-  /* --- svg --- */
-  const W=700,H=124, top=20, bot=100, trackH=bot-top;
-  const colW=78, gap=20, x0=10;
-  const maxScale=daily/0.68;                 // a target day fills ~68% of the track
-  const cx=function(i){return x0+i*(colW+gap)+colW/2};
-  var h='';
-  // target hairline
-  const ty=bot-trackH*Math.min(1,daily/maxScale);
-  h+='<line x1="4" y1="'+ty+'" x2="'+(W-4)+'" y2="'+ty+'" stroke="rgba(28,33,24,.32)" stroke-width="1.5" stroke-dasharray="6 5"/>';
-  h+='<text x="'+(W-4)+'" y="'+(ty-6)+'" text-anchor="end" font-family="DM Mono,monospace" font-size="11" fill="#5F6656">'+daily+'</text>';
-  D.forEach(function(d){
-    const x=x0+d.i*(colW+gap);
-    // track
-    h+='<rect x="'+x+'" y="'+top+'" width="'+colW+'" height="'+trackH+'" rx="3" fill="#2B3025" opacity="'+(d.future?.28:1)+'"/>';
-    // fill
-    if(d.cal>0){
-      const fh=Math.max(4,Math.min(1,d.cal/maxScale)*trackH);
-      h+='<rect x="'+x+'" y="'+(bot-fh)+'" width="'+colW+'" height="'+fh+'" rx="3" fill="#C8DDA8"/>';
-      if(d.resist) h+='<rect x="'+x+'" y="'+(bot-fh-1)+'" width="'+colW+'" height="6" rx="2" fill="#A83A26"/>';
-      if(d.cal>maxScale) h+='<polygon points="'+cx(d.i)+','+(top-11)+' '+(cx(d.i)-6)+','+(top-3)+' '+(cx(d.i)+6)+','+(top-3)+'" fill="#A83A26"/>';
-      h+='<text x="'+cx(d.i)+'" y="'+(top-10)+'" text-anchor="middle" font-family="DM Mono,monospace" font-size="12" fill="#1C2118">'+Math.round(d.cal)+'</text>';
-    }
-    // today ring
-    if(d.today) h+='<rect x="'+(x-3)+'" y="'+(top-3)+'" width="'+(colW+6)+'" height="'+(trackH+6)+'" rx="5" fill="none" stroke="#1C2118" stroke-width="2.5"/>';
-    // selected-day marker
-    if(d.k===VIEW&&!d.today)
-      h+='<rect x="'+(x-3)+'" y="'+(top-3)+'" width="'+(colW+6)+'" height="'+(trackH+6)+'" rx="5" fill="none" stroke="#A83A26" stroke-width="2.5" stroke-dasharray="6 4"/>';
-    // day letter
-    h+='<text x="'+cx(d.i)+'" y="118" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="'+(d.today?'#1C2118':'#5F6656')+'" font-weight="'+(d.today?'500':'400')+'">'+'MTWTFSS'[d.i]+'</text>';
-    // invisible hit area so the whole column is tappable
-    if(!d.future)
-      h+='<rect x="'+(x-8)+'" y="0" width="'+(colW+16)+'" height="124" fill="transparent" style="cursor:pointer" data-exd="'+d.k+'"/>';
-  });
-  $('#exBandSvg').innerHTML=h;
-  $$('#exBandSvg [data-exd]').forEach(function(el){
-    el.addEventListener('click',function(){goDay(el.getAttribute('data-exd'))});
-  });
-
-  /* --- readout --- */
-  const wl=$('#exWeekLab');
-  if(wl)wl.textContent=isToday()?'Exercise this week':'Exercise \u2014 week of '+dObj(D[0].k).toLocaleDateString(undefined,{month:'short',day:'numeric'});
-  $('#exWeekTotal').textContent=total.toLocaleString()+' kcal';
-  $('#exWeekTotal').className='band-state '+(total>=pace?'ontrack':'behind');
-  $('#exWeekOf').textContent='of '+weekly.toLocaleString()+' kcal this week';
-  $('#exResistTag').textContent=resistDone+' / '+resistGoal;
-  var msg;
-  if(total>=weekly) msg='Week complete. Anything else is a bonus.';
-  else if(total>=pace) msg=hit+' of 6 days hit · '+(weekly-total).toLocaleString()+' kcal to go';
-  else msg=Math.round(pace-total).toLocaleString()+' kcal behind pace · '+hit+' of 6 days hit';
-  if(resistDone<resistGoal) msg+=' · '+(resistGoal-resistDone)+' resistance session'+(resistGoal-resistDone===1?'':'s')+' left';
-  $('#exWeekSub').textContent=msg;
+  box.innerHTML=D.map(function(d){
+    const frac=daily?Math.min(1,d.cal/daily):0;
+    return '<div class="mbox'+(d.cal?'':' empty')+(d.k===VIEW?' sel':'')+(d.future?' future':'')+'" data-exd="'+d.k+'">'
+      +'<span class="fill'+(d.cal>=daily?'':' warn')+'" style="height:'+Math.round(frac*100)+'%"></span>'
+      +(d.resist?'<span class="rdot"></span>':'')
+      +'<span class="mv">'+(d.cal?Math.round(d.cal):'\u2013')+'</span><span class="mu">'+(d.cal?'kcal':'')+'</span></div>';
+  }).join('');
+  $$('#exStrip [data-exd]').forEach(function(b2){b2.onclick=function(){
+    goDay(b2.getAttribute('data-exd'));
+    $$('nav.tabs button').forEach(function(t){if(t.dataset.v==='move')t.click()});
+  }});
+  $('#exWeekLab').textContent=total.toLocaleString()+' / '+(daily*6).toLocaleString()+' kcal \u00b7 '
+    +resistDone+'/'+resistGoal+' lifts';
 }
 
 /* ============================================================
@@ -2995,7 +2956,10 @@ function renderIngList(){
       +'<button class="x" data-ix="'+i+'">\u00d7</button></div>';
   }).join('');
   $$('#ingList [data-ia]').forEach(function(el){el.oninput=function(){RB[+el.dataset.ia].amount=parseFloat(el.value)||0;renderRecipeTotals()}});
-  $$('#ingList [data-iu]').forEach(function(el){el.onchange=function(){RB[+el.dataset.iu].unit=el.value;renderIngList()}});
+  $$('#ingList [data-iu]').forEach(function(el){el.onchange=function(){
+    if(!el.value)return;
+    RB[+el.dataset.iu].unit=el.value;renderIngList();
+  }});
   $$('#ingList [data-ix]').forEach(function(el){el.onclick=function(){RB.splice(+el.dataset.ix,1);renderIngList()}});
   renderRecipeTotals();
 }
@@ -3208,26 +3172,8 @@ $('#backToday2').onclick=function(){STRIP=0;goDay(todayISO())};
 $('#stripPrev').onclick=function(){STRIP++;renderDayNav()};
 $('#stripNext').onclick=function(){if(STRIP>0){STRIP--;renderDayNav()}};
 
-$('#bedTime').onchange=function(){
-  const d=day(); if(this.value)d.bed=hm2min(this.value); else delete d.bed;
-  save();renderSleepCard();
-};
-$('#wakeTime').onchange=function(){
-  const d=day(); if(this.value)d.wake=hm2min(this.value); else delete d.wake;
-  save();renderSleepCard();
-};
 
 /* first / last bite overrides */
-$('#firstEat').onchange=function(){
-  const d=day(); d.firstEat=this.value?hm2min(this.value):null;
-  if(!this.value)delete d.firstEat;
-  save();renderWindowCard();renderBand();
-};
-$('#lastEat').onchange=function(){
-  const d=day(); d.lastEat=this.value?hm2min(this.value):null;
-  if(!this.value)delete d.lastEat;
-  save();renderWindowCard();renderBand();
-};
 
 /* report */
 var repScope='all';
