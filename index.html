@@ -224,6 +224,9 @@ input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid v
 .sug{border:1px solid var(--line);border-radius:var(--r);padding:12px;margin-bottom:9px;background:#fff}
 .sug-h{display:flex;gap:10px;align-items:flex-start}
 .sug-h b{flex:1;font-weight:600;font-size:15px;line-height:1.25}
+.wtag{display:inline-block;font-family:'DM Mono',monospace;font-size:10.5px;letter-spacing:.02em;
+  color:var(--tomatillo);border:1px solid rgba(79,112,49,.4);background:rgba(79,112,49,.09);
+  border-radius:99px;padding:2px 8px;margin-top:7px}
 .macros{font-family:'DM Mono',monospace;font-size:11px;color:var(--soft);margin-top:5px;letter-spacing:.01em}
 .macros b{color:var(--ink);font-weight:500}
 .ing{font-size:13px;color:var(--soft);margin-top:7px;line-height:1.45}
@@ -1070,13 +1073,14 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
    then re-save the file as weightloss_app_ver_N_short_name.html
    ============================================================ */
 const VERSION={
-  num:'20',
-  name:'weight-first logging',
+  num:'21',
+  name:'weight everywhere',
   date:'2026-08-09',
-  note:'Every logged item now shows its weight first, then the piece count, then the macros \u2014 so a slice of keto bread reads 45 g, 1 slice, and switching it to 60 g reads 60 g, 1.33 slices. Suggested meals and built-in recipes carry weights, so nothing is stuck on portions. Entries logged under earlier versions are upgraded when you open them, keeping their macros while gaining weight units. Full history is in the CHANGELOG below.'
+  note:'Weight now appears wherever a food does: recipe cards, suggested meals, day templates, search results, the ingredient picker, saved foods, the logging sheet and log rows. Recipe weight is recalculated from its ingredients every time it is shown, so recipes saved before weights existed now report correctly and the figure follows any edit. Also fixed the piece-name dropdown carrying over from the previously saved food. Full history is in the CHANGELOG below.'
 };
 /* Older versions, newest first. Add a line each time you update. */
 const CHANGELOG=[
+  ['21','weight everywhere','2026-08-19','Weight shown in every view of a food or recipe, computed live from ingredients rather than a stored field; tidier unit labels; fixed the piece dropdown retaining the previous food\u2019s value.'],
   ['20','weight-first logging','2026-08-18','Weight shown first on every log row and in the report; weights added to suggested meals and built-in recipes; older portion-only entries upgrade to weight units on edit.'],
   ['19','weights everywhere','2026-08-17','Gram weights added across the pantry; recipes compute and store their yield; live weight equivalence when logging and on log rows.'],
   ['18','recipe editing','2026-08-17','Edit and duplicate saved recipes; portion size and type editable at the point of logging, unlocking weight units for meals and recipes.'],
@@ -1910,7 +1914,7 @@ function library(){
   PANTRY.forEach(function(r){out.push(fromServ(r[0],r[1],r[2],r[3],r[4],r[5]||0,'pantry',r[6]||0))});
   MEALS.forEach(function(m){out.push(fromServ(m.name,'1 serving',m.cal,m.fat,m.pro,m.carb||0,'meal',m.grams||0))});
   [].concat(RECIPES,S.recipes||[]).forEach(function(r){
-    const sv=Math.max(1,r.servings||1), gper=r.grams?r.grams/sv:0;
+    const sv=Math.max(1,r.servings||1), W=recipeGrams(r), gper=W?W.g/sv:0;
     out.push(fromServ(r.name+' (recipe)','1 serving',r.cal,r.fat,r.pro,r.carb||0,'recipe',gper))});
   return out;
 }
@@ -1932,7 +1936,7 @@ function renderSearch(){
   if(!q){box.innerHTML='<div class="empty">Type to search 50+ pantry items, your saved foods, recipes and suggested meals.</div>';return}
   const hits=libSearch(q,14);
   if(!hits.length){box.innerHTML='<div class="empty">No match. Save it as a new food below and it\'ll be here next time.</div>';return}
-  box.innerHTML=hits.map((f,i)=>`<div class="row"><div class="nm"><b>${esc(f.name)}</b><small>per ${esc(refLabel(f))} · ${r1(f.fat)}f · ${r1(f.pro)}p · ${r1(f.carb)}c</small></div>
+  box.innerHTML=hits.map((f,i)=>`<div class="row"><div class="nm"><b>${esc(f.name)}</b><small>${(function(){const wt=weightTag(f);return wt?wt+' · ':''})()}per ${esc(refLabel(f))} · ${r1(f.fat)}f · ${r1(f.pro)}p · ${r1(f.carb)}c</small></div>
     <div class="kc">${Math.round(f.cal)}<em>kcal</em></div>
     <button class="btn sm" data-add="${i}">Add</button></div>`).join('');
   $$('#searchResults [data-add]').forEach(b=>b.onclick=()=>{
@@ -1952,6 +1956,7 @@ function renderSug(){
     <div class="sug">
       <div class="sug-h"><b>${esc(m.name)}</b><button class="btn sm" data-sug="${MEALS.indexOf(m)}">Log</button></div>
       <div class="macros"><b>${m.cal}</b> kcal · <b>${m.fat}</b>g fat · <b>${m.pro}</b>g protein · <b>${m.carb||0}</b>g carb${sugMeal==='All'?' · '+m.meal:''}</div>
+      ${m.grams?`<div class="wtag">${esc(gramLabel(m.grams))}</div>`:''}
       <div class="ing">${esc(m.ing)}</div>
       <div class="ing" style="color:var(--ink)">${esc(m.note)}</div>
       ${m.flag?`<span class="flag ${m.flag==='good'?'good':''}">${esc(m.flagT)}</span>`:''}
@@ -1967,12 +1972,13 @@ function renderSug(){
 function findMeal(slot,name){return MEALS.find(m=>m.name===name)}
 function renderDayTemplates(){
   $('#dayTemplates').innerHTML=DAYS.map((d,i)=>{
-    let c=0,f=0,p=0,cb=0;
-    d.items.forEach(([m,n])=>{const x=findMeal(m,n);if(x){c+=x.cal;f+=x.fat;p+=x.pro;cb+=(x.carb||0)}else{console.warn('missing meal:',n)}});
+    let c=0,f=0,p=0,cb=0,gw=0;
+    d.items.forEach(([m,n])=>{const x=findMeal(m,n);if(x){c+=x.cal;f+=x.fat;p+=x.pro;cb+=(x.carb||0);gw+=(x.grams||0)}else{console.warn('missing meal:',n)}});
     const names=d.items.map(([m,n])=>n).join(' · ');
     return `<div class="sug">
       <div class="sug-h"><b>${esc(d.name)}</b><button class="btn sm" data-day="${i}">Log day</button></div>
       <div class="macros"><b>${Math.round(c)}</b> kcal · <b>${r1(f)}</b>g fat · <b>${Math.round(p)}</b>g protein · <b>${Math.round(cb)}</b>g carb</div>
+      ${gw?`<div class="wtag">${esc(gramLabel(gw))} of food across the day</div>`:''}
       <div class="ing" style="color:var(--ink)">${esc(d.desc)}</div>
       <div class="ing">${esc(names)}</div>
     </div>`;
@@ -1998,7 +2004,9 @@ function renderRecipes(){
     <details class="rec">
       <summary><b>${esc(r.name)}</b><span class="arw">›</span></summary>
       <div class="rec-body">
-        <div class="macros" style="margin-bottom:10px"><b>${r.cal}</b> kcal · <b>${r.fat}</b>g fat · <b>${r.pro}</b>g protein · <b>${r.carb||0}</b>g carb${r.mins?' · '+r.mins+' min':''}${r.grams?' · makes '+esc(gramLabel(r.grams))+(r.servings>1?' ('+esc(gramLabel(r.grams/r.servings))+' a serving)':''):''}</div>
+        <div class="macros" style="margin-bottom:10px"><b>${r.cal}</b> kcal · <b>${r.fat}</b>g fat · <b>${r.pro}</b>g protein · <b>${r.carb||0}</b>g carb${r.mins?' · '+r.mins+' min':''}</div>
+        ${(function(){const W=recipeGrams(r);if(!W)return '';const sv=Math.max(1,r.servings||1);
+          return '<div class="wtag">'+esc(gramLabel(W.g))+' total'+(sv>1?' · '+esc(gramLabel(W.g/sv))+' per serving':'')+(W.partial?' · some ingredients have no weight set':'')+'</div>';})()}
         <div class="eyebrow" style="margin-bottom:6px">Ingredients</div>
         <ul class="ingl">${(r.ing||[]).map(x=>Array.isArray(x)?`<li>${esc(x[0])}<span>${esc(x[1])}</span></li>`:`<li>${esc(x)}</li>`).join('')}</ul>
         <div class="eyebrow" style="margin-bottom:6px">Method</div>
@@ -2255,16 +2263,43 @@ function gramsOf(f,amount,unit){
   }
   return null;
 }
+/* Weight of a whole recipe. Computed from its ingredients when it has
+   them, so recipes saved before weights existed still report correctly.
+   Falls back to whatever was stored at save time. */
+function recipeGrams(r){
+  if(r&&r.items&&r.items.length){
+    var g=0,known=0;
+    r.items.forEach(function(it){
+      const x=gramsOf(foodRec(it.food),it.amount,it.unit);
+      if(x!=null){g+=x;known++}
+    });
+    if(known)return {g:g,partial:known<r.items.length};
+  }
+  if(r&&r.grams>0)return {g:r.grams,partial:!!r.gramsPartial};
+  return null;
+}
+/* "· 327 g" for a food record at its reference amount, or '' if unknown */
+function weightTag(f,mult){
+  const g=gramsOf(f,(f.ref.n)*(mult||1),f.ref.u);
+  if(g==null)return '';
+  const vol=kindOf(f.ref.u)==='v'||(f.eq&&kindOf(f.eq.u2)==='v');
+  return vol?(fmtNum(Math.round(g))+' ml'):gramLabel(g);
+}
 function gramLabel(g){
   if(g==null)return '';
   return g>=1000?fmtNum(g/1000)+' kg':Math.round(g)+' g';
 }
 function refLabel(f){
-  var t=fmtNum(f.ref.n)+' '+uShort(f.ref.u);
-  if(f.eq)t+='  ·  '+fmtNum(f.eq.n)+' '+uShort(f.eq.u)+' = '+fmtNum(f.eq.n2)+' '+uShort(f.eq.u2);
+  var t=fmtQty(f.ref.n)+' '+uShort(f.ref.u);
+  if(f.eq&&kindOf(f.eq.u)==='c'&&Math.abs(f.eq.n2-f.ref.n)<0.01&&f.eq.u2===f.ref.u&&f.eq.n===1)
+    return t+' = 1 '+uShort(f.eq.u);
+  const eqRedundant = f.eq && Math.abs(f.eq.n2-f.ref.n)<0.01 && f.eq.u2===f.ref.u && f.eq.n===1;
+  if(f.eq&&!eqRedundant)
+    t+='  ·  '+fmtQty(f.eq.n)+' '+uShort(f.eq.u)+' = '+fmtQty(f.eq.n2)+' '+uShort(f.eq.u2);
   return t;
 }
 function fmtNum(n){return (Math.round(n*100)/100).toString()}
+function fmtQty(n){return (Math.abs(n)>=10?Math.round(n):Math.round(n*100)/100).toString()}
 
 function makeEntry(o){
   const f=o.food, m=macrosOf(f,o.amount,o.unit);
@@ -2333,7 +2368,8 @@ var SH={mode:'add',entry:null,src:null};
 function openSheet(src,mode,entry){
   SH.mode=mode;SH.entry=entry||null;SH.src=src;
   $('#shName').textContent=src.name;
-  $('#shServ').textContent='Per '+refLabel(src)+'  \u00b7  '
+  const wt0=weightTag(src);
+  $('#shServ').textContent=(wt0?wt0+'  \u00b7  ':'')+'Per '+refLabel(src)+'  \u00b7  '
     +Math.round(src.cal)+' kcal, '+r1(src.fat)+' g fat, '+r1(src.pro)+' g protein, '+r1(src.carb)+' g carb';
   const opts=unitOptions(src);
   $('#shUnit').innerHTML=opts.map(function(u){return '<option value="'+u+'">'+uLabelFor(src,u)+'</option>'}).join('');
@@ -2936,7 +2972,8 @@ function renderIngResults(){
   const hits=libSearch(q,8);
   if(!hits.length){box.innerHTML='<div class="empty">Nothing found. Save it under "Save a new food" on the Eat tab and it will appear here.</div>';return}
   box.innerHTML=hits.map(function(f,i){
-    return '<div class="row"><div class="nm"><b>'+esc(f.name)+'</b><small>per '+esc(refLabel(f))+' \u00b7 '+Math.round(f.cal)+' kcal</small></div>'
+    const wt=weightTag(f);
+    return '<div class="row"><div class="nm"><b>'+esc(f.name)+'</b><small>'+(wt?wt+' \u00b7 ':'')+'per '+esc(refLabel(f))+' \u00b7 '+Math.round(f.cal)+' kcal</small></div>'
       +'<button class="btn sm" data-ing="'+i+'">Add</button></div>';
   }).join('');
   $$('#ingResults [data-ing]').forEach(function(b){b.onclick=function(){
@@ -3052,7 +3089,8 @@ function renderMyFoods(){
   box.innerHTML=list.map(function(f,i){
     const rec=foodRec({name:f.name,serv:f.serv,ref:f.ref||{n:1,u:'portion'},eq:f.eq||null,
       cal:f.cal,fat:f.fat,pro:f.pro,carb:f.carb||0});
-    return '<div class="row"><div class="nm"><b>'+esc(f.name)+'</b><small>per '+esc(refLabel(rec))
+    const wt=weightTag(rec);
+    return '<div class="row"><div class="nm"><b>'+esc(f.name)+'</b><small>'+(wt?wt+' \u00b7 ':'')+'per '+esc(refLabel(rec))
       +' \u00b7 '+Math.round(rec.cal)+' kcal \u00b7 '+r1(rec.fat)+'f \u00b7 '+r1(rec.pro)+'p \u00b7 '+r1(rec.carb)+'c</small></div>'
       +'<button class="btn sm ghost" data-fed="'+i+'">Edit</button>'
       +'<button class="x" data-fdel="'+i+'">\u00d7</button></div>';
@@ -3083,6 +3121,7 @@ function resetFoodForm(){
   EDIT_FOOD=null;EQ_DIRTY=false;
   ['nfName','nfCal','nfFat','nfPro','nfCarb','nfEqN2'].forEach(function(i){$('#'+i).value=''});
   $('#nfRefN').value=100;$('#nfRefU').value='g';
+  $('#nfEqU').value='serving';$('#nfEqU2').value='g';
   $('#nfSave').textContent='Save food';$('#nfCancel').hidden=true;$('#nfTitle').textContent='Save a new food';
   nfPreview();
 }
