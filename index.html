@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#DDE2D6">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Cut 16">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -215,6 +218,7 @@ input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid v
 .row .nm{flex:1;min-width:0}
 .row .nm b{display:block;font-weight:600;font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .row .nm small{font-family:'DM Mono',monospace;font-size:11px;color:var(--soft)}
+.fs{color:var(--tomatillo)}
 .row .kc{font-family:'DM Mono',monospace;font-size:13px;text-align:right;white-space:nowrap}
 .row .kc em{display:block;font-style:normal;font-size:10.5px;color:var(--soft)}
 .x{background:none;border:0;color:var(--soft);font-size:19px;line-height:1;padding:2px 4px}
@@ -412,6 +416,14 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
   .striplab,.strip-align{padding-left:0;padding-right:0}
 }
 .row.tap{cursor:pointer}
+.updbar{position:fixed;left:12px;right:12px;z-index:70;
+  bottom:calc(var(--tab-h) + env(safe-area-inset-bottom) + 12px);
+  display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--r);
+  background:var(--char);color:var(--masa);font-size:13px;line-height:1.3;
+  max-width:520px;margin:0 auto}
+.updbar b{flex:1;font-weight:600}
+.updbar .btn.sm{background:#C8DDA8;color:var(--char);border-color:#C8DDA8;padding:4px 10px}
+.updbar .x{color:rgba(247,244,236,.7);font-size:17px}
 #toast{
   position:fixed;left:50%;transform:translateX(-50%) translateY(20px);
   bottom:calc(var(--tab-h) + env(safe-area-inset-bottom) + 14px);z-index:99;
@@ -924,6 +936,7 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
     <div class="eyebrow" style="margin-bottom:8px">History</div>
     <div id="vLog"></div>
     <div class="rule"></div>
+    <button class="btn full ghost" id="updCheck" style="margin-bottom:11px">Check for a newer version</button>
     <p style="font-size:13px;color:var(--soft);margin:0">To release a new version: open the file, edit the <b class="mono">VERSION</b> block at the top of the script, add a line to <b class="mono">CHANGELOG</b> below it, and save it under the new filename before uploading as <b class="mono">index.html</b>.</p>
   </div>
 
@@ -1071,6 +1084,7 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
     </details>
     <div class="shprev" id="shPrev"></div>
     <div class="mono" id="shWeight" style="font-size:11px;color:var(--soft);text-align:center;margin-top:7px"></div>
+    <div class="mono" id="shFast" hidden style="font-size:11px;color:var(--tomatillo);text-align:center;margin-top:5px;line-height:1.45"></div>
     <div class="grid2" style="margin-top:12px">
       <label class="f"><span>Meal</span><select id="shMeal"><option>Breakfast</option><option>Lunch</option><option>Snack</option><option>Dinner</option></select></label>
       <label class="f"><span>Time eaten</span><input type="time" id="shTime"></label>
@@ -1082,6 +1096,12 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
   </div>
 </div>
 
+<div id="updBar" class="updbar" hidden>
+  <b id="updTxt"></b>
+  <button class="btn sm" id="updGo">Update</button>
+  <button class="x" id="updX" aria-label="Dismiss">&times;</button>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -1090,13 +1110,15 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
    then re-save the file as weightloss_app_ver_N_short_name.html
    ============================================================ */
 const VERSION={
-  num:'26',
-  name:'weight readable',
+  num:'28',
+  name:'fast-safe drinks',
   date:'2026-08-09',
-  note:'The weight on each calendar square is now a readable 12px, sitting flush along the bottom edge and spanning the full width of the box with a faint tint behind it. Days without a weigh-in show nothing rather than an empty band. Full history is in the CHANGELOG below.'
+  note:'Items under 10 kcal no longer open the eating window. Logging black coffee at 7:30am used to record it as your first bite and report a broken fast; now only food that genuinely breaks a fast counts, while the calories are still tracked. The logging sheet says so before you commit, log rows are marked, and the fasting band shows those entries as hollow ticks. Oat milk coffee at 58 kcal still opens the window. Full history is in the CHANGELOG below.'
 };
 /* Older versions, newest first. Add a line each time you update. */
 const CHANGELOG=[
+  ['28','fast-safe drinks','2026-08-20','Sub-10-kcal items no longer count as the first bite or open the eating window, fixing black coffee wrongly ending a fast.'],
+  ['27','update check','2026-08-20','Automatic version check against the server with a one-tap cache-busting reload, plus no-cache headers on the shell.'],
   ['26','weight readable','2026-08-20','Larger, full-width weight readout anchored to the bottom of each calendar square.'],
   ['25','symmetry','2026-08-20','Seven equal macro boxes, borderless week arrows, and a shared horizontal inset so every row on Today lines up.'],
   ['24','aligned grid','2026-08-20','Seven-column grid across every Today row; weight folded into the calendar boxes; compact abbreviated calorie and macro boxes; exercise chart reduced to an aligned strip.'],
@@ -1515,7 +1537,8 @@ function renderBand(){
   const d=day();
   d.entries.forEach(en=>{
     if(en.min==null) return;
-    h+=`<line x1="${x(en.min)}" y1="4" x2="${x(en.min)}" y2="38" stroke="#A83A26" stroke-width="6"/>`;
+    const solid=breaksFast(en);
+    h+=`<line x1="${x(en.min)}" y1="${solid?4:14}" x2="${x(en.min)}" y2="${solid?38:28}" stroke="${solid?'#A83A26':'rgba(28,33,24,.45)'}" stroke-width="${solid?6:4}"/>`;
   });
   // now marker
   if(isToday()){
@@ -1547,8 +1570,15 @@ function renderBand(){
   }
   $('#windowLabel').textContent=to12(m2hm(s))+'\u2013'+to12(m2hm(e))+(EWb.auto?' (rolled)':'');
 }
+/* Under about 10 kcal with no protein or carbohydrate worth speaking of,
+   nothing meaningful happens to insulin, so black coffee, plain tea and
+   water do not open the eating window. Anything above that does. */
+const FAST_KCAL=10;
+function breaksFast(e){
+  return (e.cal||0)>=FAST_KCAL;
+}
 function eatTimes(k){
-  const d=day(k), mins=d.entries.map(function(e){return e.min}).filter(function(m){return m!=null});
+  const d=day(k), mins=d.entries.filter(breaksFast).map(function(e){return e.min}).filter(function(m){return m!=null});
   return {first: d.firstEat!=null?d.firstEat:(mins.length?Math.min.apply(null,mins):null),
           last:  d.lastEat !=null?d.lastEat :(mins.length?Math.max.apply(null,mins):null)};
 }
@@ -1728,6 +1758,7 @@ function renderFastPlan(){
     +'<div class="rule"></div>'
     +'<div class="kv"><span>Hungry early \u2014 '+to12(m2hm(early))+' is fine</span><b>'+(fh-1)+'h fast</b></div>'
     +'<div class="kv"><span>Not hungry \u2014 hold to '+to12(m2hm(late))+'</span><b>'+(fh+1)+'h fast</b></div>'
+    +'<p style="font-size:12.5px;line-height:1.55;color:var(--soft);margin:10px 0 0">Black coffee, plain tea and water are free \u2014 anything under '+FAST_KCAL+' kcal is ignored when working out your first bite. Oat milk is not: at 55 kcal it opens the window.</p>'
     +'<p style="font-size:13.5px;line-height:1.62;margin:12px 0 0">An hour either side of '+to12(m2hm(openN))+' changes almost nothing by itself. Opening at '+to12(m2hm(early))+' costs you nothing measurable provided the day\u2019s total still lands; holding to '+to12(m2hm(late))+' only helps if it means you eat less, not if it means you reach dinner ravenous and overshoot. <b>The back end is the half that matters</b> \u2014 closing the kitchen on time is what actually keeps the calories out.</p>';
 }
 
@@ -1747,7 +1778,7 @@ function renderToday(){
     items.forEach(e=>{
       normEntry(e);
 
-      h+=`<div class="row tap" data-edit="${e.id}"><div class="nm"><b>${esc(e.name)}</b><small>${esc(entryLabel(e))} · ${r1(e.fat)}f · ${r1(e.pro)}p · ${r1(e.carb||0)}c</small></div>
+      h+=`<div class="row tap" data-edit="${e.id}"><div class="nm"><b>${esc(e.name)}</b><small>${esc(entryLabel(e))} · ${r1(e.fat)}f · ${r1(e.pro)}p · ${r1(e.carb||0)}c${breaksFast(e)?'':' · <span class="fs">doesn\'t break the fast</span>'}</small></div>
       <div class="kc">${Math.round(e.cal)}<em>kcal</em></div>
       <button class="x" data-del="${e.id}" aria-label="Remove">×</button></div>`;
     });
@@ -2393,6 +2424,13 @@ function closeSheet(){$('#sheetWrap').hidden=true;document.body.style.overflow='
 function sheetPreview(){
   const amt=$('#shAmt').value, un=$('#shUnit').value;
   const m=macrosOf(SH.src,amt,un);
+  const fsn=$('#shFast');
+  if(fsn){
+    if(m.cal<FAST_KCAL){
+      fsn.hidden=false;
+      fsn.textContent='Under '+FAST_KCAL+' kcal \u2014 this will not open your eating window or count as your first bite.';
+    }else fsn.hidden=true;
+  }
   const g=gramsOf(SH.src,amt,un);
   const wl=$('#shWeight');
   if(wl){
@@ -2817,6 +2855,17 @@ $('#nfSave').onclick=()=>{
 };
 $('#nfCancel').onclick=resetFoodForm;
 $('#nrCancel').onclick=resetRecipeForm;
+$('#updCheck').onclick=function(){
+  if(!window.fetch){toast('This browser cannot check');return}
+  fetch('version.json?t='+Date.now(),{cache:'no-store'})
+    .then(function(r){return r.ok?r.json():null})
+    .then(function(j){
+      if(!j||!j.version){toast('No version file found on the server');return}
+      if(String(j.version)===String(VERSION.num)){toast('You are on the latest, v'+VERSION.num);return}
+      checkForUpdate();toast('Version '+j.version+' found');
+    })
+    .catch(function(){toast('Could not reach the server')});
+};
 $('#nfEqN2').addEventListener('input',function(){EQ_DIRTY=true});
 $('#nfEqU2').addEventListener('change',function(){EQ_DIRTY=true});
 $('#nrSave').onclick=()=>{
@@ -3175,6 +3224,27 @@ $('#stripNext').onclick=function(){if(STRIP>0){STRIP--;renderDayNav()}};
 
 /* first / last bite overrides */
 
+/* ---------- update check ----------
+   iOS caches the app shell hard, so a home-screen icon can keep serving an
+   old build indefinitely. This asks the server what version it has and, if
+   it differs, reloads through a fresh URL that no cache can answer. */
+function checkForUpdate(){
+  if(!window.fetch)return;
+  fetch('version.json?t='+Date.now(),{cache:'no-store'})
+    .then(function(r){return r.ok?r.json():null})
+    .then(function(j){
+      if(!j||!j.version)return;
+      if(String(j.version)===String(VERSION.num))return;
+      $('#updTxt').textContent='Version '+j.version+' is available. You are on v'+VERSION.num+'.';
+      $('#updBar').hidden=false;
+      $('#updGo').onclick=function(){
+        location.replace(location.pathname+'?v='+j.version+'&t='+Date.now());
+      };
+      $('#updX').onclick=function(){$('#updBar').hidden=true};
+    })
+    .catch(function(){});
+}
+
 /* report */
 var repScope='all';
 function renderReport(){
@@ -3438,8 +3508,9 @@ function boot(){
   if(!HAS_LS)toast('Private mode — data won\'t persist. Export before closing.');
 }
 boot();
+checkForUpdate();
 setInterval(renderBand,30000);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden){renderBand();renderExBand();renderToday()}});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){renderBand();renderExBand();renderToday();checkForUpdate()}});
 </script>
 </body>
 </html>
