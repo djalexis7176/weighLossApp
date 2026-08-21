@@ -619,6 +619,19 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
     <button class="btn full" id="nfSave">Save food</button>
   </div>
 
+  <details class="acc" id="accRef">
+    <summary>
+      <h3>Food reference</h3>
+      <span class="sum" id="refSum"></span>
+      <span class="caret">&#9656;</span>
+    </summary>
+    <div class="acc-body">
+      <p style="font-size:13px;line-height:1.55;color:var(--soft);margin:0 0 11px">Common foods with calories and macros per 100 g, raw unless the name says otherwise. Everything here is searchable from Quick add and from the recipe builder, and can be logged by weight straight away.</p>
+      <div class="chiprow" id="refCats" style="margin-bottom:11px"></div>
+      <div id="refList"></div>
+    </div>
+  </details>
+
   <details class="acc" id="accFoods">
     <summary>
       <h3>Your saved foods</h3>
@@ -1110,13 +1123,14 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
    then re-save the file as weightloss_app_ver_N_short_name.html
    ============================================================ */
 const VERSION={
-  num:'28',
-  name:'fast-safe drinks',
+  num:'29',
+  name:'food reference',
   date:'2026-08-09',
-  note:'Items under 10 kcal no longer open the eating window. Logging black coffee at 7:30am used to record it as your first bite and report a broken fast; now only food that genuinely breaks a fast counts, while the calories are still tracked. The logging sheet says so before you commit, log rows are marked, and the fasting band shows those entries as hollow ticks. Oat milk coffee at 58 kcal still opens the window. Full history is in the CHANGELOG below.'
+  note:'Added a built-in reference of 191 common foods with calories and macros per 100 g \u2014 fruit, vegetables, raw meat and poultry, fish and seafood, eggs and dairy, grains and beans, nuts and seeds, oils and condiments. Browse them by category on the Eat tab, or find them from Quick add and the recipe builder. Everything is weight-based, so 180 g of raw chicken breast can be logged without defining anything first. Full history is in the CHANGELOG below.'
 };
 /* Older versions, newest first. Add a line each time you update. */
 const CHANGELOG=[
+  ['29','food reference','2026-08-20','Built-in library of 191 common foods per 100 g across eight categories, searchable everywhere and loggable by weight.'],
   ['28','fast-safe drinks','2026-08-20','Sub-10-kcal items no longer count as the first bite or open the eating window, fixing black coffee wrongly ending a fast.'],
   ['27','update check','2026-08-20','Automatic version check against the server with a one-tap cache-busting reload, plus no-cache headers on the shell.'],
   ['26','weight readable','2026-08-20','Larger, full-width weight readout anchored to the bottom of each calendar square.'],
@@ -1273,6 +1287,204 @@ const PANTRY=[
  ['YOUR COFFEE - 1.5c decaf + 0.5c oat milk','1 mug',58,3,1.3,8.5,475],
  ['Lime juice','1 tbsp',4,0,0,1.3,15],
 ];
+
+/* ============================================================
+   Reference foods — per 100 g, raw unless the name says otherwise
+   ============================================================ */
+const REFERENCE=[
+ ['Apple',52,0.2,0.3,14,'Fruit'],
+ ['Banana',89,0.3,1.1,23,'Fruit'],
+ ['Orange',47,0.1,0.9,12,'Fruit'],
+ ['Strawberries',32,0.3,0.7,7.7,'Fruit'],
+ ['Blueberries',57,0.3,0.7,14,'Fruit'],
+ ['Raspberries',52,0.7,1.2,12,'Fruit'],
+ ['Blackberries',43,0.5,1.4,10,'Fruit'],
+ ['Grapes',69,0.2,0.7,18,'Fruit'],
+ ['Watermelon',30,0.2,0.6,7.6,'Fruit'],
+ ['Cantaloupe',34,0.2,0.8,8.2,'Fruit'],
+ ['Honeydew melon',36,0.1,0.5,9.1,'Fruit'],
+ ['Pineapple',50,0.1,0.5,13,'Fruit'],
+ ['Mango',60,0.4,0.8,15,'Fruit'],
+ ['Peach',39,0.3,0.9,9.5,'Fruit'],
+ ['Pear',57,0.1,0.4,15,'Fruit'],
+ ['Plum',46,0.3,0.7,11,'Fruit'],
+ ['Cherries',63,0.2,1.1,16,'Fruit'],
+ ['Kiwi',61,0.5,1.1,15,'Fruit'],
+ ['Grapefruit',42,0.1,0.8,11,'Fruit'],
+ ['Lemon',29,0.3,1.1,9.3,'Fruit'],
+ ['Lime',30,0.2,0.7,11,'Fruit'],
+ ['Apricot',48,0.4,1.4,11,'Fruit'],
+ ['Nectarine',44,0.3,1.1,11,'Fruit'],
+ ['Pomegranate seeds',83,1.2,1.7,19,'Fruit'],
+ ['Papaya',43,0.3,0.5,11,'Fruit'],
+ ['Avocado',160,15,2,8.5,'Fruit'],
+ ['Dates, medjool',277,0.2,1.8,75,'Fruit'],
+ ['Raisins',299,0.5,3.1,79,'Fruit'],
+ ['Figs, fresh',74,0.3,0.8,19,'Fruit'],
+ ['Cranberries',46,0.1,0.4,12,'Fruit'],
+ ['Clementine',47,0.2,0.9,12,'Fruit'],
+ ['Coconut meat, fresh',354,33,3.3,15,'Fruit'],
+ ['Broccoli',34,0.4,2.8,7,'Vegetables'],
+ ['Cauliflower',25,0.3,1.9,5,'Vegetables'],
+ ['Carrot',41,0.2,0.9,10,'Vegetables'],
+ ['Spinach',23,0.4,2.9,3.6,'Vegetables'],
+ ['Kale',49,0.9,4.3,8.8,'Vegetables'],
+ ['Romaine lettuce',17,0.3,1.2,3.3,'Vegetables'],
+ ['Iceberg lettuce',14,0.1,0.9,3,'Vegetables'],
+ ['Cabbage',25,0.1,1.3,5.8,'Vegetables'],
+ ['Red cabbage',31,0.2,1.4,7.4,'Vegetables'],
+ ['Brussels sprouts',43,0.3,3.4,9,'Vegetables'],
+ ['Asparagus',20,0.1,2.2,3.9,'Vegetables'],
+ ['Green beans',31,0.2,1.8,7,'Vegetables'],
+ ['Peas, green',81,0.4,5.4,14,'Vegetables'],
+ ['Zucchini',17,0.3,1.2,3.1,'Vegetables'],
+ ['Cucumber',15,0.1,0.7,3.6,'Vegetables'],
+ ['Tomato',18,0.2,0.9,3.9,'Vegetables'],
+ ['Cherry tomatoes',18,0.2,0.9,3.9,'Vegetables'],
+ ['Tomatillo',32,1,1,5.8,'Vegetables'],
+ ['Bell pepper, red',31,0.3,1,6,'Vegetables'],
+ ['Bell pepper, green',20,0.2,0.9,4.6,'Vegetables'],
+ ['Jalapeno',29,0.4,0.9,6.5,'Vegetables'],
+ ['Poblano pepper',20,0.2,0.9,4.6,'Vegetables'],
+ ['Serrano pepper',32,0.4,1.7,6.7,'Vegetables'],
+ ['Onion',40,0.1,1.1,9.3,'Vegetables'],
+ ['Green onion',32,0.2,1.8,7.3,'Vegetables'],
+ ['Garlic',149,0.5,6.4,33,'Vegetables'],
+ ['Leek',61,0.3,1.5,14,'Vegetables'],
+ ['Celery',16,0.2,0.7,3,'Vegetables'],
+ ['Mushrooms, white',22,0.3,3.1,3.3,'Vegetables'],
+ ['Portobello mushroom',22,0.4,2.1,3.9,'Vegetables'],
+ ['Shiitake, fresh',34,0.5,2.2,6.8,'Vegetables'],
+ ['Eggplant',25,0.2,1,6,'Vegetables'],
+ ['Sweet potato',86,0.1,1.6,20,'Vegetables'],
+ ['Potato, russet',79,0.1,2.1,18,'Vegetables'],
+ ['Butternut squash',45,0.1,1,12,'Vegetables'],
+ ['Yellow squash',16,0.2,1.2,3.4,'Vegetables'],
+ ['Pumpkin',26,0.1,1,6.5,'Vegetables'],
+ ['Beet',43,0.2,1.6,10,'Vegetables'],
+ ['Radish',16,0.1,0.7,3.4,'Vegetables'],
+ ['Turnip',28,0.1,0.9,6.4,'Vegetables'],
+ ['Corn kernels',86,1.2,3.3,19,'Vegetables'],
+ ['Artichoke',47,0.2,3.3,11,'Vegetables'],
+ ['Okra',33,0.2,1.9,7,'Vegetables'],
+ ['Bok choy',13,0.2,1.5,2.2,'Vegetables'],
+ ['Arugula',25,0.7,2.6,3.7,'Vegetables'],
+ ['Swiss chard',19,0.2,1.8,3.7,'Vegetables'],
+ ['Cilantro',23,0.5,2.1,3.7,'Vegetables'],
+ ['Parsley',36,0.8,3,6.3,'Vegetables'],
+ ['Basil, fresh',23,0.6,3.2,2.7,'Vegetables'],
+ ['Ginger root',80,0.8,1.8,18,'Vegetables'],
+ ['Snap peas',42,0.2,2.8,7.5,'Vegetables'],
+ ['Sauerkraut',19,0.1,0.9,4.3,'Vegetables'],
+ ['Chicken breast, skinless',120,2.7,22.5,0,'Meat & poultry, raw'],
+ ['Chicken thigh, skinless',121,4.2,19.7,0,'Meat & poultry, raw'],
+ ['Chicken drumstick, skinless',120,5.7,18,0,'Meat & poultry, raw'],
+ ['Chicken wing, with skin',203,15.6,15,0,'Meat & poultry, raw'],
+ ['Ground chicken',143,8,18,0,'Meat & poultry, raw'],
+ ['Turkey breast, skinless',111,0.7,24.6,0,'Meat & poultry, raw'],
+ ['Ground turkey, 93%',170,10,17,0,'Meat & poultry, raw'],
+ ['Ground beef, 90%',176,10,20,0,'Meat & poultry, raw'],
+ ['Ground beef, 85%',215,15,18.6,0,'Meat & poultry, raw'],
+ ['Ground beef, 80%',254,20,17.2,0,'Meat & poultry, raw'],
+ ['Beef sirloin, lean',143,5,22,0,'Meat & poultry, raw'],
+ ['Beef ribeye',291,24,18,0,'Meat & poultry, raw'],
+ ['Beef tenderloin',179,9.6,21.5,0,'Meat & poultry, raw'],
+ ['Beef chuck roast',217,15,19,0,'Meat & poultry, raw'],
+ ['Pork loin',143,5.5,21.5,0,'Meat & poultry, raw'],
+ ['Pork tenderloin',120,3.5,20.9,0,'Meat & poultry, raw'],
+ ['Pork chop, boneless',172,9,21.5,0,'Meat & poultry, raw'],
+ ['Ground pork',263,21,17,0,'Meat & poultry, raw'],
+ ['Bacon, raw',458,45,12.6,1.3,'Meat & poultry, raw'],
+ ['Ham, lean',107,3.5,17,1.5,'Meat & poultry, raw'],
+ ['Lamb, leg',202,14,18.3,0,'Meat & poultry, raw'],
+ ['Veal cutlet',107,2.4,20,0,'Meat & poultry, raw'],
+ ['Salmon, farmed',208,13,20,0,'Fish & seafood, raw'],
+ ['Salmon, wild',142,6.3,20,0,'Fish & seafood, raw'],
+ ['Tilapia',96,1.7,20,0,'Fish & seafood, raw'],
+ ['Cod',82,0.7,18,0,'Fish & seafood, raw'],
+ ['Halibut',111,2.3,21,0,'Fish & seafood, raw'],
+ ['Tuna, yellowfin',109,0.5,24,0,'Fish & seafood, raw'],
+ ['Tuna, canned in water',116,0.8,25.5,0,'Fish & seafood, raw'],
+ ['Sardines, canned in oil',208,11.5,25,0,'Fish & seafood, raw'],
+ ['Shrimp',85,0.5,20,0,'Fish & seafood, raw'],
+ ['Swai fillet',90,3,15,0,'Fish & seafood, raw'],
+ ['Mahi mahi',85,0.7,18.5,0,'Fish & seafood, raw'],
+ ['Trout',148,6.6,21,0,'Fish & seafood, raw'],
+ ['Mackerel',205,13.9,19,0,'Fish & seafood, raw'],
+ ['Scallops',69,0.5,12.1,3.2,'Fish & seafood, raw'],
+ ['Crab meat',84,0.6,18,0,'Fish & seafood, raw'],
+ ['Lobster',77,0.7,16.5,0,'Fish & seafood, raw'],
+ ['Mussels',86,2.2,12,3.7,'Fish & seafood, raw'],
+ ['Squid',92,1.4,15.6,3.1,'Fish & seafood, raw'],
+ ['Anchovies, canned',210,9.7,29,0,'Fish & seafood, raw'],
+ ['Egg, whole',143,9.5,12.6,0.7,'Eggs & dairy'],
+ ['Egg white',52,0.2,10.9,0.7,'Eggs & dairy'],
+ ['Egg yolk',322,27,16,3.6,'Eggs & dairy'],
+ ['Milk, whole',61,3.3,3.2,4.8,'Eggs & dairy'],
+ ['Milk, 2%',50,2,3.3,4.8,'Eggs & dairy'],
+ ['Milk, skim',34,0.2,3.4,5,'Eggs & dairy'],
+ ['Greek yogurt, nonfat',59,0.4,10.3,3.6,'Eggs & dairy'],
+ ['Greek yogurt, whole',97,5,9,3.6,'Eggs & dairy'],
+ ['Yogurt, plain lowfat',63,1.6,5.3,7,'Eggs & dairy'],
+ ['Cottage cheese, 1%',72,1,12.4,2.7,'Eggs & dairy'],
+ ['Cottage cheese, 4%',98,4.3,11.1,3.4,'Eggs & dairy'],
+ ['Cheddar cheese',403,33,25,1.3,'Eggs & dairy'],
+ ['Mozzarella, part skim',254,16,24,2.8,'Eggs & dairy'],
+ ['Parmesan',431,29,38,4.1,'Eggs & dairy'],
+ ['Feta',264,21,14,4.1,'Eggs & dairy'],
+ ['Cream cheese',342,34,6,4.1,'Eggs & dairy'],
+ ['Butter',717,81,0.9,0.1,'Eggs & dairy'],
+ ['Heavy cream',340,36,2.1,2.8,'Eggs & dairy'],
+ ['Sour cream',198,20,2.4,4.6,'Eggs & dairy'],
+ ['Oat milk (per 100 ml)',43,1.5,1,6.7,'Eggs & dairy'],
+ ['Almond milk, unsweetened (per 100 ml)',15,1.2,0.6,0.6,'Eggs & dairy'],
+ ['White rice, cooked',130,0.3,2.7,28,'Grains, beans & starch'],
+ ['Brown rice, cooked',123,1,2.7,26,'Grains, beans & starch'],
+ ['Quinoa, cooked',120,1.9,4.4,21,'Grains, beans & starch'],
+ ['Oats, dry',389,6.9,16.9,66,'Grains, beans & starch'],
+ ['Pasta, dry',371,1.5,13,75,'Grains, beans & starch'],
+ ['Pasta, cooked',158,0.9,5.8,31,'Grains, beans & starch'],
+ ['Bread, whole wheat',247,3.4,13,41,'Grains, beans & starch'],
+ ['Bread, white',265,3.2,9,49,'Grains, beans & starch'],
+ ['Tortilla, corn',218,2.9,5.7,45,'Grains, beans & starch'],
+ ['Tortilla, flour',306,8,8,49,'Grains, beans & starch'],
+ ['Black beans, cooked',132,0.5,8.9,24,'Grains, beans & starch'],
+ ['Pinto beans, cooked',143,0.6,9,27,'Grains, beans & starch'],
+ ['Chickpeas, cooked',164,2.6,8.9,27,'Grains, beans & starch'],
+ ['Lentils, cooked',116,0.4,9,20,'Grains, beans & starch'],
+ ['Kidney beans, cooked',127,0.5,8.7,23,'Grains, beans & starch'],
+ ['Edamame',121,5.2,11,9,'Grains, beans & starch'],
+ ['Tofu, firm',144,8.7,17,2.8,'Grains, beans & starch'],
+ ['Tempeh',192,11,20,7.6,'Grains, beans & starch'],
+ ['Couscous, cooked',112,0.2,3.8,23,'Grains, beans & starch'],
+ ['Almonds',579,50,21,22,'Nuts & seeds'],
+ ['Walnuts',654,65,15,14,'Nuts & seeds'],
+ ['Cashews',553,44,18,30,'Nuts & seeds'],
+ ['Peanuts',567,49,26,16,'Nuts & seeds'],
+ ['Peanut butter',588,50,25,20,'Nuts & seeds'],
+ ['Almond butter',614,56,21,19,'Nuts & seeds'],
+ ['Pistachios',560,45,20,28,'Nuts & seeds'],
+ ['Pecans',691,72,9,14,'Nuts & seeds'],
+ ['Chia seeds',486,31,17,42,'Nuts & seeds'],
+ ['Flaxseed',534,42,18,29,'Nuts & seeds'],
+ ['Sunflower seeds',584,51,21,20,'Nuts & seeds'],
+ ['Pumpkin seeds',559,49,30,11,'Nuts & seeds'],
+ ['Olive oil',884,100,0,0,'Oils & condiments'],
+ ['Avocado oil',884,100,0,0,'Oils & condiments'],
+ ['Coconut oil',862,100,0,0,'Oils & condiments'],
+ ['Mayonnaise',680,75,1,0.6,'Oils & condiments'],
+ ['Mustard, yellow',66,3.3,3.7,5.8,'Oils & condiments'],
+ ['Ketchup',101,0.1,1.3,26,'Oils & condiments'],
+ ['Soy sauce',53,0.1,8,4.9,'Oils & condiments'],
+ ['Hot sauce',11,0.4,0.5,1.8,'Oils & condiments'],
+ ['Salsa',36,0.2,1.5,7,'Oils & condiments'],
+ ['Honey',304,0,0.3,82,'Oils & condiments'],
+ ['Maple syrup',260,0.1,0,67,'Oils & condiments'],
+ ['Sugar',387,0,0,100,'Oils & condiments'],
+ ['Balsamic vinegar',88,0,0.5,17,'Oils & condiments'],
+ ['Ranch dressing',430,45,1,6,'Oils & condiments'],
+];
+const REF_CATS=(function(){var o=[],seen={};REFERENCE.forEach(function(r){if(!seen[r[5]]){seen[r[5]]=1;o.push(r[5])}});return o})();
 
 /* ============================================================
    Suggested meals — assembled from the pantry above
@@ -1909,6 +2121,7 @@ function library(){
       cal:f.cal,fat:f.fat,pro:f.pro,carb:f.carb||0,src:'yours'}));
   });
   PANTRY.forEach(function(r){out.push(fromServ(r[0],r[1],r[2],r[3],r[4],r[5]||0,'pantry',r[6]||0))});
+  REFERENCE.forEach(function(r){out.push(fromServ(r[0],'100 g',r[1],r[2],r[3],r[4],'reference'))});
   MEALS.forEach(function(m){out.push(fromServ(m.name,'1 serving',m.cal,m.fat,m.pro,m.carb||0,'meal',m.grams||0))});
   [].concat(RECIPES,S.recipes||[]).forEach(function(r){
     const sv=Math.max(1,r.servings||1), W=recipeGrams(r), gper=W?W.g/sv:0;
@@ -3093,6 +3306,27 @@ function resetRecipeForm(){
   renderIngList();
 }
 
+/* ---------- reference browser ---------- */
+var REF_CAT=REF_CATS[0];
+function renderRefList(){
+  $('#refSum').textContent=REFERENCE.length+' foods';
+  $('#refCats').innerHTML=REF_CATS.map(function(c){
+    return '<button class="chip" aria-pressed="'+(REF_CAT===c)+'" data-rc="'+esc(c)+'">'+esc(c)+'</button>';
+  }).join('');
+  $$('#refCats [data-rc]').forEach(function(b){b.onclick=function(){REF_CAT=b.dataset.rc;renderRefList()}});
+  const rows=REFERENCE.filter(function(r){return r[5]===REF_CAT});
+  $('#refList').innerHTML=rows.map(function(r,i){
+    return '<div class="row"><div class="nm"><b>'+esc(r[0])+'</b><small>per 100 g \u00b7 '
+      +r[2]+'f \u00b7 '+r[3]+'p \u00b7 '+r[4]+'c</small></div>'
+      +'<div class="kc">'+r[1]+'<em>kcal</em></div>'
+      +'<button class="btn sm" data-rl="'+i+'">Log</button></div>';
+  }).join('');
+  $$('#refList [data-rl]').forEach(function(b){b.onclick=function(){
+    const r=rows[+b.dataset.rl];
+    openSheet(fromServ(r[0],'100 g',r[1],r[2],r[3],r[4],'reference'),'add');
+  }});
+}
+
 /* ---------- saved-food manager ---------- */
 var EDIT_FOOD=null;
 function renderMyFoods(){
@@ -3502,7 +3736,7 @@ function boot(){
   unitSelect('#nfRefU',ALL_UNITS.concat(COUNT_UNITS),'g');
   unitSelect('#nfEqU',COUNT_UNITS.concat(ALL_UNITS),'slice');
   unitSelect('#nfEqU2',ALL_UNITS,'g');
-  nfPreview();renderIngList();renderMyFoods();
+  nfPreview();renderIngList();renderMyFoods();renderRefList();
   renderToday();renderBand();renderExBand();renderSearch();renderSug();renderDayTemplates();
   renderRecipes();renderEx();renderWeight();renderNumbers();renderVersion();renderReport();
   if(!HAS_LS)toast('Private mode — data won\'t persist. Export before closing.');
