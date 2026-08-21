@@ -394,6 +394,51 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
 .qbox .big.ok{color:var(--tomatillo)}
 .qbox .big.over{color:var(--guajillo)}
 .ledgerwrap{margin-bottom:12px}
+
+/* ---- day / week toggle ---- */
+.viewtog{display:flex;border:1px solid var(--line2);border-radius:99px;overflow:hidden;flex:0 0 auto}
+.viewtog button{background:transparent;border:0;color:var(--soft);font-size:11.5px;font-weight:600;
+  padding:4px 12px;letter-spacing:.02em}
+.viewtog button[aria-pressed="true"]{background:var(--char);color:var(--masa)}
+body[data-view="day"] .weekonly{display:none!important}
+body[data-view="week"] .dayonly{display:none!important}
+#dayWrap{margin:0 36px}
+@media(min-width:620px){#dayWrap{max-width:420px;margin:0 auto}}
+
+/* ---- day view blocks ---- */
+.hero{background:rgba(79,112,49,.13);border:1px solid rgba(79,112,49,.32);border-radius:10px;
+  padding:14px 14px 0;text-align:center;margin-bottom:8px;overflow:hidden}
+.hero-lab{font-family:'DM Mono',monospace;font-size:11px;color:var(--tomatillo);letter-spacing:.04em}
+.hero-num{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:40px;letter-spacing:-.035em;line-height:1.1}
+.hero-sub{font-size:13px;color:var(--soft);margin-top:1px}
+.hero-bar{height:7px;background:rgba(28,33,24,.13);border-radius:99px;margin:11px 0 12px;overflow:hidden}
+.hero-bar i{display:block;height:100%;border-radius:99px;background:var(--tomatillo);transition:width .4s}
+.hero-bar i.warn{background:var(--amber)} .hero-bar i.over{background:var(--guajillo)}
+.hero-add{display:block;width:calc(100% + 28px);margin:0 -14px;border:0;border-top:1px solid rgba(79,112,49,.3);
+  background:var(--char);color:var(--masa);font-weight:600;font-size:14px;padding:11px 0}
+.hero-add:active{opacity:.75}
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}
+.tri{background:var(--masa);border:1px solid var(--line);border-radius:var(--r);padding:9px 4px;text-align:center}
+.tri span{display:block;font-size:10.5px;color:var(--soft)}
+.tri b{display:block;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:19px;letter-spacing:-.02em;line-height:1.2}
+.tri em{font-style:normal;font-family:'DM Mono',monospace;font-size:9.5px;color:var(--soft)}
+.tri.ok b{color:var(--tomatillo)} .tri.over b{color:var(--guajillo)}
+.movecard{display:flex;align-items:center;gap:10px;background:var(--masa);border:1px solid var(--line);
+  border-radius:var(--r);padding:9px 12px;margin-bottom:8px}
+.mv-txt{flex:1;min-width:0}
+.mv-txt span{display:block;font-size:10.5px;color:var(--soft)}
+.mv-txt b{font-family:'DM Mono',monospace;font-size:15px;font-weight:500}
+.mv-bar{width:64px;height:6px;background:rgba(28,33,24,.13);border-radius:99px;overflow:hidden}
+.mv-bar i{display:block;height:100%;background:var(--tomatillo);border-radius:99px}
+.fastwrap{margin-bottom:9px}
+.fast-lab{display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:10.5px;color:var(--soft);margin-bottom:4px}
+.fast-lab span{color:var(--ink);font-weight:500}
+.fastbar{position:relative;height:24px;border-radius:4px;background:var(--char);overflow:hidden}
+.fastbar i{position:absolute;top:0;bottom:0;background:#C8DDA8}
+.fastbar u{position:absolute;top:0;bottom:0;width:2px;background:var(--guajillo)}
+.fastbar b{position:absolute;top:0;bottom:0;width:3px;background:var(--masa)}
+.wrow{display:flex;gap:7px}
+.wrow input{flex:1}
 #v-today>.card,#v-today>.ledgerwrap,#v-today>details.acc,#v-today>.band-wrap,#v-today>.dayhead,#v-today>.bkbar{
   margin-left:36px;margin-right:36px}
 @media(max-width:560px){
@@ -465,7 +510,10 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
       <b id="dhDate"></b>
       <span class="db-back" id="dbBack"></span>
     </div>
-    <button class="btn sm" id="backToday2" hidden>Jump to today</button>
+    <div class="viewtog">
+      <button id="vDay">Day</button><button id="vWeek">Week</button>
+    </div>
+    <button class="btn sm" id="backToday2" hidden>Today</button>
   </div>
 
   <div class="bkbar" id="bkBar" hidden>
@@ -480,15 +528,55 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
     <button class="stripnav" id="stripNext" aria-label="Later week">&#8250;</button>
   </div>
 
-  <div class="striprow">
+  <div class="dayonly" id="dayWrap">
+    <div class="hero">
+      <div class="hero-lab" id="dEatLab">Eaten today</div>
+      <div class="hero-num" id="dEaten">0</div>
+      <div class="hero-sub" id="dLeft"></div>
+      <div class="hero-bar"><i id="dBar" style="width:0"></i></div>
+      <button class="hero-add" id="dAdd">Add food</button>
+    </div>
+
+    <div class="trio">
+      <div class="tri"><span>protein</span><b id="dPro">0</b><em id="dProOf"></em></div>
+      <div class="tri"><span>fat</span><b id="dFat">0</b><em id="dFatOf"></em></div>
+      <div class="tri"><span>carbs</span><b id="dCarb">0</b><em id="dCarbOf"></em></div>
+    </div>
+
+    <div class="movecard">
+      <div class="mv-txt"><span>burned moving</span><b id="dBurn">0</b></div>
+      <div class="mv-bar"><i id="dBurnBar" style="width:0"></i></div>
+      <button class="btn sm ghost" id="dAddEx">Log</button>
+    </div>
+
+    <div class="fastwrap">
+      <div class="fast-lab"><span id="dFastState"></span><em id="dFastEnd"></em></div>
+      <div class="fastbar" id="dFastBar"></div>
+    </div>
+
+    <div class="chiprow typerow" id="dTypeRow" style="margin-bottom:10px"></div>
+
+    <details class="acc sub" id="dLogAcc" open style="margin-bottom:10px">
+      <summary><h3 id="dLogTitle">Today's log</h3><span class="sum" id="dLogSum"></span><span class="caret">&#9656;</span></summary>
+      <div class="acc-body" style="padding:0 12px 10px"><div id="dLogList"></div></div>
+    </details>
+
+    <div class="wrow">
+      <input type="number" step="0.1" id="dWeight" inputmode="decimal" placeholder="204.1">
+      <button class="btn" id="dWeightBtn">Log weight</button>
+    </div>
+    <div class="mono" id="dWeightNote" style="font-size:11px;color:var(--soft);margin:6px 0 0;text-align:center"></div>
+  </div>
+
+  <div class="striprow weekonly">
     <div class="striplab"><span>Food</span><em id="foodStripNote">tap a day to log a meal</em></div>
     <div class="strip-align"><div class="ministrip" id="foodStrip"></div></div>
   </div>
 
-  <div class="grid7" id="calRow"></div>
-  <div class="grid7 macgrid" id="macRow"></div>
+  <div class="grid7 weekonly" id="calRow"></div>
+  <div class="grid7 macgrid weekonly" id="macRow"></div>
 
-  <div class="ledgerwrap">
+  <div class="ledgerwrap weekonly">
     <details class="acc sub" id="accLedger">
       <summary><h3>Full breakdown</h3><span class="sum" id="ledSum"></span><span class="caret">&#9656;</span></summary>
       <div class="acc-body">
@@ -507,20 +595,20 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
     </details>
   </div>
 
-  <div class="striprow">
+  <div class="striprow weekonly">
     <div class="striplab"><span>Move</span><em id="exWeekLab"></em></div>
     <div class="strip-align"><div class="ministrip" id="exStrip"></div></div>
   </div>
 
 
-  <div class="timerow" id="timeRow"></div>
+  <div class="timerow weekonly" id="timeRow"></div>
 
-  <div class="card">
+  <div class="card weekonly">
     <div class="card-h"><h3>Tomorrow's window</h3></div>
     <div id="fastPlan"></div>
   </div>
 
-  <div class="band-wrap">
+  <div class="band-wrap weekonly">
     <div class="eyebrow" style="margin-bottom:9px" id="clockLab">Fasting clock</div>
     <div class="band-top">
       <div>
@@ -539,14 +627,14 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
   </div>
 
 
-  <div class="card">
+  <div class="card weekonly">
     <div class="card-h"><h3>Day type</h3></div>
     <div class="typerow"><div class="chiprow" id="dayTypeRow"></div><button class="chip" id="estChip">Reconstructed</button></div>
     <div class="mono" id="dayTypeNote" style="font-size:11.5px;color:var(--soft);margin-top:10px;line-height:1.5"></div>
     <div class="mono" id="estNote" style="font-size:11px;color:var(--soft);margin-top:7px;line-height:1.5"></div>
   </div>
 
-  <details class="acc" id="accLog" open>
+  <details class="acc weekonly" id="accLog" open>
     <summary>
       <h3 id="logTitle">Today's log</h3>
       <span class="sum" id="logSum"></span>
@@ -1123,13 +1211,14 @@ body:not([data-back="0"]) .dh-tag{background:#A8442C}
    then re-save the file as weightloss_app_ver_N_short_name.html
    ============================================================ */
 const VERSION={
-  num:'29',
-  name:'food reference',
+  num:'30',
+  name:'day view',
   date:'2026-08-09',
-  note:'Added a built-in reference of 191 common foods with calories and macros per 100 g \u2014 fruit, vegetables, raw meat and poultry, fish and seafood, eggs and dairy, grains and beans, nuts and seeds, oils and condiments. Browse them by category on the Eat tab, or find them from Quick add and the recipe builder. Everything is weight-based, so 180 g of raw chicken breast can be logged without defining anything first. Full history is in the CHANGELOG below.'
+  note:'Added a Day view alongside the existing Week view, toggled from the day header and remembered between sessions. Day view keeps the calendar and reduces everything else to one large eaten-today figure with a progress bar and an Add food button beneath it, three macro squares, a movement card, a single fasting bar, day-type buttons, the log, and a weight entry at the bottom. Tapping another date in the calendar stays in Day view and shows that date. On wide screens the column is capped and centred. Full history is in the CHANGELOG below.'
 };
 /* Older versions, newest first. Add a line each time you update. */
 const CHANGELOG=[
+  ['30','day view','2026-08-21','Day and Week views with a remembered toggle; simplified single-day layout with inline add-food and weight entry.'],
   ['29','food reference','2026-08-20','Built-in library of 191 common foods per 100 g across eight categories, searchable everywhere and loggable by weight.'],
   ['28','fast-safe drinks','2026-08-20','Sub-10-kcal items no longer count as the first bite or open the eating window, fixing black coffee wrongly ending a fast.'],
   ['27','update check','2026-08-20','Automatic version check against the server with a one-tap cache-busting reload, plus no-cache headers on the shell.'],
@@ -1172,7 +1261,7 @@ const DEFAULTS={
   profile:{heightIn:73.5,startLbs:206.3,goalLbs:190.3,age:40,startDate:todayISO(),
            calTarget:1650,fatTarget:50,proTarget:150,exDaily:350,exResist:3},
   window:{start:'12:00',end:'20:00'},
-  settings:{fastHours:16,eatHours:8,autoWindow:false},
+  settings:{fastHours:16,eatHours:8,autoWindow:false,view:'day'},
   meta:{lastBackup:null,promptSeen:null},
   foods:[],      // user-created
   recipes:[],    // user-created
@@ -1901,6 +1990,97 @@ function renderFoodStrip(){
   }});
   $('#foodStripNote').textContent=isToday()?'tap a day to log a meal':'logging to '+dayShort();
 }
+function setView(v){
+  if(!S.settings)S.settings={};
+  S.settings.view=v; save();
+  document.body.dataset.view=v;
+  $('#vDay').setAttribute('aria-pressed',v==='day');
+  $('#vWeek').setAttribute('aria-pressed',v==='week');
+  renderToday();renderBand();
+}
+function renderDay(){
+  const p=S.profile, t=totals(), d=day(), n=calcNumbers();
+  const tgt=p.calTarget, eaten=Math.round(t.cal), left=tgt-eaten;
+  $('#dEatLab').textContent=isToday()?'Eaten today':'Eaten '+dayShort();
+  $('#dEaten').textContent=eaten.toLocaleString();
+  $('#dLeft').textContent=left>=0?left.toLocaleString()+' left of '+tgt.toLocaleString()
+                                 :Math.abs(left).toLocaleString()+' over '+tgt.toLocaleString();
+  const bar=$('#dBar');
+  bar.style.width=Math.min(100,eaten/tgt*100)+'%';
+  bar.className=eaten>tgt?'over':eaten>tgt*0.9?'warn':'';
+  $('#dAdd').textContent=isToday()?'Add food':'Add food to '+dayShort();
+
+  function tri(id,val,cap,unit,cls){
+    $('#'+id).textContent=val;
+    $('#'+id+'Of').textContent='of '+cap+' '+unit;
+    $('#'+id).parentElement.className='tri'+(cls?' '+cls:'');
+  }
+  tri('dPro',Math.round(t.pro),p.proTarget,'g',t.pro>=p.proTarget?'ok':'');
+  tri('dFat',r1(t.fat),p.fatTarget,'g',t.fat>p.fatTarget?'over':'');
+  tri('dCarb',Math.round(t.carb),carbAllowance(),'g',t.carb>carbAllowance()?'over':'');
+
+  const ex=Math.round(t.ex), exGoal=p.exDaily||350;
+  $('#dBurn').innerHTML=ex.toLocaleString()+' <span style="font-size:10.5px;color:var(--soft);font-weight:400">of '+exGoal.toLocaleString()+'</span>';
+  $('#dBurnBar').style.width=Math.min(100,ex/exGoal*100)+'%';
+
+  /* fasting bar: the whole day, window filled, meals ticked, now marked */
+  const W=effWindow(), nm=nowMin(), fb=$('#dFastBar');
+  const pc=function(m){return (m/1440*100)+'%'};
+  var h='';
+  if(W.start<W.end)h+='<i style="left:'+pc(W.start)+';width:'+((W.end-W.start)/1440*100)+'%"></i>';
+  else h+='<i style="left:'+pc(W.start)+';right:0"></i><i style="left:0;width:'+(W.end/1440*100)+'%"></i>';
+  d.entries.forEach(function(e){if(e.min!=null&&breaksFast(e))h+='<u style="left:'+pc(e.min)+'"></u>'});
+  if(isToday())h+='<b style="left:'+pc(nm)+'"></b>';
+  fb.innerHTML=h;
+  const open=W.start<W.end?(nm>=W.start&&nm<W.end):(nm>=W.start||nm<W.end);
+  if(isToday()){
+    $('#dFastState').textContent=open?'window open':'fasting';
+    var mins=open?(W.end-nm+1440)%1440:(W.start-nm+1440)%1440;
+    $('#dFastEnd').textContent=(open?'closes ':'opens ')+to12(m2hm(open?W.end:W.start))+' \u00b7 '+dur(mins)+' away';
+  }else{
+    const et=eatTimes();
+    $('#dFastState').textContent='window '+to12(m2hm(W.start))+'\u2013'+to12(m2hm(W.end));
+    $('#dFastEnd').textContent=(et.first!=null&&et.last!=null&&et.last>et.first)?'ate across '+dur(et.last-et.first):'nothing logged';
+  }
+
+  const types=[['standard','Standard'],['low','Low'],['training','Training']];
+  $('#dTypeRow').innerHTML=types.map(function(x){
+    return '<button class="chip" aria-pressed="'+(d.dayType===x[0])+'" data-ddt="'+x[0]+'">'+x[1]+'</button>';
+  }).join('');
+  $$('#dTypeRow [data-ddt]').forEach(function(b){b.onclick=function(){
+    d.dayType=b.dataset.ddt;
+    S.profile.calTarget=d.dayType==='low'?1200:d.dayType==='training'?1800:1650;
+    S.profile.fatTarget=d.dayType==='low'?35:d.dayType==='training'?58:50;
+    save();renderToday();
+  }});
+
+  $('#dLogTitle').textContent=isToday()?"Today's log":dayFull()+' log';
+  $('#dLogSum').textContent=d.entries.length?(d.entries.length+' item'+(d.entries.length>1?'s':'')):'nothing yet';
+  const order=['Breakfast','Lunch','Snack','Dinner'];
+  var lh='';
+  order.forEach(function(m){
+    const it=d.entries.filter(function(e){return e.meal===m});
+    if(!it.length)return;
+    lh+='<div class="mealhead"><span class="eyebrow">'+m+'</span><span class="tot">'
+      +Math.round(it.reduce(function(a,b){return a+b.cal},0))+' kcal</span></div>';
+    it.forEach(function(e){
+      normEntry(e);
+      lh+='<div class="row tap" data-dedit="'+e.id+'"><div class="nm"><b>'+esc(e.name)+'</b>'
+        +'<small>'+esc(entryLabel(e))+'</small></div>'
+        +'<div class="kc">'+Math.round(e.cal)+'<em>kcal</em></div></div>';
+    });
+  });
+  $('#dLogList').innerHTML=lh||'<div class="empty">Nothing logged yet.</div>';
+  $$('#dLogList [data-dedit]').forEach(function(r){r.onclick=function(){
+    const e=normEntry(d.entries.filter(function(x){return x.id===r.dataset.dedit})[0]);
+    if(e)openSheet(resolveFood(e),'edit',e);
+  }});
+
+  const w=S.weights.filter(function(x){return x.date===VIEW})[0];
+  $('#dWeight').value=w?w.lbs:'';
+  $('#dWeightBtn').textContent=isToday()?'Log weight':'Save for '+dayShort();
+  $('#dWeightNote').textContent=w?('recorded '+dayOn()):('nothing recorded '+dayOn()+' \u00b7 latest '+latestWeight()+' lb');
+}
 function renderQuad(){
   const p=S.profile, t=totals(), n=calcNumbers();
   const ex=Math.round(t.ex), eaten=Math.round(t.cal);
@@ -2034,7 +2214,7 @@ function renderToday(){
   $('#clockLab').textContent=isToday()?'Fasting clock':'Fasting clock \u2014 '+dayFull();
   $('#logTitle').textContent=isToday()?"Today's log":dayFull()+' log';
   renderBackupState();
-  renderQuad();renderFoodStrip();renderTimeRow();renderFastPlan();
+  renderDay();renderQuad();renderFoodStrip();renderTimeRow();renderFastPlan();
 
   // day type chips
   const types=[['standard','Standard 16:8'],['low','Low day ~1,200'],['training','Training ~1,800']];
@@ -3450,6 +3630,22 @@ $('#bkDismiss').onclick=function(){
   S.meta.promptSeen=todayISO();save();renderBackupState();
 };
 
+$('#vDay').onclick=function(){setView('day')};
+$('#vWeek').onclick=function(){setView('week')};
+$('#dAdd').onclick=function(){
+  $$('nav.tabs button').forEach(function(t){if(t.dataset.v==='eat')t.click()});
+  setTimeout(function(){const el=$('#qSearch');if(el)el.focus()},150);
+};
+$('#dAddEx').onclick=function(){
+  $$('nav.tabs button').forEach(function(t){if(t.dataset.v==='move')t.click()});
+};
+$('#dWeightBtn').onclick=function(){
+  const l=+$('#dWeight').value; if(!l){toast('Enter a weight');return}
+  S.weights=S.weights.filter(function(x){return x.date!==VIEW});
+  S.weights.push({date:VIEW,lbs:r1(l)});save();
+  renderToday();renderWeight();toast('Saved');
+};
+
 /* date navigation */
 $('#backToday2').onclick=function(){STRIP=0;goDay(todayISO())};
 $('#stripPrev').onclick=function(){STRIP++;renderDayNav()};
@@ -3733,6 +3929,10 @@ function boot(){
   $('#pExD').value=p.exDaily;$('#pExR').value=p.exResist;
   $('#wDate').value=todayISO();
   VIEW=todayISO();
+  const vw=(S.settings&&S.settings.view)||'day';
+  document.body.dataset.view=vw;
+  $('#vDay').setAttribute('aria-pressed',vw==='day');
+  $('#vWeek').setAttribute('aria-pressed',vw==='week');
   unitSelect('#nfRefU',ALL_UNITS.concat(COUNT_UNITS),'g');
   unitSelect('#nfEqU',COUNT_UNITS.concat(ALL_UNITS),'slice');
   unitSelect('#nfEqU2',ALL_UNITS,'g');
